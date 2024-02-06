@@ -1,0 +1,80 @@
+This chapter is about learning regular languages of finite words. All automata here are deterministic finite automata. The setup is that there are two parties: Learner and Teacher. Teacher knows a regular language. Learner wants to learn this language, and pursues this goal by asking two types of queries to the Teacher:
+
+\begin{itemize}
+	\item \emph{Membership.} In a membership query, Learner gives a word, and the Teacher says whether or not Teacher's language contains that word.
+\item  \emph{Equivalence.} In an equivalence query, Learner gives regular language, represented by an automaton, and Teacher replies whether or not the Teacher's and Learner's languages are equal. If yes, the protocol is finished. If no, Teacher gives a counterexample, i.e. a word where the Teacher's and Learner's languages disagree.
+\end{itemize}
+
+Membership queries on their own can never be enough to identify the language, since there are infinitely many regular languages that match any finite set of membership queries.  Given enough time, equivalence queries alone are sufficient:  Learner can enumerate all regular languages, and ask equivalence queries until the correct language is reached, without ever using membership queries. The lecture is about a more practical solution, which was found by Dana Angluin~\cite{Angluin:1987kr}. Angluin's algorithm is a protocol where Learner learns Teacher's language in a number of queries that is polynomial in:
+\begin{itemize}
+	\item the minimal automaton of Teacher's language;
+\item the size of Teacher's counterexamples.
+\end{itemize}
+If Teacher provides counterexamples of minimal size, then the second parameter above is superfluous, i.e. the number of queries will be polynomial in the minimal automaton of Teacher's language. As mentioned above, we only talk about deterministic automata, and therefore the minimal automaton refers to the minimal deterministic automaton.
+
+
+
+
+
+\paragraph*{State words and test words.}
+Suppose that Teacher's language is $L \subseteq \Sigma^*$. We assume that the alphabet is known to both parties, but the language is only known to Teacher. At each step of the algorithm, Learner will store an approximation of the minimal automaton of $L$,  described by two sets of words:
+\begin{itemize}
+	\item a set $Q \subseteq \Sigma^*$ of state words, closed under prefixes;
+	\item a set $T \subseteq \Sigma^*$ of test words, closed under suffixes.
+\end{itemize}
+The idea is that the state words are all distinct with respect to Myhill-Nerode equivalence for Teacher's language, and the test words  prove this. This idea is formalised in the following definitions.
+
+\paragraph*{Correctness and completeness.} If $T$ is a set of test words, we say that words $v,w \in \Sigma^*$ are $T$-equivalent if $$ wu \in L \quad\mbox{iff}  \quad vu \in L  \qquad \mbox{for every $u \in T$}$$ This is an equivalence relation, which is coarser or equal to the Myhill-Nerode equivalence relation of Teacher's language. In terms of $T$-equivalence we define the following properties of sets $Q,T \subseteq \Sigma^*$ that will be used in the algorithm:
+\begin{itemize}
+	\item \emph{Correctness.} All words in $Q$ are pairwise $T$-non-equivalent;
+	\item \emph{Completeness.} For every $q \in Q$ and $a \in \Sigma$, there is some $p \in Q$ that is $T$-equivalent to $qa$.
+\end{itemize}
+
+
+
+If $(Q,T)$ is correct and complete, then we can define an automaton as follows. The states are $Q$, the initial state being the empty word. When the automaton is in state $q \in Q$ and reads a letter $a$, it goes to the state $p$ described in the completeness property; this state is unique by the correctness property. The accepting states are those states that are in Teacher's language.
+
+
+\begin{lemma}\label{lem:angluin-enlarge}
+ If $(Q,T)$ is correct but not complete, then using a polynomial number of membership queries, Learner can find some $P \supseteq Q$ such that $(P,T)$ is correct and complete.	
+\end{lemma}
+\begin{proof}
+If $q \in Q$ and $a \in \Sigma$ are such that no word in $Q$ is $T$-equivalent to $qa$, then $qa$ can be added to $Q$. The membership queries are used to test what is $T$-equivalent to $qa$. 	
+\end{proof}
+
+
+
+
+\paragraph*{The algorithm.} Here is  the algorithm.
+
+\begin{enumerate}
+	\item $Q=T= \set{\epsilon}$
+ \item Invariant: $(Q,T)$ is correct, not necessarily complete.
+\item  Apply Lemma~\ref{lem:angluin-enlarge}, and enlarge $Q$, making $(Q,T)$ correct and complete.
+\item  Compute the automaton for $(Q,T)$ and ask an equivalence query for it.
+\item If the answer is yes, then the algorithm terminates with success.
+\item If the answer is no, then add the counterexample and its suffixes to $T$.
+\item Goto 2.
+\end{enumerate}
+
+
+
+Note that if $(Q,T)$ is correct, then all words in $Q$ correspond to different states in the minimal automaton (for Teacher's language). Furthermore, if the size of $Q$ reaches the size of the minimal automaton, then $Q$ represents all states of the minimal automaton, and the transition function in the automaton for $(Q,T)$ is the same as the transition function in the minimal automaton. Therefore, if $Q$ reaches the size of the minimal automaton, the equivalence query in step 4 has a positive result.
+
+To prove that the algorithm terminates, we show  below that after step 6, $(Q,T)$ is no longer complete. This will mean that step 3 will necessarily enlarge $Q$, and therefore the number of times we do "Goto 2" will be bounded by the size of the minimal automaton.
+
+\begin{lemma}
+After step 6, $(Q,T)$ is no longer complete.
+\end{lemma}
+\begin{proof}
+Let $(Q,T)$ be the pair in step 4, and let $a_1 \cdots a_n$ be the counterexample, which witnesses that the automaton for $(Q,T)$ does not recognise Teacher's language. Define $T'$ to be $T$ plus all suffixes of the counterexample, and suppose toward a contradiction that $(Q,T')$ is complete.  If $(Q,T')$ is complete, then  the automata for $(Q,T)$ and $(Q,T')$ are the same. Define $q_i$ to be the state of either of these automata after reading $a_1 \cdots a_i$.  By construction, the state $q_{i}$ is a word which is $T'$-equivalent to $q_{i-1} a_i$, and since $a_{i+1} \cdots a_n \in T'$, it follows that $$ q_{i-1} a_{i} \cdots a_n \in L \qquad \mbox{iff} \qquad q_{i} a_{i+1} \cdots a_n \in L.$$
+Since $q_0$ is the empty word, the above and induction imply that
+$$ a_1 \cdots a_n \in L \qquad \mbox{iff} \qquad q_n \in L$$
+which means that the automaton gives the correct answer to the counterexample, a  contradiction. 	
+\end{proof}
+
+
+
+
+
+

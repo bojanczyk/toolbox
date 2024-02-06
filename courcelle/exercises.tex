@@ -1,0 +1,369 @@
+% !TEX root = ../main.tex
+
+\wojtek{Sporo tu jest od Marcina Pilipczuka z ich skryptu, moze trzeba zacytowac}
+
+\exercise{zad:06-01}{Show that a graph has treewidth 1 iff it is a forest.
+}
+{
+First we show the treewidth of a forest is indeed one. Let's focus on the tree,
+we can of course decompose every tree independently. We make the following decomposition:
+decomposition tree has the same shape as the tree, root bag contains the root and every other
+node bag contains this node and its parent. One can easily check that this is correct.
+
+For the other direction assume that $\tw(G) = 1$. We aim to show that there is no cycle in $G$.
+In there would be a cycle $C = \{v_1, \ldots, v_n, v_1\}$ then also $\tw(C) = 1$, so it is enough to show
+that treewidth of a cycle is bigger than one. Assume a decomposition of cycle $C$ with tree width one.
+Some bag $B_i$ contains edge $\{v_i, v_{i+1 \mod n}$ for every $i$. Clearly there is a path $\rho_i$ from
+any bag $B_i$ to bag $B_{i+1 \mod n}$, as node $v_{i+1 \mod n}$ belongs to both nodes. Definitely no two consecutive
+paths intersect. Therefore if we follow $\rho_1, \ldots, \rho_n$ we can a nontrivial loop of bags, contradiction with
+the fact that decomposition is a tree.
+
+Remark: there might be a much simpler solution, this is the one we found on exercises.
+}
+
+
+
+
+\exercise{zad:06-02}{Compute the treewidth of the  clique of $n$ vertices.
+}
+{
+Of course $\tw(K_n) \leq n-1$, we can put all the nodes into one bag. We show now that there is no decomposition
+of treewidth smaller or equal $n-2$, so containing at most $n-1$ nodes in one bag.
+Let us take the decomposition of treewidth $\leq n-1$, but with minimal number of nodes.
+Consider some bag $B$, if we remove this bag set of nodes not being in this set separates into
+disjoint parts contained in different parts of decomposition tree. However, this cannot happen in $K_n$ case,
+so it means that every node of decomposition tree has at most one neighbor. This means that there can
+be at most two nodes, which is impossible (we can easily check it).
+}
+
+
+
+
+\exercise{zad:06-03}{ Consider the following game on a  graph $G$ between $k$ cops and one robber.
+ The robber has a fast motorbike, cops have helicopters. In between moves everybody occupies one vertex.
+A round of the game is played as follows:
+\begin{itemize}
+  \item some subset of the cops starts flying their helicopters and  declares where they are going to land (different cops might land in different places) at the end of the round; the remaining cops stay on the ground,
+  \item the robber moves along a path; he cannot pass through vertices  that  are occupied by cops who are on the ground,
+  \item the cops in helicopters land on the declared vertices.
+\end{itemize}
+The cops win if they manage to land on the vertex with the robber. %Assume that the cops know where the robber is and  he is.
+Show that if a graph has treewidth $k$ then $k+1$ cops have a winning strategy in this game.
+Remark: if a graph has treewidth $k$  then the robber has a winning strategy against $k$ cops, but this is harder to show.
+}
+{
+Cops first choose a random bag $U$. Then they look where is the robber, i.e. in which part of the decomposition tree.
+It is easy to show that if $v \in U$ then $v$ can only belong to bags in one direction in decomposition tree from $U$.
+Then cops move slowly towards this direction. Let $U'$ be the first bag into this direction. Cops outside of $U \cap U'$
+move to $U'$. Of course by having $\tw(G) + 1$ cops we can place one at every vertex of $U'$. Then we follow the same
+strategy and finally robber will be caught.
+}
+
+
+
+\exercise{zad:06-04}{
+Let $G_k$ be a grid $k \times k$ (with $k^2$ vertices).
+Show that $G_k$ has treewidth which is either $k$ or $k-1$. The actual answer is $k$, but showing this is a bit technical.\wojtek{Na rysunku trzeba dodac jedna kolumne}
+\mypicc{6}
+}
+{
+It is easy to see that $k+1$ cops will manage to catch the robber. They take the whole first row and then slowly move
+downwards such that they form a barrier without holes. At every moment they have the beginning of the row in row number
+$i$ and the end in row number $i+1$, the place where there is a change of rows two cops stay in the same column.
+
+Now we show that strategy of robber to avoid $k-1$ cops. If there are $k-1$ cops there is always some row and some column,
+where no cop is staying. This is the place which robber occupies. When cops change places we just moves to the new place.
+He first uses old-free row, to reach the new-free column and the new-free column to reach crossing of new-free column and
+new-free row.
+}
+
+
+
+\exercise{zad:06-05}{
+Determine the treewidth  of the  full bipartite graph with $n$ vertices on the left and
+$n$ vertices on the right.
+}
+{
+We show that $\tw(K_{n,n}) = n$.
+We use one more time cops and robber game. It is easy to see that $n+1$ cops can catch robber.
+First $n$ cops fly to all the vertices on one side. Then the last cop fly to the robber node and he cannot move
+anywhere.
+
+On the other hand robber can avoid $n$ cops. He just stays in his node. If some of the cops is approaching him it means
+that on the other half of the graph there is a free node. This is where robber moves in this round.
+}
+
+
+
+
+\exercise{zad:06-06}{
+Show that the  vertex cover problem can be solved on a  graph $G$ in time $2^{\O(\tw(G))} \cdot n^{\O(1)}$.
+}
+{
+We do dynamic programming on the tree decomposition. It is actually easier to do this on nice tree
+decomposition, so such that all the vertices are either introduce, forget or join nodes or a leaf node.
+The updated information is as follows: for an already processed part of the graph and
+a current bag $B$ we remember for every its subset $S \subseteq B$ how many vertices have to be
+taken into vertex cover under the condition that all the vertices from $S$ are taken. It is quite easy
+to update this information on nice tree decomposition. Complexity is as need, as we remember for every
+of at most $2^{\tw(G)}$ nodes some small information.
+}
+
+
+
+
+\exercise{zad:06-07}{A 
+graph $G$ is called a \emph{minor} of graph $H$, denoted $G \minor H$, if $G$ can be obtained from $H$
+by a sequence of operations of one of the following three types: 1) deleting a vertex, 2) deleting an edge, 3) contracting an edge, i.e.
+unifying two endpoints of this edge.
+Show that $G \minor H$ implies $\tw(G) \leq \tw(H)$.
+}
+{
+We have to show that none of three operations can enlarge treewidth of a decomposition. For 1) and 2) it is trivial,
+for 3) it is also easy to see.
+}
+
+
+
+
+
+
+
+\exercise{zad:06-10}{
+Show that there exists a function $f$ such that if a graph $G$ is connected then it has a walk (a path which is allowed to visit vertices multiple times) that visits all vertices and visits every edge at most $f(\tw(G))$ times. Show that this is no longer true if we want to limit the number of visits to every vertex.
+}
+{
+}
+
+
+\exercise{zad:06-11}{
+Show that the following problem is decidable: given an \mso formula $\varphi$ and $k \in \set{1,2,\ldots}$, decide if $\varphi$ is true  in some graph of treewidth at most $k$.
+}
+{
+}
+
+
+
+\exercise{zad:06-12}{
+Consider two representations of graphs as logical structures:
+\begin{itemize}
+	\item \emph{Edge representation}. The universe is the vertices and there is a binary relation for neighbourhood. 
+	\item \emph{Incidence representation}. The universe is the  vertices and the edges, and there is a binary relation for incidence of a vertex with an edge.
+\end{itemize}
+With edge representation, \mso can quantify over sets of vertices, while with incidence representation, \mso can quantify over sets of vertices and edges. When proving Lemma~\ref{lem:courcelle}, we used edge representation. 
+Show that the lemma and also Problem~\ref{zad:06-11} remain true with the  incidence representation.
+}
+{
+}
+
+
+
+\exercise{zad:06-19}{
+Show that the language of connected graphs is definable in \mso on graphs
+(assume edge representation, as described in the Problem~\ref{zad:06-12}).
+}
+{
+The idea is that graph is connected if there is no partition of its vertices such that both parts are nonempty,
+but there is no edge between the part.
+We write the following formula:
+\[
+\neg \exists_{S, T \subseteq V} 
+\]
+\[
+\forall_{x \in V} \big((x \in S \vee x \in T) \wedge (x \not\in S \vee x \not\in T)\big) \, \wedge
+\]
+\[
+\forall_{x, y \in V} (x \in S \wedge y \in T) \Rightarrow \neg E(x, y)
+\]
+}
+
+
+
+
+
+\exercise{zad:06-20}{
+Show that the language of all forests is definable in \mso on graphs
+(assume edge representation, as described in the Problem~\ref{zad:06-12}).
+}
+{
+The idea is that graph is a forest if there is no cycle.
+And there is a cycle if there ia set of vertices such that every vertex from this set
+has exactly two neighbors from this set.
+We don't write a formula here, but it is not hard to write it.
+}
+
+
+
+\exercise{zad:06-21}{
+Show that the language of grids is definable in \mso on graphs and find an appropriate formula
+(assume edge representation, as described in the Problem~\ref{zad:06-12}).
+}
+{
+Alphabet will contain corner letters $\Sigma_{cor}$ containing four different labels for corners, border letters $\Sigma_{bor}$
+containing four different letters for borders (top, bottom, left, right) and one inside letter $\Sigma_{ins}$ for other nodes.
+Moreover this will be producted with alphabet for $0$, $1$ or $2$ modulo $3$ rows and columns. So every node will
+know what is its modulo in rows, in columns and whether it is on the corner, border or inside.
+Then we write in $\phi$ that corner and border nodes have appropriate neighbors and also that inside nodes have
+appropriate neighbors (from appropriate rows and columns). We also define for an edge whether it goes
+left, right, up or down (we can do it looking at numbers). Then we also define a predicate $\textup{row}$ and $\textup{column}$
+for the set of nodes in one row or column. Then we write that for any vertical neighbor nodes their upper neighbors are also vertical
+neighbors and the same in all directions. And we also write that every row and column finishes at some moment (we have order,
+as we can go right or up for example). This should be sufficient to define grid.
+}
+
+\exercise{zad:06-13}{
+Recall the edge and incidence representations from Problem~\ref{zad:06-12}. Show a property of graphs that is definable using incidence representation  but not using edge representation.
+}
+{An example property is ``cliques of square size''. This property can be defined using incidence 
+representation, because a clique has square size  if and only if one can remove edges to get a square grid. This property cannot be defined using edge representation, because over cliques with edge representation, one can use 
+an Ehrenfeucht-Fra\"iss\'e game to show that every \mso formula selects finitely many, or co-finitely many cliques.
+}
+
+
+\exercise{zad:06-14}{
+Recall the edge and incidence representations from Problem~\ref{zad:06-12}. Find a class of graphs $\Cc$ such that the following problem is decidable for the edge representation but not for incidence representation: given a formula of \mso, decide if it is true in some graph from $\Cc$.
+}
+{The class of cliques.
+}
+
+
+\exercise{zad:06-15}{
+Show that ``has an Euler cycle'' is a graph property that is not definable in \mso, even if one uses the incidence representation from Problem~\ref{zad:06-12}. 
+}
+{
+Cliques.  For cliques, having an Euler cycle is the same as having an even number of vertices.
+}
+
+\exercise{zad:06-16}{
+Consider the extension of \mso, called counting \mso, where one can write a formula ``the size of set $X$ is divisible by $n$'' for every $n$. Show that having an Euler cycle is definable in counting \mso.
+}
+{
+}
+
+\exercise{zad:06-17}{
+Show that Lemma~\ref{lem:courcelle} remains true when we use counting \mso (see Problem~\ref{zad:06-16}) and incidence representation.  
+}
+{
+}
+
+
+
+
+
+\exercise{zad:06-18}{
+The grid theorem~\cite{Robertson:1986fy,Chekuri:2016ub} says that  if a class of graphs has unbounded treewidth, then it has square grids
+of arbitrarily large dimensions as minors.
+Using the grid theorem, show that if a class $\Cc$ of finite graphs has unbounded treewidth, then the following problem is undecidable: given an \mso formula $\varphi$, decide if it is true in some graph from $\Cc$.
+}
+{
+Sketch goes as follows (I hope it works, when grid is a minor).
+
+We will reduce from the halting problem of a Turing Machine (TM).
+For a machine we will construct $\phi$ in MSO such that $\phi$ is satisfied if and only if Turing Machine
+halts. Actually $\phi$ will be true only in graphs which are grids of rectangle shape, which represent
+a finite run of TM.
+
+We will say that graph is a lattice, as in the previous exercise.
+Then we say that two rows differ only near the head.
+All these things can be expressed in MSO.
+
+As that are graphs of unbounded treewidth in $\Cc$ there are arbitrary big grids as minors and we implement the above argument on
+these grids.
+}
+
+
+
+
+\exercise{zad:06-08}{
+Show that for every $k \in \N$ there exists $t \in \N$ such that if a graph has treewidth $\ge t$ then it has  $k$ vertex disjoint cycles. 
+\emph{Hint:} use the grid theorem.
+}
+{
+We can put it in the other way: if $\tw(G) > t$ then $G$ has $k$ vertex disjoint cycles.
+Let $N$ be constant such that for $G$ with more than $N$ vertices if $\tw(G) \geq k^{99}$ then $G_k \minor G$.
+Let then $t = \max(N, k^{99})$, definitely for $\tw(G) \geq t$ we have $G_k \minor G$. However in $G_k$ there are $k$
+vertex disjoint cycles, so in $G$ also, which finishes the proof.
+}
+
+
+
+
+
+\exercise{zad:06-09}{
+Show that for a planar graph one can check in time $2^{\O(\sqrt{k} \log(k))} \cdot n^{\O(1)}$ whether it contains
+a simple path with at least $k$ vertices. \\
+\emph{Hint:} use the grid theorem for planar graphs in the following form: if a planar graph has treewidth $\ge 5k$ then it has the $k \times k$ grid as a minor.
+}
+{
+
+}
+
+
+
+
+
+
+
+\exercise{zad:06-22}{Recall $\eso$ from Problem~\ref{zad:05-13}. Let us model a graph as relational structure using the edge representation discussed in Problem~\ref{zad:06-12} (for the incidence representation, the same result would be true). Show that a property of graphs is definable in $\eso$ if and only if it is in the class NP (this is Fagin's theorem).
+}
+{
+The inclusion $\eso \subseteq \text{NP}$ is simpler.
+Assume that our formula $\phi \in \eso$ uses relations $R_1, \ldots, R_k$
+with arities $n_1, \ldots, n_k$.
+The TM working in polynomial time just guesses tuples in $R_i$ and there are maximally $k \cdot n^{\max{n_i}}$ of them,
+so the size is polynomial. Then TM have to verify that indeed the formula is true, so the first order part remains.
+However, if we have $m$ quantifiers we can do this in time size$^m$, so it is also in polynomial time.
+
+The inclusion $\text{NP} \subseteq \eso$ is a bit harder. Let $L \in \text{NP}$ and there is a TM $\mathcal{M}$
+which recognizes $L$ in polynomial time. Let $\mathcal{M}$ work in $n^k$. Then it also clearly works in $n^k$ space.
+Therefore to describe a run of $\mathcal{M}$ it is enough to present a lattice $n^k \times n^k$, where first row is the first
+configuration of the run, second row is the second configuration of the run etc. Such a lattice is labelled by different things,
+like symbols of the tape, head of the machine, state etc. So we say that there exists a lattice (represented by a few relations,
+like horizontal, vertical, first row etc.) which has good properties.
+Assume that this machine alphabet is $\Sigma$. We can represent
+this by a family of relations $\{R_a\}_{a \in \Sigma}$, where $R_a \subseteq n^k \times n^k$. We have to assure that
+this is a partition of the lattice and this is a representation of the correct run, but it is possible to achieve in FO logic.
+}
+
+
+
+
+
+
+\exercise{zad:06-23}{Show that the following problem is undecidable: the input is a formula of $\eso$ that uses only equality (and the quantified relations); the question is if this formula is true in some finite structure (i.e.~a finite universe equipped with equality only).}
+{
+It is easy. We reduce from the halting problem for TM. We will construct $\phi$ such that a model of $\phi$ exists
+iff the TM halts. The words will have a form $c_1 \# c_2 \# \cdots c_k \#$. We use the relation $+m$, where
+$m$ is the size of the configuration plus one. All the conditions are easy to check.
+}
+
+
+
+\exercise{zad:06-24}{
+Show that there is a polynomial time algorithm deciding whether a given graph is planar.
+\emph{Hint:} assume that there exists a polynomial algorithm deciding whether a given graph $G$ is
+a minor of an input graph $H$.
+}
+{
+We use the Wagner (or Kuratowski) theorem that $H$ is planar iff neither $K_5$ nor $K_{3,3}$ is its minor.
+By Hint above we can easily check it in PTIME.
+}
+
+\exercise{zad:06-25}{
+Show that there exists a polynomial time algorithm deciding whether a given graph can
+be drawn on torus without crossing edges.
+}
+{
+It is not hard to observe that if $H \minor H'$ and $H'$ can be drawn on torus then also $H$ can be drawn on torus.
+Therefore set of graphs which can be drawn on torus is downward closed in the minor order $\minor$.
+Thus its complement is upward closed. By Robertson-Seimour theorem we know that $\minor$ is WQO.
+Set of minimal (wrt. to $\minor$) graphs, which cannot be drawn on torus is an antichain, thus it is finite set,
+say these are $G_1, \ldots, G_k$. Therefore $H$ can be drawn on torus iff none of $G_i$ is a minor of $H$.
+Therefore it is enough to check whether all these $G_i$ are minors on the input graph, which is in PTIME
+by hint above. Note that we know that such an algorithm exist, but we do not know graphs $G_i$, so we do not
+know how exactly this algorithm looks like.
+}
+
+
+
+

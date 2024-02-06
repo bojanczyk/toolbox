@@ -1,0 +1,31 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:learning-blind}{
+Show that one can design an algorithm for learning DFA without membership queries and counterexamples,
+which finds a correct DFA in exponential time. Show that one cannot do better.
+}
+{
+Algorithm just enumerates bigger and bigger automata and at some moment (after time exponential wrt. minimal DFA)
+it will guess a correct one. Actually this algorithm cannot be improved.
+}
+
+\exercise{zad:learning-one-test}{
+Show that there is no algorithm, which asks only membership queries and guesses a correct DFA at the
+first time it asks an equivalence query. Show that the same holds for a fixed number of mistaken equivalence queries
+allowed.
+}
+{
+Is we already know that $w_1, \ldots, w_k \in L$, but $u_1, \ldots, u_n \not\in L$ there are still many possibilities for $L$.
+For example might be that $L = \{w_1, \ldots, w_k\}$, but also might be that $L = \{w_1, \ldots, w_k, w_{k+1}\}$ for some
+new word $w_{k+1}$.
+}
+
+\exercise{zad:learning-one-test}{
+Show that there is no algorithm running in polynomial time, which learns a correct DFA in the following setting:
+both membership and equivalence queries are allowed, but in the case when answer
+for an equivalence query is ''NO'' Teacher delivers no counterexample.
+}
+{
+Consider the case when $L = \{w\}$, where length of $w$ is $n$. There are $|\Sigma|^n$ different $L$ of such a form, while
+size of the automaton is only $n+1$. This means that without counterexamples it would be very hard to guess such an $L$ correctly.
+}

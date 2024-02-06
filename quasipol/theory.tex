@@ -1,0 +1,237 @@
+In this chapter, we show the following result.
+\begin{theorem}\label{thm:quasipolynomial}
+Parity games with $n$ positions and $d$ ranks can be solved in  time 
+$n^{\Oo(\log d)}$.
+\end{theorem}
+The time in the above theorem is  a special case of \emph{quasipolynomial time} mentioned in the title of the chapter.  Whether or not parity games can be solved in time  which is polynomial in both $n$ and $d$  is an important open problem.
+The presentation here is based on the original paper~\cite{Calude:2017cw}, with some new terminology (notably, the use of separation).
+
+
+Define a \emph{reachability} game to be a game where the objective  of player $0$  is to  visit an edge from a designated subset. (We  assume that the designated subset contains all edges pointing to dead ends of player $1$, so that winning by reaching a dead end is subsumed by reaching designated edges.)  Reachability games can  be solved in time linear in the number of edges, as is shown in Exercise~\ref{zad:quasipol-reach}.
+Our proof strategy for Theorem~\ref{thm:quasipolynomial}  is to reduce  parity games to reachability games of appropriate size.
+
+
+
+
+
+\section{Reduction to reachability games}
+  The syntax of a  \emph{reachability automaton} is exactly the same as the syntax of an \nfa. The semantics, however, is different: the automaton inputs an infinite word, and accepts if a final state can be reached (in other words, there is a prefix which is accepted by the automaton when viewed as an \nfa). For example, the following reachability automaton 
+\mypicc{27}
+accepts all $\omega$-words over alphabet $\set{a,b}$ which contain two consecutive $a$'s. A reachability automaton is called deterministic if its transition relation is a function.
+
+Consider an infinite word over an alphabet $\set{1,\ldots,n} \times \set{1,\ldots,d}$. We view this word as an infinite path in a game, where the positions are $\set{1,\ldots,n}$ and each edge is labelled by a \emph{rank} from  $\set{1,\ldots,d}$. Each letter describes a position and the rank of an outgoing edge. An infix of such a path is called an \emph{even loop} if it begins and ends in the same vertex from $\set{1,\ldots,n}$ and the maximal rank in the infix is even. Likewise we define odd loops. Here is a picture:
+\mypic{83}
+
+
+%\paragraph*{The reduction.} 
+%\begin{lemma}\label{lem:quasi-reduction}
+%Suppose that, given $n \in \Nat$, one can compute a deterministic reachability automaton $\Aa_n$ with input alphabet $\set{1,\ldots,n}$, which accepts all inputs that have only even loops, and rejects all inputs that have only odd loops, as in the following picture:
+%\mypic{84}
+%Then parity games can be solved in time 
+%\begin{align*}
+%\text{time to compute $\Aa_n$} + n \times \text{number of states in $\Aa_n$}.
+%\end{align*}
+%
+%
+%
+%\end{lemma}
+%\begin{proof}
+%\end{proof}
+
+The following lemma shows that to quickly solve parity games, it suffices to find a small deterministic reachability automaton which separates the properties ``all loops are even'' and ``all loops are odd''.
+\begin{lemma}
+	\label{lem:quasi-red}
+	Let $n,d \in \set{1,2,\ldots}$.   Assume that one can compute a deterministic reachability automaton $\Dd$ with input alphabet $\set{1,\ldots,n} \times \set{1,\ldots,d}$  that accepts every $\omega$-word where all loops are even, and rejects every $\omega$-word where all loops are odd, as in the following picture:
+\mypic{84}
+Then a parity game $\Gg$  with $n$ positions and $d$ ranks can be solved in time
+\begin{align*}
+\Oo((\text{number of edges in $\Gg$}) \times \text{(number of states in $\Dd$)})  + \text{time to compute $\Dd$}
+\end{align*}
+\end{lemma}
+\begin{proof} 
+	Let $G$ be a parity game with vertices   $\set{1,\ldots,n}$ and edges labelled by parity ranks $\set{1,\ldots,d}$. Let $\Dd$ be an automaton as in the assumption of the lemma.  Consider a product game $G \times \Dd$, as defined on page~\pageref{page:product-game}, i.e.~the positions are pairs (position of $v$, state of $\Aa$) and the structure of the game is inherited from $G$ with only the states being updated according to the parity ranks on edges. Player $0$ wins the product game $G \times \Dd$ if a dead end of player 1 is reached, or if the play is infinite and accepted by $\Dd$ (in the latter case, by the assumption that $\Dd$ is a reachability automaton,  this is done by reaching an accepting state of $\Dd$ at some point during the play). 
+\begin{claim}
+	If player $i \in \set{0,1}$ wins $G$, then player $i$  also wins $G \times \Dd$.
+\end{claim}
+\begin{proof}
+By symmetry, take $i=0$.  Let $\sigma_0$ be a winning strategy for player $i$ in the game~$G$. By memoryless determinacy of parity games, we assume that $\sigma_0$ is memoryless. Let $G_0$ be the graph obtained from the graph underlying the game $G$ by fixing the memoryless strategy $\sigma_0$, i.e.~by removing every edge that originates in a position owned by player $0$ and is not used by the strategy $\sigma_0$. Paths in the graph $G_0$ correspond to plays in the game $G$ that are consistent with strategy $\sigma_0$. Because $\sigma_0$ was winning in the game $G$, all infinite paths in $G$ satisfy the parity condition.  In particular, every  loop in $G_0$ that is accessible from the initial vertex has even maximum. This means  that every infinite path in $G_0$ is accepted by the automaton $\Dd$. Therefore, the same strategy $\sigma_0$ also wins in the game $G \times \Dd$.
+\end{proof}
+Because $\Dd$ is a reachability automaton, the product game $G \times \Dd$ can be solved in time proportional to the number of its edges, which is consistent with the bound in the lemma.
+\end{proof}
+
+
+\section{A small reachability automaton for loop parity}
+\label{sec:quasi-separator}
+By Lemma~\ref{lem:quasi-red}, to prove Theorem~\ref{thm:quasipolynomial}, it suffices to find a deterministic automaton which  separates ``all loops even'' from ``all loops odd'', and which has a quasipolynomial state space (and time to compute the automaton). As a warm-up, we present a simpler construction which has $n^{d/2}$ states.
+\begin{fact}
+Let $n,d \in \set{1,2,\ldots}$. There is a deterministic reachability automaton with $n^{d/2}$ states which satisfies the properties in Lemma~\ref{lem:quasi-red}.
+\end{fact}
+\begin{proof}
+Consider a finite word over  the alphabet $\set{1,\ldots,n} \times \set{1,\ldots,d}$. For a rank $a \in \set{1,\ldots,d}$,  a position in the word is called \emph{$a$-visible} if its letter has rank exactly $a$, and all later positions have ranks $\le a$, as in the following picture \mypic{111} 
+After reading a word, for each even rank $a$, the automaton stores the number of $a$-visible positions up to threshold $n-1$, i.e.~the state space is a function
+\begin{align*}
+  \text{even numbers in $\set{1,\ldots,d}$} \quad \to \quad \set{0,1,\ldots,n}.
+\end{align*}
+Whenever the threshold is exceeded, i.e.~the number of $a$-visible positions exceeds  $n$ for some $a$, the automaton accepts. If this happens, then the pigeonhole principle says that the input word contains two $a$-visible positions with the same label in $\set{1,\ldots,n}$, and therefore the infix connecting these positions forms   an even loop with maximum exactly $a$. Therefore, if the automaton accepts, then there is an even loop. Contrapositively: if there are only odd loops, then the automaton rejects. On the other hand, if the input word satisfies the parity condition, i.e.~the maximal rank seen infinitely often is an even number $a$, then at some point there will be at least $n$ positions that are $a$-visible. Therefore if the input satisfies the parity condition (in particular, if the input has all loops even), then the automaton must accept.
+\end{proof}
+
+Note that in the above construction, the automaton satisfies a stronger property than required by Lemma~\ref{lem:quasi-red}, namely it accepts all words satisfying the parity condition (instead of only those where all loops are even). 
+
+\begin{lemma}\label{lem:quasi-reduction} 
+Let $n,d \in \set{1,2,\ldots}$. There is deterministic reachability automaton with $n^{\Oo(\log d)}$ states which satisfies the assumptions of  Lemma~\ref{lem:quasi-red}.
+\end{lemma}
+
+
+
+The rest of Section~\ref{sec:quasi-separator} is devoted to proving the above lemma. Like in the construction with $n^{d/2}$ states,  the automaton will reject all words which violate the parity condition, and not just those where all loops are odd.   This stronger property, however, is not used  in the proof of Theorem~\ref{thm:quasipolynomial}.
+
+
+
+
+We begin with a \emph{nondeterministic} reachability automaton $\Aa$ which satisfies the properties in the lemma in the following sense: if all loops are even, then at least one run reaches an accepting state, and if all loops are odd, then all runs avoid accepting states.
+
+
+Choose the smallest $k$ so that $n < 2^k$. 
+The nondeterministic automaton   uses  $k$ registers with names $\set{0,\ldots,k -1}$. Each register stores a number  from $\set{1,\ldots,d}$, or it is undefined. A state of the automaton is a valuation of these registers or an accepting sink state, i.e.~the number of states is at most $(1+d)^k + 1$. By choice of $k$, we have
+\begin{align*}
+(d+1)^k \le \\
+  (d+1)^{\log(n+1)}  = \\
+  2^{\log(n+1) \cdot \log(d+1)} = \\
+  (n+1)^{\log(d+1)} 
+\end{align*}
+and therefore the number of states in $\Aa$ is at most $n^{\Oo(\log d)}$. Our final automaton $\Dd$ will be obtained by keeping the same states as $\Aa$ and removing transitions so as to make the automaton deterministic, and hence the size of $\Dd$ will be as required to make Theorem~\ref{thm:quasipolynomial} true.
+
+
+
+
+Here is a picture of a state of the automaton $\Aa$:
+\mypic{85}
+We design the transition relation to respect  following invariant.
+\begin{itemize}
+	\item[(*)]  Suppose that the automaton has read a finite word, and has not accepted yet. Then the register valuation is nondecreasing on nonempty registers. Furthermore, one can associate to each register $r$ a word $w_r$ so that:
+\begin{enumerate} 
+\item if $r$ is empty then $w_r$ is empty; and 
+	\item the word $w_{k-1} w_{k-2} \cdots w_1 w_0$ is a suffix of the input read so far; and 
+	\item if a register $r$ is nonempty and stores $i \in \set{1,\ldots,d}$, then:
+	\begin{enumerate}
+	\item all words associated to nonempty registers $<r$ use ranks $\le i$;
+	\item the word $w_r$ associated to $r$ is a concatenation of two words:
+	\begin{itemize} 
+	\item {\sc tail:} $2^r - 1$ words with even maximal rank;
+	\item {\sc head:}	  a word with maximal rank  exactly $i$.
+	\end{itemize}
+	\end{enumerate}
+\end{enumerate}
+\end{itemize}
+Here is a picture of the invariant. In the picture, we only draw the ranks of the input letters, and not their labels in $\set{1,\ldots,n}$. One reason is that the automaton completely ignores the labels in its transition relation.   \mypic{91}
+In the initial state, all registers are empty; this state clearly satisfies the invariant. Before giving the state update function, we  explain two properties of the invariant.
+
+
+
+\begin{lemma}\label{lem:quasi-accept}
+Assume that the invariant is satisfied, all registers are nonempty and store even ranks, and the input letter has  even rank.  Then  the input contains an even loop.
+\end{lemma}
+\begin{proof} If register $r$ stores an even rank,  then the associated word $w_r$ is a concatenation of $2^r$ words with even maximal rank: one for the head, and  $2^r-1$ for the tail. Therefore, if all registers are nonempty and store even ranks, and a letter of even rank appears in the input,  then a  suffix of the input -- including the new input letter -- can be factorised as a concatenation of
+\begin{align*}
+  \underbrace{2^{k -1} + 2^{k -2} + \cdots 2^{0}}_{\text{the registers}} + \underbrace {1}_{\text{the input letter}} = 2^{k} > n
+\end{align*}
+words with even maximal rank. For each of these words, choose the position which achieves the maximal rank. The pigeonhole principle says that two positions achieving the maximal rank  must have the same label. The infix connecting these two positions is an even loop.
+\end{proof}
+
+The above lemma justifies the following acceptance criterion of the automaton: if all of its registers are nonempty and store even ranks, and it reads an even rank, then it accepts. 
+
+\begin{lemma}\label{lem:quasy-empty-registers}
+Emptying any subset of the registers preserves the invariant.
+\end{lemma}
+\begin{proof}
+It is enough to show that emptying any single  register $r$ preserves the invariant. If $r$ is the most significant nonempty register, then the word associated to $r$ is put into the prefix of the input that is not assigned to any register. Otherwise, the word associated to $r$ is appended to the head of the closest more significant register.
+\end{proof}
+
+
+\paragraph*{Transitions of the automaton.} We now describe the transitions of the automaton and justify that they preserve the invariant. Suppose that the automaton reads a letter with rank  $a \in \set{1,\ldots,d}$. Then the automaton allows three types of transitions A, B and C, as described below.
+
+\begin{enumerate}
+\item[A.] Assume that in the current state, all registers store values $\ge a$, which includes the special case when all registers are empty. Under this assumption, the automaton is allowed to do nothing, i.e.~not change the state when reading $a$.
+
+\emph{Why the invariant is preserved.} If all registers are empty, then the new input letter $a$ becomes part of the input that is not associated to any register. Otherwise, $a$ is appended to the head of the least significant nonempty register.  
+
+
+	\item[B.] Let  $r$ be any register  which satisfies conditions written in grey below:
+ \mypic{108}
+ Then the automaton can do the following update (the picture uses $a=4$):
+ \mypic{112}
+ 
+ \emph{Why the invariant is preserved.} We view this transition as a two-step process. First, all registers $< r$ are made empty, which preserves the invariant by Lemma~\ref{lem:quasy-empty-registers}. Next, the input letter $a$ is appended to the head of the register $r$ (which is now the least significant nonempty register), and therefore becomes the new maximum in this head.
+		\item[C.] Let  $r$ be any register  which satisfies the conditions written in grey below:
+\mypic{107}
+Under these conditions, and assuming that $a$ is even, the automaton can do the same update as in transitions of type B., i.e.~it put $a$ into register $r$ and empty all registers $<r$. Apart from the assumption that $a$ is even, there is no assumption that $a$ is bigger than the contents of registers $< r$, e.g.~in the above picture $a$ could be $2$ or $4$.
+ 
+  \emph{Why the invariant is preserved.} We also view this transition as a two-step process. First, we empty register $r$ (but not the smaller ones), which preserves the invariant by Lemma~\ref{lem:quasy-empty-registers}.   Next, all of the words associated to registers $<r$ are concatenated and put into the tail of register $r$. As explained in the proof of Lemma~\ref{lem:quasi-accept}, after the update the  tail of register $r$ consists of 
+ \begin{align*}
+2^{r-1}+2^{r-2}+ \cdots 2^0 = 2^{r} -1  
+\end{align*}
+words with even maximum, as required by the invariant. Finally,  the head of register $r$ is set to the one letter word consisting of the new input letter $a$.  Here is a  picture: \mypic{89}
+\end{enumerate}
+
+
+
+Since every transition of $\Aa$ preserves the invariant, we can use   Lemma~\ref{lem:quasi-accept} to conclude  that if the invariant is preserved and the automaton accepts (which happens when all registers store even ranks and a new even rank is read), then the input contains at least one even loop. This gives the following inclusion: 
+\mypic{110}  
+ 
+Define $\Dd$ to be the deterministic reachability automaton which is obtained from $\Aa$ as follows: if there are several applicable transitions, then choose any transition that maximises the most significant register that is modified. The automaton $\Dd$ has fewer accepting runs than $\Aa$, and therefore it still rejects all words that have only odd loops. Therefore, the proof of Lemma~\ref{lem:quasi-reduction} is completed by the following lemma.
+
+
+% Define an ordering $\preceq$ on register contents as follows: first we have all even numbers in decreasing order, then the undefined value, and then we have all odd numbers in increasing order, like in the following example for $n=8$:
+%\begin{align*}
+%  8 \prec 6 \prec 4 \prec 2  \prec \text{empty} \prec 1 \prec 3 \prec 5 \prec 7
+%\end{align*}
+%Lift the ordering $\preceq$ to register valuations lexicographically, with more significant register begin more important. 
+%
+%Define $\Bb$ to be the deterministic automaton obtained from $\Aa$ as follows: for every state $q$ -- which is a register valuation -- of the automaton $\Aa$ and every input letter $a$, choose the outgoing transition of $\Aa$ which minimises the new register valuation with respect to the ordering $\preceq$. We claim 
+%
+%
+% When reading an input letter $a$, the automaton:
+%\begin{itemize}
+%	\item Empty some (possibly empty) prefix of the registers, and then apply one of the operations  from Lemma.. 
+%\end{itemize}
+%
+%\begin{itemize}
+%	\item {\bf Input letter is even.} If all nonempty registers store value $\ge a$, do nothing, i.e.~keep the register valuation unchanged. Otherwise, find the most significant register $r$ with defined value $<a$, empty all registers $< r$, and put $a$ into register $r$. 
+%		\item {\bf Input letter is odd.}  
+%If all registers are nonempty and store odd values, reject. Otherwise, consider the following two registers
+%(which might be undefined):
+%\begin{enumerate}
+%	 \item[$r_1$] most significant nonempty register that stores value $<a$;
+%	\item[$r_2$]  least significant  register that does not store an odd number.
+%	\end{enumerate}
+%
+%
+%\end{itemize}
+%
+% Consider the following two registers 	If at least one of the  registers $\set{r_1,r_2}$ is defined, then value $a$ is inserted into the more significant one that is defined, call it $r$, and all registers $<r$  are emptied. If  neither of the registers is defined and $a$ is even (which means that all nonempty registers have values $\ge a$, because  register $r_2$ is necessarily undefined for even inputs), then the state is left unchanged. If  neither of the registers is defined and $a$ is odd (which means that all registers are  nonempty and store odd values $\ge a$), then the automaton rejects.
+ %\begin{claim}[Invariant]
+%\end{claim}
+%\begin{proof}
+%Suppose that the invariant holds for some input word $w$, and the input  letter is $a$. Recall the registers $r_1,r_2$ in  the definition of the state update function. We prove the invariant depending on which one is used in the update function.
+%\begin{enumerate}
+%		\end{proof}
+%\begin{claim}\label{claim:odd-loop}
+%	If the automaton rejects, then the input contains an odd loop.
+%\end{claim}
+%\begin{proof}
+%From the invariant it follows that if the automaton rejects, then some suffix of the input can be decomposed into $2^{k}$ parts, each one with odd maximum. By the pigeonhole principle, at least two of these parts must have the same maximum, say achieved in positions $i$ and $j$ of the input word. The infix from $i$ to $j$ is a loop, and its maximal number is odd (it is either the number stored in position $i$, or one of the maximal numbers in the parts between $i$ and $j$).
+%\end{proof}
+
+\begin{lemma}\label{claim:parity}
+	If the input has only even loops, then  $\Dd$  accepts.
+\end{lemma}
+\begin{proof}  For $i \in \set{1,2,\ldots}$, define $\Dd_i$ to be a variant of the automaton $\Dd$ where the number of registers is $i$ instead of $k$. In particular, $\Dd=\Dd_k$. By induction on $i$, we prove the following generalisation (*) of the lemma.  The generalisation is twofold: we allow any number of registers, and we weaken the assumption from ``only even loops'' to ``satisfies the parity condition''.
+\begin{itemize}
+	\item [(*)] Suppose that $\Dd_i$ is initialised in an arbitrary  
+	 state (not necessarily the initial state with all registers empty). If the input satisfies the parity condition, then $\Dd_i$ accepts, i.e.~it reaches a configuration where all registers store even ranks and the input letter has  even rank.
+\end{itemize}
+Suppose that we have already proved (*) for $i-1$, or $i=1$ and there is nothing to prove. We now prove  (*)  for $i$. Consider a run of $\Dd_i$ on an input which satisfies the parity condition, i.e.~the maximal rank that appears infinitely often is some even $a \in \set{1,\ldots,d}$. By the induction assumption, the most significant register $i$ must eventually become nonempty, because transitions that do not affect the most significant register are transitions of the automaton $\Dd_{i-1}$. Once the most significant register becomes nonempty, then it stays nonempty. Wait until the most significant rank $a$ is seen again; either the automaton accepts before this time, or otherwise it puts $a$ into the most significant register. Once the most significant register stores $a$, and the input contains only values with rank $\le a$, then the most significant register will keep on containing $a$. Again by induction assumption, the automaton will eventually fill all registers $<i$ with even ranks and read an even letter, thus accepting.
+\end{proof}
+
+
+

@@ -1,0 +1,60 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:sst-basics}{ Show that the class \sst of  functions recognised by streaming string transducers has the following closure properties:
+\begin{enumerate}
+	\item if $f,g$ are in \sst, then so is $w \mapsto f(w) g(w)$. 
+	\item if $f$ is in \sst, then so is $w \mapsto \text{reverse of }f(w)$.
+\end{enumerate}
+}
+{
+}
+
+\exercise{zad:sst-images}{ Show that the class of regular languages is closed under inverse images of streaming string transducers, but not under forward images.
+}
+{
+}
+
+\
+\exercise{zad:sst-char}{ Show that a language $L \subseteq \Sigma^*$ is regular if and only if there is a streaming string transducer with input alphabet $\Sigma$ and output alphabet $\set{0,1}$ which recognises the characteristic function of $L$.
+}
+{
+}
+
+
+\exercise{zad:sst-unambig}{ Define a \emph{nondeterministic} streaming string transducer by (a) allowing several applicable transitions in each state; (b) distinguishing accepting states, so that only runs that end in an accepting state count. A  \emph{functional} streaming string transducer is a nondeterministic one where every accepting run produces the same output. Show that functional streaming string transducers recognise the same functions as deterministic ones. 
+}
+{
+A rational relation can choose an accepting run for every input. Rational relations can be uniformised into rational functions.
+}
+
+\exercise{zad:sst-transformation-forest}{ 
+Consider the least class of monoids that contains $\Gamma^*$, and is closed under:
+\begin{itemize}
+	\item reversing the monoid operation, i.e.~$ m \cdot n$ becomes $n \cdot m$;
+	\item submonoids;
+	\item homomorphic images;
+	\item if $M$ is the class, then so is $M^{[Q]}$ for every finite set $Q$.
+\end{itemize}
+Show that this class contains, for any finite set $R$ of registers, the monoid of copyless register updates with alphabet $\Gamma$ and registers $R$.
+}
+{
+}
+
+\exercise{zad:sst-monotone}{ 
+A streaming string transducer is called \emph{monotone} if its registers can be totally ordered as $r_1,\ldots,r_n$ so that every register update $\tau$ preserves the order in the following sense: after concatenating  the words $\tau(r_1),\ldots,\tau(r_n)$ and keeping only the register names, we get a subsequence of $r_1,\ldots,r_n$.  Show that every streaming string transducer can be decomposed as $g \circ f$ where $f$ is a rational function and $g$ is a monotone streaming string transducer.
+}
+{
+}
+
+\exercise{zad:sst-pspace}{ 
+Show that the following problem is {\sc PSpace}-hard (it is also in {\sc PSpace}, but this is more challenging to prove): given a streaming string transducer, decide if it produces the empty word for every input.
+}
+{
+}
+
+
+
+
+
+%%% TeX-master: "../EN_main"
+%%% End:

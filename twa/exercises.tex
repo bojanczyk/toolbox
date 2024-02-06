@@ -1,0 +1,89 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:07-01}{
+Consider trees over an alphabet $\Sigma$ containing two letters $0, 1$ of arity zero,
+one letter $\neg$ of arity one and two letters $\vee, \wedge$ of arity two. Let $T$ be the trees over the above alphabet which evaluate to value $1$ under the standard semantics
+of boolean expressions.
+Show a tree-walking automaton that  recognizes  $T$.
+}
+{
+
+}
+
+
+
+\exercise{zad:07-02}{
+Show that every language recognized by a two-way automaton on finite words is regular.
+}
+{
+
+}
+
+
+
+
+\exercise{zad:07-03}{
+Show that every language recognized by a tree-walking automaton  on finite trees is regular, i.e.~recognised by a deterministic  (branching) bottom-up tree automaton.
+}
+{
+
+}
+
+
+
+
+\exercise{zad:07-04}{
+Show that every language recognized by a deterministic tree-walking automaton is also recognized by some
+deterministic tree-walking automaton that never loops.
+}
+{
+The second automaton traverses backwards in a DFS way tree of computation of the first automaton, starting from the final state
+and trying to reach an initial state. As initial one was deterministic the second one never reaches a loop.
+}
+
+
+
+%\exercise{zad:tree-aut-01}{
+%Show that deterministic top-down (branching) tree automata do not recognise the language ``at least one leaf has label $a$'', assuming that the alphabet has a binary letter and at least two leaf letters.
+%}
+%{
+%}
+
+
+\exercise{zad:tree-aut-05}{Following~\cite{Kamimura:1981fj}.
+Consider a model of tree-walking automata where the automaton sees only the label and whether or not the node is a root or leaf, but it does not see the child number. Show that this model, even in the nondeterministic variant, cannot recognise the language ``every leaf has label $a$''.
+}
+{
+}
+
+
+\exercise{zad:tree-aut-02}{
+(Answer unknown) Prove or disprove:  for every deterministic top-down branching tree automaton, there is a deterministic  tree-walking automaton that recognises the same language.
+}
+{
+}
+
+
+\exercise{zad:tree-aut-04}{
+Show the following generalisation of the Rotation Lemma: every two homogeneous patterns of same arity are equivalent.
+}
+{
+Let us use the name \emph{rotation} for the operation which replaces one of the patterns in the Rotation Lemma  with the other one. The exercise follows from the following two observations: (a) every homogeneous pattern of arity $\ge 2$  is equivalent to one that is built only using the pattern $t_2$; (b) 
+every two patterns of same arity that are constructed only using $t_2$ can be transformed into each other using a sequence of rotations. 
+}
+
+
+\exercise{zad:tree-aut-pebble}{
+Consider a variant of tree-walking automata that can use  $1$ pebble. The pebble operations are: place the pebble on the current node (assuming it is not already placed anywhere else), pick it up from the current node. The local view includes the information about whether or not the pebble is on the current node. Show that this extension of tree-walking automata can still be simulated by branching tree automata.
+\wojtek{Mam mieszane uczucia co do tego i nastepnego zadania, w szczegolnosci nie umiem ich zrobic. Chcemy je?}
+}
+{
+}
+
+\exercise{zad:tree-aut-pebble-two}{
+Consider an extension of the pebble automaton from the previous exercise, where 2 pebbles are allowed.  Show that (a) this extension of tree-walking automata can still be simulated by branching tree automata if we keep a stack discipline (i.e.~if pebble 2 is present in the tree, then any actions on pebble 1 are disallowed); (b) if stack discipline is lifted, then the model cannot be simulated by tree automata and in fact has undecidable emptiness.
+}
+{
+}
+
+

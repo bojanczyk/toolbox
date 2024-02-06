@@ -1,0 +1,288 @@
+In this chapter, we discuss automata for $\omega$-words, i.e.~infinite words of the form
+\begin{align*}
+  a_1 a_2 a_3 \cdots
+\end{align*}
+We write $\Sigma^\omega$ for the set of $\omega$ words over alphabet $\Sigma$.
+The  topic of this chapter is McNaughton's Theorem, which shows that automata over $\omega$-words can be determinised. A more in depth account of automata (and logic) for $\omega$ words can be found in~\cite{Thomas:1997ec}.
+
+\section{Automata models for $\omega$-words}
+A \emph{nondeterministic Büchi automaton} is a type of automaton for $\omega$-words.  Its syntax is typically defined to be the same as that of a nondeterministic finite automaton: a set of states, an input alphabet, initial and accepting subsets of states, and a set of transitions. For our presentation it is  more convenient to use accepting transitions, i.e. the accepting set is a set of transitions, not a set of states. An infinite word is accepted by the automaton if there exists a run which begins in one of the initial states, and visits some accepting transition infinitely often.
+\begin{example}\label{ex:a-finitely-often}
+Consider the set of words over alphabet $\set{a,b}$ where the letter $a$ appears finitely often. This language is recognised by a nondeterministic Büchi automaton like this (we adopt the convention that accepting transitions are red edges):
+\mypic{19}
+\end{example}
+
+This chapter is about determinising Büchi automata.  One simple idea would be to use the standard powerset construction, and accept an input word if infinitely often one sees a subset (i.e.~a state of the powerset automaton) which contains at least one accepting transition. This idea does not work, as witnessed by the following picture describing a run of the automaton from Example~\ref{ex:a-finitely-often}:
+\mypic{41}
+In fact, Büchi automata cannot be determinised using any construction.
+
+\begin{fact}
+Nondeterministic Büchi automata recognise strictly more languages than deterministic Büchi automata.	
+\end{fact}
+\begin{proof}
+Take the automaton from Example~\ref{ex:a-finitely-often}.
+  Suppose that there is a deterministic Büchi automaton that is equivalent, i.e.~recognises the same language. Let us view the set of all possible inputs as an infinite tree, where the vertices are prefixes $\set{a,b}^*$.  Since the automaton is deterministic, to each edge of this tree one can uniquely assign a transition of the automaton. Every vertex $v \in \set{a,b}^*$ of this tree has an accepting transition in its subtree,  because the word $vb^\omega$ should have an accepting run. Therefore, we can find an infinite path in this tree which  has $a$ infinitely often and uses accepting transitions infinitely often.	
+\end{proof}
+
+
+
+
+The above fact shows that if we want to determinse automata for $\omega$-words, we need something more powerful than the Büchi condition. One solution is called the Muller condition, and is described below. Later we will see another (equivalent) solution, which is called the parity condition.
+
+
+
+
+
+\paragraph*{Muller automata.}
+The syntax of a Muller automaton is the same as for a Büchi automaton, except that the accepting set is different. Suppose that $\Delta$ is the set of transitions. Instead of being a set $F \subseteq \Delta$ of transitions, the accepting set in a Muller automaton  is a family $\mathcal F \subseteq \powerset \Delta$ of sets of transitions. A run is defined to be \emph{accepting} if the set of transitions visited infinitely often belongs to the family $\mathcal F$. 
+
+\begin{example}
+	Consider this automaton 
+	\mypic{20}
+	Suppose that we set $\Ff$ to be all subsets which contain only  transitions that  enter the blue state, as in the following picture.
+	\mypicb{6}
+	 In this case, the automaton will accept words which contain infinitely many $a$'s and finitely many $b$'s.	
+	If we set $\Ff$ to be all subsets which contain at least one  transition that  enters the blue state, then the automaton will accept words which contain infinitely many $a$'s.	
+\end{example}
+%then a run is accepting if "infinitely often $p$" implies "infinitely often $q$". A convenient (and more succinct) way to describe a Muller condition is to give a propositional formula (i.e. a formula built out of variables using $\neg,\land$ and $\lor$) where the variables are states, and a variable $q$ stands for "infinitely often $q$". The family $\Ff$ in the example above would be represented by a formula
+%
+%$$ \neg p \lor q$$
+
+Deterministic Muller automata are clearly closed under complement – it suffices to replace the accepting family by $\powerset \Delta -\mathcal F$. This lecture is devoted to proving the following determinisation result.
+
+\begin{theorem}
+[McNaughton's Theorem] \label{thm:mcnaughton} For every nondeterministic Büchi automaton there exists an equivalent (accepting the same $\omega$-words) deterministic Muller automaton.	
+\end{theorem}
+
+The converse of the theorem, namely that deterministic Muller (even nondeterministic) automata can be transformed into equivalent nondeterministic Büchi automata is more straightforward, see Exercise~\ref{zad:01-07}. It  follows  from the above discussion that 
+\begin{itemize}
+	\item nondeterministic Büchi automata
+	\item nondeterministic Muller automata
+	\item deterministic Muller automata
+\end{itemize}
+have the same expressive power, but deterministic Büchi automata are weaker.
+Theorem~\ref{thm:mcnaughton} was first proved by McNaughton in~\cite{McNaughton:1966}. The proof here is similar to one by  Muller and Schupp~\cite{Muller:1987dn}. An alternative proof method is the Safra Construction, see e.g.~\cite{Thomas:1997ec}.
+
+
+
+The proof strategy is as follows. We first define a family of languages, called universal Büchi languages, and show that the McNaughton's theorem boils down to recognising these languages with deterministic Muller automata. Then we do that.
+
+
+
+\paragraph*{The universal Büchi language.}
+For $n \in \Nat$, define a width $n$ dag to be a directed acyclic graph where the nodes are pairs $\set{1,\ldots,n} \times \set{1,2,\ldots}$ and every edge is of the form $$(q,i) \to (p,i+1) \qquad \mbox{for some }p,q \in \set{1,\ldots,n}\mbox{ and }i \in \set{1,2,\ldots}.$$Furthermore, every edge is either red or black, with red meaning ``\red{accepting}''. We assume that there are no multiple edges (i.e.~there is at most one edge connecting a given source and target). Here is a picture of a  width 3 dag:
+\mypic{21}
+In the pictures, we adopt the convention that the $i$-th column stands for the set of vertices $\set{1,\ldots,n} \times \set{i}$. The top left corner of the picture, namely the vertex $(1,1)$ is called the \emph{initial vertex}.
+
+
+
+The essence of  McNaughton's theorem is showing that for every $n$, there is a deterministic Muller automaton which inputs a  width $n$ dag and says if it contains a path that begins in the initial vertex and visits infinitely many red (accepting) edges. In order to write such an automaton, we need to encode as a width $n$ dag as an $\omega$-word over some finite alphabet. This is done using an alphabet, which we denote by $[n]$, where the letters look like this:
+\mypic{14}
+Formally speaking,  $[n]$ is the set of functions
+\begin{align*}
+  \set{1,\ldots,n} \times \set{1,\ldots,n} \to \set{\text{no edge, non-accepting edge, \red{accepting edge}}}.
+\end{align*}
+Define the \emph{universal $n$ state Büchi language} to be the set of words $w \in [n]^\omega$ which, when treated as a width $n$  dag, contain a path that starts in the initial vertex and  visits accepting edges infinitely often.  The key to McNaughton's theorem is the following proposition.
+
+\begin{proposition}\label{prop:universal-language}
+For every  $n \in \Nat$  there is a deterministic Muller automaton recognising the universal $n$ state Büchi language.
+\end{proposition}
+
+Before proving the proposition, let us show how it implies McNaughton's theorem. To make this and other proofs more transparent, it will be convenient to use transducers. Define a \emph{sequential transducer} to be a deterministic finite automaton, without accepting states, where each transition is additionally labelled by a word over  some output alphabet. In this section, we only care about the special case when the output words have exactly one letter; this is sometimes called a \emph{letter-to-letter} transducer. The name "transducer" refers to an automaton which outputs more than just yes/no; later in this book we will see  other (and more powerful) types of transducers, with names like rational transducer or regular transducer.
+ If the input alphabet is $\Sigma$ and the output alphabet is $\Gamma$, then a sequential transducer defines a function $$ f : \Sigma^\omega \to \Gamma^\omega.$$ 
+
+\begin{example}
+Here is a picture of a sequential 	transducer which inputs a word over $\set{a,b}$ and replaces letters on even-numbered positions by $a$.
+\mypic{22}
+\end{example}
+
+
+\begin{lemma}\label{lem:compose-transducer-muller}
+Languages recognised by deterministic Muller automata are closed under inverse images of sequential letter-to-letter transducers, i.e. if $\Aa$ in the diagram below is a deterministic Muller automaton and  $f$ is a sequential transducer, there is a deterministic Muller automaton $\Bb$ which makes the following diagram commute:
+\begin{align*}
+  \xymatrix{\Sigma^\omega \ar[r]^f \ar[dr]_{\Bb} & \Gamma^\omega \ar[d]^\Aa \\
+  & \set{\text{yes, no}}  }
+\end{align*}  
+\end{lemma}
+\begin{proof}
+A straightforward product construction.
+The states of automaton $\Bb$ are pairs (state of the transducer $f$, state of the automaton $\Aa$). If the automaton is in state $(p,q)$ and reads letter $a \in \Sigma$, then it does the following. Suppose that the transition of $f$ when in state $p$ and when reading letter $a$ is 
+\begin{align*}
+p \stackrel {a/b} \to p',	
+\end{align*}
+i.e.~the output produced is $b \in \Gamma$ and the new state is $p'$. Suppose that the transition of $\Aa$ when in state $q$ and when reading letter $b$ is 
+\begin{align*}
+q 	\stackrel b \to q'.
+\end{align*}
+Then the automaton $\Bb$ has a transition of the form
+\begin{align*}
+(p,q) \stackrel a \to (p',q').	
+\end{align*}
+Note how each transition in $\Bb$ corresponds to two transitions, one in $f$ and one in $\Aa$. 
+The Muller condition is inherited from the automaton $\Aa$, i.e.~a set of transitions in $\Bb$ is accepting if the corresponding set of transitions in $\Aa$ is accepting. 
+
+ (The assumption that the transducer is letter-to-letter is not necessary, but then defining the Muller condition for $\Bb$  becomes a bit   more complicated, because each transition of $\Bb$ corresponds to several transitions in $\Aa$.)
+\end{proof}
+
+
+
+Let us continue with the proof of McNaughton's theorem. We claim that every language recognised by a nondeterministic Büchi automaton reduces to a universal Büchi language via some transducer. Let $\Aa$ be a nondeterministic Büchi automaton with input alphabet $\Sigma$. We assume without loss of generality that the states are numbers $\set{1,\ldots,n}$ and the initial state is $1$. By simply copying the transitions of the automaton, one obtains a sequential transducer
+\begin{align*}
+f : \Sigma^\omega \to [n]^\omega
+\end{align*}
+such that a word $w \in \Sigma^\omega$ is accepted by $\Aa$ if and only if $f(w)$ contains a path from the initial vertex with infinitely many accepting edges. Here is a picture:
+\mypicb{7}
+The sequential transducer does even need states, i.e.~one state is enough: \mypicb{8}
+Using Lemma~\ref{lem:compose-transducer-muller}, we compose the transducer with the automaton from Proposition~\ref{prop:universal-language}, getting a deterministic Muller automaton equivalent to $\Aa$.
+ 
+  It now remains to show the proposition, i.e. that the $n$ state universal Büchi language can be recognised by a Muller automaton. The proof has two steps. 
+
+The first step is stated in Lemma~\ref{lem:reduction-to-trees} and says that a deterministic transducer can  replace an arbitrary width $n$  dag by an equivalent tree. Here we use the name \emph{tree} for a width $n$ dag, where every non-isolated node other than (1,1) has exactly one incoming edge. Here is a picture of such a tree, with the isolated nodes not drawn:
+\mypic{23}
+
+\begin{lemma}\label{lem:reduction-to-trees}
+There is a sequential transducer
+\begin{align*}
+f : [n]^\omega \to [n]^\omega
+\end{align*}
+
+which outputs only trees and is invariant with respect to the universal Büchi language, i.e. if the input contains a path with infinitely many accepting edges, then so does the output and vice versa.
+	\end{lemma}
+
+The second step is showing that  a deterministic Muller automaton can test if a tree contains an accepting path.
+
+\begin{lemma}\label{lem:mcnaughton-trees}
+There exists a deterministic Muller automaton with input alphabet $[n]$ such that for every $w \in [n]^\omega$ that is a tree,  the automaton accepts $w$ if and only if  $w$ contains	 a path from the root with infinitely many accepting edges.
+\end{lemma}
+Combining the two lemmas using Lemma~\ref{lem:compose-transducer-muller}, we get Proposition~\ref{prop:universal-language}, and thus finish the proof of McNaughton's theorem. Lemma~\ref{lem:reduction-to-trees} is proved in Section~\ref{sec:reduction-to-trees} and Lemma~\ref{lem:mcnaughton-trees} is proved in Section~\ref{sec:dag-graphs}.
+
+
+\section{Pruning the graph of runs to a tree}
+\label{sec:reduction-to-trees}
+We begin by proving Lemma~\ref{lem:reduction-to-trees}, which says that a sequential transducer can convert a width $n$ dag into a tree, while preserving  the  existence of a path from the initial vertex with infinitely many accepting edges. The transducer is simply going to remove edges.
+
+
+
+
+
+
+\paragraph*{Profiles.} For a path $\pi$ in a  width $n$ dag, define its \emph{profile} to be the word of same length over the alphabet "\red{accepting}" and "non-accepting" which is obtained by replacing each edge with its appropriate type. We  order profiles lexicographically, with "\red{accepting}"  smaller than "non-accepting". 
+\mypic{24}
+A finite path $\pi$ in a width $n$ dag is called \emph{profile optimal} if it begins in the initial vertex, and its profile is lexicographically least among profiles of  paths in $w$ that begin in the initial vertex and have the same target as $\pi$.
+
+\begin{lemma}\label{lem:optimise-dag}
+ There is a sequential transducer $$f : [n]^\omega \to [n]^\omega$$ such that if the input is $w$, then $f(w)$ is a tree with the same reachable (from the initial vertex) vertices as in $w$, and such that every finite path in $f(w)$ that  begins in the root is a profile optimal path in $w$. 
+\end{lemma}
+\begin{proof} The key observation is that the prefix of a profile optimal path is also profile optimal. Therefore, if we want to do find a profile optimal path that leads to a vertex $(q,i)$, we need to do the following.  Consider all paths from the initial vertex to $(q,i)$, decomposed as $\pi \cdot e$ where $e$ is the last edge of the path and $\pi$ is the remaining part of the path from the initial vertex to column $i-1$. Because profile optimal paths are closed under prefixes, if we want $\pi \cdot e$ to be profile optimal, then $\pi$ should be profile optimal. Since profiles are sorted lexicographically, then the profile of $\pi$ should be optimal among profiles of paths that go from the initial vertex to some neighbour of $(q,i)$ in the previous column $i-1$. If there are several candidates for $\pi \cdot e$ with the same profile of $\pi$, then we should use those that have a smaller profile for $e$ (i.e.~is it ``accepting'' is preferred over ``non-accepting''). In the end there might be several paths $\pi \cdot e$ that meet all of these criteria, and all of them are profile optimal. 
+
+
+Based on the discussion above, we describe a sequential transducer as in the statement of the lemma. After reading  the first $i$ letters, the automaton keeps in its memory the following information:
+\begin{enumerate}
+	\item which vertices of the form $(i,q)$ are targets of profile optimal paths, i.e.~which ones are reachable from the initial vertex;
+	\item if both $(i,q)$ and $(i,p)$ are targets of profile optimal paths, then how are these profiles ordered.
+\end{enumerate}
+The above information can be kept in the finite state space of the sequential transducer, since it consists of a subset of $\set{1,\ldots,n}$ together with an ordering on it (a total, transitive, reflexive but not necessarily antisymmetric relation). The  information can be maintained by the automaton (i.e.~it is enough to know the old information and the new letter to get the new information), and it is also enough to produce the output tree.  Here is a picture of the construction:
+\mypic{25}
+\end{proof}
+
+ 
+\begin{lemma}\label{lem:optimal-is-accepting}
+Let $f$ be the sequential transducer from Lemma~\ref{lem:optimise-dag}. If the input to $f$ contains a path with infinitely many accepting edges, then so does the output.
+\end{lemma}
+\begin{proof}
+Assume that the input $w$ to $f$ contains a path with infinitely many accepting edges. Define a sequence $\pi_0,\pi_1,\ldots$ of finite paths in $f(w)$ as follows by induction. In the definition, we  preserve the invariant that each  path in the sequence $\pi_0,\pi_1,\ldots$ can be extended to  an accepting path in the graph $w$. We begin with $\pi_0$ being the edgeless path that begins and ends in the root of the tree $f(w)$.  This path $\pi_0$ satisfies the invariant, by the assumption that the input $w$ contains a path with infinitely many accepting edges. Suppose that $\pi_n$ has been defined. By the invariant, we can extend $\pi_n$ to an infinite accepting path in the graph $w$, and therefore we can extend $\pi_n$ to a finite path (call it $\sigma_n$) in $w$ that contains at least one more accepting edge.  Define $\pi_{n+1}$ to be the unique path in the tree $f(w)$ which begins in the root of the tree $f(w)$ and has the same  target as the new path that extends $\pi_n$ with  at least one accepting edge.
+\mypic{26}
+The path $\pi_{n+1}$ satisfies the invariant, because its target is the same as the target of $\sigma_n$, and $\sigma_n$ is a finite prefix of some accepting path.
+Define $P_n$ to be the profile of the path $\pi_n$. By definition, the paths $\pi_1,\pi_2,\ldots$, and therefore also the corresponding profiles, get longer and longer. Furthermore, if  profiles $P_n$ and $P_{n+1}$ have both length at least $i$, then the first $i$ positions of $P_n$ give a word that is lexicographically smaller than the first $i$ positions of $P_{n+1}$, this is because the path $\pi_{n+1}$ was taken from the tree $f(w)$ which had profile optimal paths.
+ We claim that the sequence of profiles $P_0,P_1,P_2,\ldots$ has a well defined limit
+
+$$\lim_{n \to \infty} P_n  = P \in \set{\text{accepting, non-accepting}}^\omega.$$
+More precisely, we claim that for every position $i$, the $i$-th letter of the profiles $P_1,P_2,\ldots$ eventually stabilises. The limit $P$ is defined to  be the sequence of these stable values. The limit exists because for every $i$, if we look at the prefixes of $P_0,P_1,\ldots$ of length $i$, then they get lexicographically smaller and smaller; and therefore they must eventually stabilise, as in the following picture:
+\mypic{27}
+
+\begin{claim}\label{claim:accepting-infinitely-often}
+	The limit $P$ contains the letter "\red{accepting}" infinitely often.
+\end{claim}
+\begin{proof}
+Toward a contradiction, suppose that $P$ has the letter "\red{accepting}" finitely often, i.e. there is some $i$ such that after $i$, only the letter  "non-accepting" appears in $P$. Choose $n$ so that $\pi_n,\pi_{n+1},\ldots$ have profile consistent with $P$ on the first $i$ letters. By construction, the profile $P_{n+1}$ has an accepting letter on some position after $i$, and this property remains true for all subsequent profiles $P_{n+2},P_{n+3}\ldots$ and therefore is also true in the limit, contradicting our assumption that $P$ has only "non-accepting" letters after position $i$.
+\end{proof}
+
+Consider the set of finite paths  in the tree $f(w)$ which have profile that is a prefix of $P$. This set of paths forms a tree (because it is prefix-closed). This tree has bounded degree (assuming the parent of a path is obtained by removing the last edge) and it contain paths of arbitrary finite length (suitable prefixes of the paths $\pi_1,\pi_2,\ldots$). The  König lemma says that every finitely branching tree with arbitrarily long paths contains an infinite path. Applying the König lemma to the paths in $f(w)$ with profile $P$, we get an infinite path with profile $P$. By Claim~\ref{claim:accepting-infinitely-often} this path has  infinitely many accepting edges. 
+\end{proof}
+
+
+
+
+
+
+\section{Finding an accepting path in a tree graph}
+\label{sec:dag-graphs}
+We now show Lemma~\ref{lem:mcnaughton-trees}, which says that a deterministic Muller automaton can check if a width $n$ tree contains a path with infinitely many accepting edges.
+
+Consider a tree $t \in [n]^\omega$, and let $d \in \Nat$ be some depth. Define an  \emph{important node for depth $d$} to be a node which is either: the root, a node at depth $d$, or a node which is a closest common ancestor of two nodes at depth $d$. This definition is illustrated below (with red lines representing accepting edges, and black lines representing non-accepting edges):
+
+\mypic{12}
+
+
+
+
+
+\paragraph*{Definition of the Muller automaton.} We now describe the Muller automaton for Lemma~\ref{lem:mcnaughton-trees}. After reading the first $d$ letters of an input tree (i.e. after reading the input tree up to depth $d$), the automaton keeps in its state a tree, where the nodes correspond to nodes of the input tree that are important for depth $d$, and the edges correspond to paths in the input tree that connect these nodes. This tree stored by the automaton is a tree with at most $n$ leaves, and therefore it has less than $2n$ edges. The automaton also keeps track of a colouring of the edges, with each edge being marked as accepting or not, where "\red{accepting}" means that the corresponding path in the input tree contains at least one accepting edge. Finally, the automaton remembers for each edge an identifiers from the set $\set{1,\ldots,2n-1}$, with the identifier policy being described below. A typical memory state looks like this:
+
+\mypic{13}
+
+The big black dots correspond to important nodes for the current depth, red edges are accepting, black edges are non-accepting, while the numbers are the identifiers. All identifiers are distinct, i.e.~different edges get different identifiers. It might be the case (which is not true for the picture above), that the identifiers used at a given moment have gaps, e.g. identifier 4 is used but not 3.
+
+The initial state of the automaton is a tree which has one node, which is the root and a leaf at the same time, and no edges. We now explain how the state is updated. Suppose the automaton reads a new letter, which looks something like this:
+\mypic{14}
+
+
+To define the new state, perform the following  steps.
+
+\begin{enumerate}
+	\item Append the new letter to the tree in the state of the automaton. In the example of the tree and letter illustrated above, the result looks like this:
+\mypic{15}
+\item Eliminate paths that  die out before reaching the new maximal depth. In the above picture, this means eliminating the path with identifier 4:
+\mypic{16}
+\item Eliminate unary nodes, thus joining several edges into a single edge. This means that a path which only passes through nodes of degree one gets collapsed to a single edge, the identifier for such a path is inherited from the first edge on the path. In the above picture, this means eliminating the unary nodes that are the targets of edges with identifiers 1 and 5:
+\mypic{17}
+\item Finally, if there are edges that do not have identifiers, these edges get assigned arbitrary identifiers that are not currently used. In the above picture, there are two such edges, and the final result looks like this:
+\mypic{18}
+\end{enumerate}
+
+
+This completes the definition of the state update function. We now define the acceptance condition.
+
+
+\paragraph*{The acceptance condition.} When executing a transition, the automaton described above goes from one tree with edges labelled by identifiers to another tree with edges labelled by identifiers. For each identifier, a transition can have three possible effects, described below:
+\begin{enumerate}
+	\item {\bf Delete.} An edge can be deleted in  step 2  or in step 3 (by being  merged with an edge closer to the root). The identifier of such an edge is said to be deleted in the transition. Since we reuse identifiers, an identifier can still be present after a transition that deletes it, because it has been added again in step 4,  e.g. this happens to identifier 4 in the above example.
+\item {\bf Refresh.} In step 3, a whole path $e_1 e_2 \cdots e_n$ can be folded into its first edge $e_1$. If the part $e_2 \cdots e_n$ contains at least one accepting edge, then we say that the identifier of edge $e_1$ is refreshed. This happens to identifiers 1 and 5 in the above example.
+\item {\bf Nothing.} An identifier might be neither deleted nor refreshed, e.g. this is the case for identifier 2 in the example.
+\end{enumerate}
+The following lemma describes the key property of the above data structure.
+
+\begin{lemma}\label{lem:muller-invariant}
+For every tree in $[n]^\omega$, the following are equivalent:
+\begin{enumerate}
+	\item[(a)] the tree contains a path from the root with infinitely many accepting edges;
+\item[(b)] some identifier is deleted finitely often but refreshed infinitely often.
+\end{enumerate}
+\end{lemma}
+Before proving the above fact, we show how it completes the proof of Lemma~\ref{lem:mcnaughton-trees}. We claim that condition (a) can be expressed as a Muller condition on transitions. The accepting family of subsets of transitions is $$\bigcup_i \Ff_i$$ where $i$ ranges over possible identifiers, and the family $\Ff_i$ contains a set $X$ of transitions if
+\begin{itemize}
+	\item some transition in $X$ refreshes identifier $i$; and
+	\item  none of the transitions in $X$ delete identifier $i$.
+\end{itemize}
+
+
+Identifier $i$ is deleted finitely often but refreshed infinitely often if and only if the set of transitions seen infinitely often belongs to $\Ff_i$, and therefore, thanks to the fact above, the automaton defined above recognises the language in the statement of Lemma~\ref{lem:mcnaughton-trees}. 
+
+\begin{proof}[Proof of Lemma~\ref{lem:muller-invariant}]
+The implication from (b) to (a) is straightforward. An identifier in the state of the automaton corresponds to a finite path in the input tree. If the identifier is not deleted, then this path stays the same or grows to the right (i.e. something is appended to the path). When the identifier is refreshed, the path grows by at least one accepting edge. Therefore, if the identifier is deleted finitely often and refreshed infinitely often, there is some path that keeps on growing with more and more accepting states, and its limit is a path with infinitely many accepting edges.
+
+Let us now focus on the implication from (a) to (b). Suppose that the tree $t$ contains some infinite path $\pi$ that begins in the root and has infinitely many accepting edges. Call an identifier \emph{active} in step $d$ if the path described by this identifier in the $d$-th state of the run corresponds to an infix of the path $\pi$. Let $I$ be the set of identifiers that are active in all but finitely many steps, and which are deleted finitely often. This set is nonempty, e.g. the first edge of the path $\pi$  always has the same identifier. In particular, there is some step $d$, such that identifiers from $I$ are not deleted after step $n$. Let $i \in I$ be the identifier that is last on the path $\pi$, i.e. all other identifiers in $I$ describe finite paths that are earlier on $\pi$. It is not difficult to see that the identifier $i$ must be refreshed infinitely often by prefixes of the path $\pi$.
+\end{proof}
+
+
+

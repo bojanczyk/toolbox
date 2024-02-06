@@ -1,0 +1,197 @@
+
+% MACROS GENERATING THE GENERAL FLOW OF EXERCISES
+
+% \setlist[itemize]{leftmargin=15pt, labelsep=5pt}
+
+%\usepackage[parfill]{parskip}
+
+% General list of sub-exercises, to be redefined soon...
+\newenvironment{exEnum}
+	{
+	\begin{enumerate}}
+	{\end{enumerate}}
+
+% Enumerate list of EQUIVALENT STATEMENTS (!)
+\newenvironment{exEnumEquiv}
+	{
+	\begin{enumerate}[label={\makebox[1em][c]{{\upshape({\itshape\alph*})}}},ref=({\itshape\alph*})]}
+	{\end{enumerate}}
+
+% Enumerate list of sub-exercises in the statement of problem
+\newenvironment{exEnumStatement}
+	{
+	\begin{enumerate}[label={\upshape(\arabic*)},ref=(\arabic*)]}
+	{\end{enumerate}}
+
+% Enumerate list of sub-exercises in the solution of a problem
+\newenvironment{exEnumSolution}
+	{\mbox{}% 
+	\begin{enumerate}[label=\textbf{\upshape\hyperref[\exRef]{\arabic{exnumber}}$\,$(\arabic*)}\hspace{3pt},ref=\arabic{exnumber}$\,$(\arabic*),%
+		leftmargin=0pt,%
+		itemindent=0pt,%
+		labelsep=0pt,%
+		align=left,%
+		listparindent=\parindent, %
+		parsep=0pt]
+ % \setlist[itemize]{leftmargin=*,labelsep=5pt}
+ \setlist[itemize]{leftmargin=\itemizemargin,labelsep=\itemizelabelsep}
+ % \setlist[itemize]{leftmargin=\itemizemargin,labelsep=5pt}
+	}
+	{\qedhere\end{enumerate}}
+
+
+%macros for manipulation of toc
+\newcommand{\nocontentsline}[3]{}
+\newcommand{\tocless}[2]{\bgroup\let\addcontentsline=\nocontentsline#1{#2}\egroup}
+%usage:  \tocless\section{bla} or  \tocless\subsection{bla} 
+
+%the following solution is taken from https://tex.stackexchange.com/questions/326412/multiple-page-numbers-on-element-of-toc
+% the goal is to have two numbers in one row of the table of contents
+\renewcommand\thechapter{\arabic{chapter}}
+\renewcommand\thesection{\arabic{chapter}.\arabic{section}}
+\renewcommand\thesubsection{\arabic{subsection}}
+
+
+\makeatletter
+\renewcommand{\@pnumwidth}{1cm}
+\makeatother
+
+
+
+\newcommand{\twonumbers}[2]{\hfill\makebox[0em][r]{#1}\makebox[1.2cm][r]{#2}}
+
+\newcommand{\problems}[1]{%
+\let\realsection\section%
+\let\realchapter\chapter%
+\newcommand{\pagebreaksol}{} %% Do nothing in this part.
+%\renewcommand\addcontentsline[3]{}%
+\renewcommand{\chapter}[1]{%
+  \cleardoublepage%
+  \thispagestyle{empty}%  
+  \pdfbookmark[chapter]{##1}{chapter.\thechapter}%  
+  \realchapter{##1}\label{section.\thesection}%
+  \thispagestyle{empty}%
+  \label{chapter.\thechapter}%
+}%
+\renewcommand{\section}[1]{%there is a problem when there is a pagebreak just before the section, then the bookmark points to the previous page
+  \pdfbookmark[section]{##1}{section.\thesection}%  
+  \realsection{##1}\label{section.\thesection}%
+}%
+\cleardoublepage%
+\thispagestyle{empty}%
+\pdfbookmark[part]{#1}{part.\thepart}%
+\tocless\part{#1}%
+\thispagestyle{empty}%  
+}
+
+\newcommand{\solutions}[1]{%
+  \cleardoublepage%
+  \thispagestyle{empty}%  
+  \pdfbookmark[part]{#1}{part.\thepart}%  
+  \part{#1}% 
+  \thispagestyle{empty}%
+  \renewcommand{\pagebreaksol}{\pagebreak}
+  \renewcommand\addcontentsline[3]{}
+    % todo: 
+    % (1) if ##2 is 'chapter' then the pageref should be to chapter.\thechapter
+    % (2) \thepage should be a hyperlink
+%    \addtocontents{##1}{\protect\contentsline{##2}{##3}{\twonumbers{\pageref{section.\thesection}}{\thepage}}{section.\thesection}}%
+  %}%
+  \renewcommand{\chapter}[1]{%
+    \cleardoublepage%
+    \thispagestyle{empty}%  
+    \pdfbookmark[chapter]{##1}{sol.chapter.\thechapter}%    
+    \realchapter{##1}\label{sol.section.\thesection}%
+    \thispagestyle{empty}
+    \label{sol.chapter.\thechapter}%
+  }%
+  \renewcommand{\section}[1]{%
+    \pdfbookmark[section]{##1}{sol.section.\thesection}%    
+    \realsection{##1}\label{sol.section.\thesection}%
+  }%
+  % 
+  \renewcommand{\assList}{FALSE}%
+  \setcounter{chapter}{0}%
+}
+%%%%%%%%%%%%%%%%%%%%%%%%% end of toc macros
+
+
+\theoremstyle{definition}
+
+\newcommand{\exRef}{}
+
+\newtheorem{exStatement}{Problem}
+
+\theoremstyle{plain}%
+
+\newtheorem{exSolution}{Problem}
+
+\newcounter{exnumber}
+
+\newcommand{\exercise}[3]{
+\ifthenelse{\equal{\assList}{TRUE}}{
+\let\exEnum\exEnumStatement%
+\let\endexEnum\endexEnumStatement%
+\setcounter{exnumber}{\value{exStatement}}%
+\stepcounter{exnumber}%
+\renewcommand\theexStatement{\hyperref[sol:#1]{\arabic{exnumber}}}%
+\renewcommand{\assBody}{TRUE}%
+\begin{exStatement}
+\label{#1}
+#2
+\end{exStatement}
+\renewcommand{\assBody}{FALSE}%
+}{%
+
+
+
+
+
+\let\exEnum\exEnumStatement%
+\let\endexEnum\endexEnumStatement%
+\setcounter{exnumber}{\value{exSolution}}%
+\stepcounter{exnumber}%
+\renewcommand\theexSolution{\hyperref[#1]{\arabic{exnumber}}}%
+\renewcommand{\assBody}{TRUE}%
+% \begin{mdframed}[%backgroundcolor=lightgray!50,
+%   innertopmargin = 0pt,
+%   innerbottommargin = 4pt,
+%   innerrightmargin = 4pt,
+%   innerleftmargin = 4pt,
+%   topline=true,
+%   bottomline=true,
+%   rightline=true,
+%   leftline=true
+%   ]%
+\begin{exSolution}
+\label{sol:#1}\vspace{-3pt}
+#2%
+\end{exSolution}%
+% \end{mdframed}
+\renewcommand{\assBody}{FALSE}%
+\let\exEnum\exEnumSolution%
+\let\endexEnum\endexEnumSolution%
+\def\exRef{sol:#1}%
+\begin{proof}[{\bf Solution}]
+#3
+\end{proof}
+}
+}
+
+% (SH) Exercise reference
+\newcommand{\exref}[1]{Prob\-lem~\ref{#1}}
+
+    
+	
+\newcommand{\assList}{TRUE}
+\newcommand{\assBody}{TRUE}
+
+
+\newcommand{\secintro}[1]{\ifthenelse{\equal{\assList}{TRUE}}{#1}{}}
+
+\newcommand{\seclabel}[1]{\ifthenelse{\equal{\assList}{TRUE}}{\label{#1}}{\label{#1.sol}}}
+
+\newcommand{\exlabel}[1]{\ifthenelse{\equal{\assList}{TRUE}}{\label{#1}}{}}
+
+\newcommand{\exFootnote}[1]{\ifthenelse{\equal{\assList}{TRUE}}{\footnote{#1}}{\ifthenelse{\equal{\assBody}{FALSE}}{\footnote{#1}}{}}}
+

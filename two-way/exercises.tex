@@ -1,0 +1,109 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:two-way-01}{
+Show that deterministic two-way automata (seen as acceptors of words) can be complemented with polynomial blowup.
+}
+{
+}
+
+
+
+
+
+\exercise{zad:12-04}{
+Consider a sequential transducer, which defines a function $f: \Sigma^\omega \to \Gamma^\omega$. Show that this function is continuous with respect to the distance defined in Problem~\ref{zad:01-10}.
+}
+{
+It is easy to do this from definition. Let us take some two words, which are close to each other, so they agree on some
+prefix, say of length $n$. Then their images will also agree on the prefix of length $n$. Therefore by definition: if we want
+that images agree on prefix of length $n$ it is enough to take arguments which agree on prefix of length $n$.
+}
+
+\exercise{zad:12-01}{
+Show that the reverse function is not left-to-right sequential.
+}
+{
+
+}
+
+
+\exercise{zad:12-02}{
+Which of the following functions over a unary alphabet are sequential?
+\begin{enumerate}
+  \item $a^n \mapsto a^{n^2}$;
+  \item $a^n \mapsto a^{\lfloor \sqrt{n} \rfloor}$.
+\end{enumerate}
+}
+{
+
+}
+
+
+\exercise{zad:12-03}{
+Show that the duplication function $w \mapsto ww$ is not rational.
+}
+{
+We use the theorem that nondeterministic transducers are equally expressible with deterministic transducers with oracles.
+Consider a word $a^n b$ for big $n$. Definitely for some $k_1, k_2 \in \N$ we have that automaton is in the same
+state after reading $a^{k_1}$ and $a^{k_2}$. Similarly for some $\ell_1, \ell_2 \in \N$ we have that $a^{\ell_1} b$ and
+$a^{\ell_2} b$ belong to the same oracle language $L_i$. Thus for some $n_1, n_2, r \in \N$ we have that
+situation $a^{n_1}$ on the left and $a^{n_2+r} b$ on the right is the same as $a^{n_1 + r}$ on the left and $a^{n_2} b$ on the
+right is the same. Actually we have even stronger statement, that for big $n$ we have that
+$f(a^n b) = f(a^{n_1} a^{r \cdot k} a^{n_2} b) = w_1 w^k w_2$, so the intermediate part is the same.
+Definitely there could be only $a$ in $w$, actually there should be that $w = a^{2r}$.
+But for big $k$ this is a contradiction with the assumption that $f$ duplicates every word.
+}
+
+\exercise{zad:two-way-seq-comp}{
+Show that left-to-right sequential functions are closed under compositon, i.e.~
+\begin{align*}
+\seqfun = \seqfun \circ \seqfun.	
+\end{align*}
+}
+{
+}
+
+\exercise{zad:two-way-rat-comp-1}{
+Show that rational functions are closed under compositon, i.e.~
+\begin{align*}
+\ratfun = \ratfun \circ \ratfun.	
+\end{align*}
+}
+{
+}
+
+
+\exercise{zad:two-way-rat-comp}{
+Show that if $f$ is  recognised by a deterministic two-way transducer and  and $g$ is rational (with suitable input and output alphabets), then $g \circ f$ is recognised by a deterministic two-way transducer.
+}
+{
+}
+
+
+\exercise{zad:two-way-unamb}{
+Consider  nondeterministic two-way automata with output. Show that for every nondeterministic two-way automaton with output $\Aa$ there is a deterministic two-way automaton with output $\Bb$ that uniformises it in the following sense: for every input word,  $\Bb$ produces one of the outputs of $\Aa$. (If there is no output of $\Aa$, then also there is no output of $\Bb$.)
+}
+{
+}
+
+\exercise{zad:two-way-functional}{
+Show that the following problem is in polynomial time: given two letter-to-letter (i.e.~each transition produces exactly one letter) left-to-right sequential functions with the same input alphabet, decide if for every input they produce the same output.
+}
+{A product construction.
+}
+
+
+\exercise{zad:two-way-undec}{
+Show that the following problem is undecidable: given two left-to-right sequential functions with the same input alphabet, decide if for some input, they produce the same output.
+}
+{This is a special case of Post's Correspondence Problem.
+}
+
+
+%\exercise{zad:two-way-unamb}{
+%A nondeterministic two-way automaton is called functional if for every input word, all accepting runs produce the same output. Show that every functional nondeterministic two-way automaton can be made deterministic.
+%}
+%{
+%}
+%
+%

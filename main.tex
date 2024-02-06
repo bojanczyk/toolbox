@@ -1,0 +1,200 @@
+ %%%%%% Use: 
+%%%%%% \hfill \qedhere if proof ends with item, 
+%%%%%% \tag*{\qedhere} if proof ends with equation. 
+
+%%%%%% Dodac gwiazdki do zadan - poprosic autorow o danie gwiazdek.
+ 
+\ifx\synctex\undefined\else\synctex=1\fi
+
+\documentclass[b5paper,11pt]{book}
+
+\usepackage[utf8]{inputenc}
+%% (FMu) uzywamy \lw do napisania l z kreska, bo potem cos
+%% przedefiniowuje \l na \lambda. To nie jest eleganckie,
+%% ale dziala. To samo dla czeskiego hacka (np. w Cerny)
+\let\lw\l  
+\let\hacek\v
+
+\usepackage{amsfonts}
+\usepackage[fleqn]{amsmath} %fleqn does left allignment of display formulas
+\usepackage{amssymb,amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{todonotes}
+\usepackage{mathbbol}
+\usepackage{enumerate}
+\usepackage{comment}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{nameref}
+\usepackage{ifthen}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{tikz}
+\usepackage[normalem]{ulem}
+\usepackage[all]{xy}
+% \usepackage{mdframed} 
+\usepackage{fancyhdr}
+\usepackage{pdfpages}
+
+\RequirePackage[osf,sc]{mathpazo}
+\usepackage[mathcal]{euscript}
+
+
+
+\input{exercise}
+\input{tikzsetup}
+\input{macros}
+
+\begin{document}
+\frontmatter 
+\pdfbookmark[section]{Frontmatter}{frontmatter}%      
+\pagestyle{empty}
+
+% \sffamily%
+% \fontsize{18}{20}\selectfont\par\noindent\textcolor{darkgray}{\allcaps{niwi{\'n}ski and rytter's}}%
+% \vspace{2.5pc}%
+%
+% \fontsize{56}{60}\selectfont\par\noindent\textcolor{darkgray}{\allcaps{200 Problems \vspace{9pt}}}%
+% \fontsize{20}{25}\selectfont\par\noindent\textcolor{darkgray}{\allcaps{%200 Problems \vspace{9pt}\\
+%     in \vspace{9pt} {Formal Languages\\ and Automata Theory}}}%
+%
+% \vfill%
+% \fontsize{14}{16}\selectfont\par\noindent\allcaps{edited by filip murlak}%
+% \rmfamily
+
+%strona przedtytułowa
+{\rmfamily\slshape%\color{darkgray}
+\fontsize{36}{45}\selectfont\par\noindent{An Automata Toolbox\par}%
+{\vspace{-0.8cm}\noindent \small Version of \today}
+
+\vfill%
+\fontsize{18}{20}\selectfont\par\noindent{{Miko{\l}aj Boja\'nczyk and Wojciech Czerwi\'nski}\\
+}
+}
+
+%\cleardoublepage
+
+         
+\upshape\normalsize
+\pdfbookmark[section]{Preface}{preface}%      
+\chapter*{Preface}%\thispagestyle{empty}
+{  \raggedright
+\allcapsspacing{\scshape These} are lecture notes for a course on advanced automata theory, that we gave at the University of Warsaw in the years 2015-2018.  
+The material was chosen to highlight interesting constructions; with a smaller emphasis on  the theoretical and bibliographical context. The  first part of the book -- the lectures -- is written  by the first author, and the second part -- the exercise solutions -- is  written by the second author. Nevertheless,  we consulted each other extensively in the process of both teaching and writing. 
+
+\bigskip
+{\slshape  \noindent Miko{\l}aj Boja\'nczyk and Wojciech Czerwi\'nski}
+
+
+\cleardoublepage
+\pdfbookmark[section]{Contents}{toc}%      
+%\thispagestyle{empty}%this doesn't work anyway 
+\tableofcontents
+\thispagestyle{empty}
+
+\mainmatter   % arabic page numbers
+\pagestyle{fancy}
+
+\newcommand{\rozdzial}[2]{ 
+\chapter{#1}
+\seclabel{sec:#2}
+\secintro{\input{#2/theory}}
+\input{#2/exercises}
+}
+
+\newcommand{\bookcontent}{
+\rozdzial{Determinisation of $\omega$-automata}{determinisation}
+\rozdzial{Infinite duration games}{buchi-landweber}	
+\rozdzial{Parity games in quasipolynomial time}{quasipol}
+\rozdzial{Distance automata}{distance-automata}
+\rozdzial{Monadic second-order logic}{tree-aut}
+\rozdzial{Treewidth}{courcelle}
+\rozdzial{Tree-walking automata}{twa}
+\rozdzial{Weighted automata over a field}{linear-automata}
+\rozdzial{Vector addition systems}{wqo}
+\rozdzial{First-order theory of the reals}{tarski}
+\rozdzial{Polynomial grammars}{hilbert}
+\rozdzial{Parsing in matrix multiplication time}{valiant}
+\rozdzial{Two-way transducers}{two-way}
+\rozdzial{Streaming string transducers}{sst}
+\rozdzial{Learning automata}{angluin}
+}
+
+%Mikolaj: ponizsze jest po to, zeby mi lepiej dzialal edytor
+\ignore{
+\input{determinisation/theory}
+\input{buchi-landweber/theory}	
+\input{quasipol/theory}
+\input{distance-automata/theory}
+\input{tree-aut/theory}
+\input{courcelle/theory}
+\input{twa/theory}
+\input{linear-automata/theory}
+\input{wqo/theory}
+\input{hilbert/theory}
+\input{tarski/theory}
+\input{valiant/theory}
+\input{two-way/theory}
+\input{angluin/theory}
+\input{sst/theory}
+\input{determinisation/exercises}
+\input{buchi-landweber/exercises}	
+\input{quasipol/exercises}
+\input{distance-automata/exercises}
+\input{twa/exercises}
+\input{tree-aut/exercises}
+\input{courcelle/exercises}
+\input{linear-automata/exercises}
+\input{wqo/exercises}
+\input{tarski/exercises}
+\input{hilbert/exercises}
+\input{valiant/exercises}
+\input{two-way/exercises}
+\input{angluin/exercises}
+\input{sst/exercises}
+
+}
+
+
+
+\problems{}
+\bookcontent
+
+%valiant
+
+%\part{Part III. Transducers}
+%sst
+%2dfa
+
+%\part{Part IV. Tree automata}
+%alternating tree automata
+%courcelle's theorem
+%tree-walking auomata
+
+
+
+
+
+
+% the following macro turns on the "solutions" mode.
+% Then we need to repeat all the input we had (one could use a macro for that as well)
+
+%\solutions{Exercise solutions}
+%\bookcontent
+
+\testhide{
+}%\testhide
+
+\newpage
+{\Huge \it Bibliography}
+
+\bigskip
+\renewcommand{\chapter}[2]{}
+\bibliographystyle{plain}
+\bibliography{bib}
+
+
+\end{document}

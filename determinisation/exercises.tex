@@ -1,0 +1,252 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:01-01}{
+Are the following languages $\omega$-regular (i.e.~recognised by nondeterministic B\"uchi automata)?
+\begin{enumerate}
+  \item $\omega$-words which have infinitely many prefixes in a  fixed regular language of finite words $L \subseteq \Sigma^*$;
+  \item $\omega$-words with infinitely many infixes of the form $a b^p a$, where $p$ is prime;
+  \item $\omega$-words with  infinitely many infixes of the form $a b^n a$, where $n$ is even.
+\end{enumerate}
+}
+{
+Solutions of the points:
+\begin{enumerate}
+  \item YES. Let $\A$ be an automaton for $L$. We make the same automaton with the same final states and B\"{u}chi
+  acceptance condition.
+  \item NO. Assume that yes and $\A$ is an automaton for this language. Let $\A$ has $n$ states
+  and let $p > n$ be some prime number. The word $(b^p a)^\omega$ belongs to $L$,
+  so $\A$ has an accepting run on it.
+  Note that in every block $b^p$ some two states are the same. We pump the part $b^k$
+  between them $p$ times, so that the block has now the length $b^{p + kp}$, which is not prime.
+  The now word is accepted by $\A$, because it has an accepting run (which came out from the pumping of
+  an old run), but no block has prime length.
+  \item YES. It suffices to count length of the block $b^k$ modulo $2$ and go into an accepting state on $a$
+  which finishes such a block.
+\end{enumerate}
+}
+
+\exercise{zad:01-02}{
+Call an $\omega$-word  \emph{ultimately periodic} if it is of the form $uv^\omega$ for some finite words $u,v$. Show that if an $\omega$-regular langauge  is nonempty, then it contains an ultimately periodic word.}
+{
+Towards contradiction assume that $L \neq \emptyset$. Then there is some infinite word $w \in L$.
+Word $w$ visits infinitely many times accepting state (in automaton for $L$),
+so in particular visits some concrete accepting state $q$ infinitely many times.
+In particular $w = x y z$ such that $x$ goes from initial state to state $q$
+and $y$ goes from state $q$ to itself. Then also word $x y^\omega$ belongs to $L$ and is ultimately periodic.
+}
+
+\exercise{zad:01-03}{
+Let $UP$ be the set of ultimately periodic words. 
+Let $K$ and $L$ be $\omega$-regular languages. Show that if $L \cap UP = K \cap UP$ then $K = L$.
+}
+{
+Assume towards contradiction that $K \neq L$. Without loss of generality assume that $K \setminus L \neq \emptyset$
+(symmetric case would be $L \setminus K \neq \emptyset$). Clearly $K \setminus L$ is regular.
+Thus $(K \setminus L) \cap UP \neq \emptyset$, which implies that $K \cap UP \neq L \cap UP$. Contradiction.
+}
+
+\exercise{zad:01-04}{
+Are the following languages $\omega$-regular?
+\begin{enumerate}
+  \item $\omega$-words with arbitrarily long infixes belonging to a fixed regular language of finite words $L$;
+  \item $\omega$-words which have infinitely many  prefixes in a fixed language of finite words $L \subseteq \Sigma^*$ (not necessarily regular).
+\end{enumerate}
+}
+{
+Solutions of the points:
+\begin{enumerate}
+  \item NO. Consider $L = ab^*a$. This language contains no ultimately periodic word, so it would have to be
+  empty to be regular.
+  \item NO. Let us fix some infinite word $u$, which is not ultimately periodic. Let $L$ be all its
+  prefixes. Prefixes of $v$ belong infinitely often to $L$ if and only if $v = u$. However, the language $\{u\}$ is not
+  regular. By the way, note that the language $\{w\}$ is regular iff $w$ is ultimately periodic.
+\end{enumerate}
+}
+
+\exercise{zad:01-05}{
+Show that the language of words ''there exists a letter $b$'' cannot be accepted by a nondeterministic
+automaton with the B\"{u}chi acceptance condition, where all the states are accepting (but possibly transitions
+over some letters in some states are missing).
+}
+{
+By reading $a^k$ for any $k \in \N$ we cannot get blocked. Therefore word $a^\omega$ also cannot
+get blocked, which means that it is accepted by the considered automaton, contradiction.
+}
+
+\exercise{zad:01-06}{
+Show that the language ''finitely many occurrences of letter $a$'' cannot be accepted by a deterministic
+automaton with the B\"{u}chi acceptance condition.
+}
+{
+Assume towards a contradiction that it is accepted by some automaton with $n$ states.
+Let $w = (a b^n)^{\omega}$. For any prefix of it of the form $(a b^n)^k$ there should be an accepting
+state among the last $n+1$ states. Indeed, otherwise a word $(a b^n)^k b^\omega$ would not be accepted.
+Therefore a run over $w$ visits infinitely many times an accepting state, which means that $w$ is accepted.
+On the other hand it does not belong to the language, as it has infinitely many letters $a$. Contradiction.
+}
+
+\exercise{zad:01-07}{
+Show that every language accepted by a nondeterministic automaton with the Muller acceptance
+condition is also accepted by some nondeterministic automaton with the B\"{u}chi acceptance condition.
+}
+{
+We have an automaton $\A$ with Muller condition, we will be trying to make an automaton $\A'$ with
+B\"{u}chi condition such that $L(\A') = L(\A)$.
+For every $S \in \F$ we will do a separate gadget in automaton $\A'$ such that acceptance in this gadget
+is if and only if $\inf(\rho) = S$. At the beginning we just make a copy of $\A$, but such that no states
+are accepting. Beside that for every $S \in \F$ we add a gadget $\A_S$. The idea is that automaton $\A'$
+will jump into the gadget $\A_S$ if it wants to choose that $\inf(\rho) = S$ and  this is the  moment
+from which on only states from $S$ will occur. Let $S = \{q_1, \ldots, q_k\}$.
+
+Observe now that if $\inf(\rho) = S$ and there are no states outside of $S$ in $\rho$ then states occurring in $\rho$
+have also an infinite subsequence of the form $(q_1 q_2 \cdots q_k)^\omega$. Thus we can just investigate whether
+there exists such a subsequence. Gadget $A_\S$ will be the following. It contains $|S|$ copies of $\A$:
+$\A_{S, 1}, \ldots, \A_{S, |S|}$. The copy $\A_{S, i}$ has only one accepting state: $q_i$.
+In the copy $\A_{S, i}$ transitions are like in $\A$ with the only exception that from state $q_i$ we go
+to the next copy: $\A_{S, (i+1) \mod |S|}$.
+Now we can easily observe that $\rho$ visits infinitely many times accepting state iff it infinitely many
+times changes a copy. Therefore it has a subsequence of states of the form $(q_1 q_2 \cdots q_k)^\omega$,
+so indeed $\inf(\rho) = S$.
+}
+
+%
+%\exercise{zad:01-08}{
+%\todo{ale w wykladzie uzywa sie tranzycji}
+%Consider an acceptance condition where instead of states visited infinitely often, transitions visited
+%infinitely often along the run are taken into account. How does it affect the expressive power of automata in the case
+%of
+%\begin{enumerate}
+%  \item B\"{u}chi acceptance condition;
+%  \item Muller acceptance condition.
+%\end{enumerate}
+%}
+%{
+%In both cases (B\"{u}chi and Muller) expressivity does not change.
+%Therefore we have to prove four facts: (1) condition with states can be implemented on transitions,
+%(2) condition with transitions can be implemented on states, both points for both B\"{u}chi and Muller
+%acceptance conditions.
+%
+%Let us start
+%\begin{enumerate}
+%  \item We first implement states on transitions for B\"{u}chi condition.
+%  It is very easy, simply these transitions are final which finish into previously final states.
+%  \item Now we implement transitions on states for B\"{u}chi condition. Let language $L$ be accepted
+%  by automaton $\A$ with B\"{u}chi acceptance condition on transitions. We make an automaton $\A'$,
+%  which has two copies of every state in $\A$. To one copy go all the accepting transitions, while to another one
+%  go all the non accepting ones. The outgoing transitions are identical in both copies, the same as in $\A$.
+%  All the copies with accepting incoming transitions are final, while the other not (some of the final states may
+%  not be reachable, but this is not the problem).
+%  \item Now we implement states on transitions for Muller acceptance condition. This is also easy, set of transitions
+%  is accepting iff the set of states into which they go is accepting.
+%  \item Now we implement transitions on states for Muller acceptance conditions.
+%  Let automaton $\A$ with Muller condition on transitions accept $L = L(\A)$. We make $\A'$ as follows.
+%  Every state of $\A$ is split into as many copies in $\A'$ as it has incoming transitions in $\A$.
+%  The state of $\A'$ is accepting if the incoming transition in $\A$ was accepting.
+%\end{enumerate}
+%}
+
+\exercise{zad:01-09}{
+Show that nonemptiness is decidable for automata with the Muller acceptance condition.
+}
+{
+It is enough to check whether for some $S \in \F$ there exists a run $\rho$ of an automaton in which $\inf(\rho) = S$,
+where $\inf(\rho)$ is the set of states which occur infinitely often in $\rho$.
+We do this separately for every $S \in \F$. We check whether the graph with only states from $S$ is strongly connected
+and whether some state from $S$ is reachable from some initial state (now in the situation where we have all the states).
+}
+
+
+
+\exercise{zad:01-10}{
+Define a metric on $\omega$-words by
+\begin{align*}
+d(u,v) = \frac{1}{2^{\diff(u,v)}},
+\end{align*}
+where $\diff(u,v)$ is the smallest
+position where  $u$ and $v$ have different labels. A language $L$ is called \emph{open} (in this metric) if for every $w \in L$
+there exists some open ball centered in $w$ that is included in $L$ (standard definition).
+Prove that the following conditions are equivalent for an $\omega$-regular language $L$:
+\begin{enumerate}
+  \item  is open;
+  \item  is of the form $K \Sigma^\omega$ for some $K \subseteq \Sigma^*$;
+  \item  is of the form $K \Sigma^\omega$ for some regular $K \subseteq \Sigma^*$.
+\end{enumerate}
+}
+{
+We will first show equivalence of (1) and (2), so two implications.
+
+First $(1) \Rightarrow (2)$. If $L$ is open then around every $w \in L$ there is a ball $L_w$ with positive radius
+such that $L_w \subseteq L$. Therefore $L = \bigcup_{w \in L} L_w$. Observe however that $L_w = f(w) \Sigma^\omega$,
+where $f(w)$ is some finite prefix of $w$.Thus $L = \bigcup_{w \in L} f(w) \Sigma^\omega$, therefore $L = K \Sigma^\omega$
+for $K = \bigcup_{w \in L} f(w)$.
+
+Now $(2) \Rightarrow (1)$. Let $w \in L = K \Sigma^\omega$. Therefore $w = u v$, where $u \in K$.
+Thus for any $v' \in \Sigma^\omega$ we have $u v' \in L$. Therefore the ball centered in $w$ and radius equal
+$\frac{1}{2^{|u|+1}}$ is included in $L$.
+
+Now we will show equivalence of (1) and (3). Implication $(3) \Rightarrow (1)$ works the same as
+$(2) \Rightarrow (1)$, so we will focus on implication $(1) \Rightarrow (3)$.
+
+Let us consider an automaton $\A_L$ of language $L$, where $\A_L$ is a deterministic
+automaton with Muller acceptance condition.
+Let $Q_U \subseteq Q$ be a subset of states such that $q \in Q_U$ iff $L(q) = \Sigma^\omega$.
+Let $L' \subseteq \Sigma^*$ be the set of finite words accepted by automaton $\A_L$,
+where final states are $Q_U$. We will show that $L = L' \Sigma^\omega$.
+We have $L \supseteq L' \Sigma^\omega$, because it is easy to find a run in $\A_L$ for every word from $L' \Sigma^\omega$.
+We simply first go like in automaton for $L'$ and then arbitrarily and this is an accepting run for $\A_L$.
+On the other hand let us take $w \in L$ and its run. After some its prefix we will already be in the ball $L_w$,
+which means that independent of the rest of the word, everything is accepted, so we are in the state from $Q_U$.
+This gives us a division into prefix from $L'$ and the rest.
+}
+
+
+
+\exercise{zad:01-12}{
+Which of the following candidates for a  Myhill-Nerode congruence inded have the property:
+$\sim_L$ has finite index if and only if $L$ is $\omega$-regular
+\begin{enumerate}
+  \item an equivalence relation $\sim_L$ on $\Sigma^*$ where  $u \sim_L v$ is defined by
+  \begin{align*}
+uw \in L \iff vw \in L \qquad \text{for all $w \in \Sigma^\omega$}
+\end{align*}
+ \item an equivalence relation $\sim_L$ on $\Sigma^\omega$ where  $u \sim_L v$ is defined by
+  \begin{align*}
+wu \in L \iff wv \in L \qquad \text{for all $w \in \Sigma^*$}
+\end{align*}
+  \item an equivalence relation $\sim_L$ on $\Sigma^*$ where  $u \sim_L v$ is defined by
+  \begin{align*}
+ \text{and} \begin{cases}
+uw \in L \iff vw \in L  & \text{for all $w \in \Sigma^\omega$}\\
+s (u t)^\omega \in L \iff s (v t)^\omega \in L &\text{for all $s,t \in \Sigma^*$}
+\end{cases}
+\end{align*}
+\end{enumerate}
+}
+{None. In all cases if $L$ is regular then $\sim_L$ has a finite index.
+We will first show this. Consider an automaton $\A$ with B\"{u}chi condition for $L$.
+In $\sim_L$ we just have to remember
+\begin{enumerate}
+  \item which states of $\A$ one can reach via a word $u$;
+  \item from which states of $\A$ there exists an accepting run via a word $u$;
+  \item as in 1. and in 2. and additionally for which pair of states $p, q \in Q(\A)$ there exists a run via a word $u$
+  which goes from $p$ to $q$ and a) has an accepting state b) has no accepting state.
+\end{enumerate}
+Now we show that there exist nonregular languages $L$ such that $\sim_L$ has finite index.
+\begin{enumerate}
+  \item every prefix independent language, for example: language from exercise 1.2
+  ($u$ contains infinitely many infixes of the form
+  $ab^pa$, where $p$ is prime). For such a language $\sim_L$ has only one equivalence class;
+  \item also every prefix independent language, as language from 1.2 works. For such a language
+  relation $\sim_L$ has two classes ($wu \in L$ or $wu \not\in L$, this does not depend on $w$);
+  \item language similar like from exercise 1.4 works ($u$ contains arbitrary long infixes of the form $ba^*b$).
+  It is not regular. Definitely $uw \in L$ does not depend on $u$. It is enough to know whether $u$ contains any $b$
+  (if yes then $s (v t)^\omega \not \in L$) and additionally if not whether $u$ is empty (it matters for empty $t$).
+\end{enumerate}
+In general there exists no reasonable relation with this property.
+}
+
+
+
+%%% Local Variables:
+%%% TeX-master: "../EN_main"
+%%% End:

@@ -1,0 +1,300 @@
+In this chapter we present a one-way automaton model that has the same expressive power as two-way transducers. 
+
+We begin  by defining {register transducers}, which are automata that use registers to store parts of their output. We have already seen register transducers in Chapter~\ref{sec:hilbert} -- in a more general setting, for arbitrary algebras --  and we have even proved in Corollary~\ref{cor:register-automata-equivalence} that their equivalence is decidable for the specific algebra of words with concatenation that we use in this chapter. To make this chapter self-contained, we give a stand-alone definition below. 
+
+Register transducers, as defined below, will turn out to be strictly more powerful than two-way transducers, but a model with the same expressive power as two-way transducers will be recovered by placing a  certain {copyless restriction} on the register updates. 
+\begin{definition}
+	\label{def:sst}
+	A \emph{register transducer} consists of:
+	\begin{itemize}
+		\item finite  \emph{input and output alphabets} $\Sigma$ and $\Gamma$;
+\item a finite set of \emph{states} $Q$;
+ \item  a finite set of \emph{registers} $R$;
+\item an \emph{initial configuration} in $Q \times (R \to \Gamma^*)$;
+\item  a \emph{transition function}
+$$ \delta : Q \times \Sigma \to Q \times \underbrace{(R \to (R + \Gamma)^*)}_{\text{register update}}$$
+\item  an \emph{output function}
+$$ out : Q \to (R + \Gamma)^*$$
+	\end{itemize}
+\end{definition}
+
+The automaton is run as follows.  Define a \emph{register valuation} to be any function from registers to words over the  output alphabet $\Gamma$,  and  define a  \emph{register update} to be any function from registers to words over the alphabet  $R + \Gamma$.
+There is an action of updates on valuations 
+\begin{align*}
+(v \in \text{register valuations}, \tau \in \text{register update}) \quad \mapsto \quad v\cdot \tau \in \text{register valuations}	
+\end{align*}
+where $v \cdot\tau$ is obtained from $\tau$ by replacing each register name with its contents under $\tau$. A \emph{configuration} of the automaton  is defined to be  a pair (state, register valuation).  
+The automaton begins in the initial configuration. When reading an input letter $a$, the automaton uses its transition function to determine its new state and the register update. More formally, the  configuration is updated as follows:
+\begin{align*}
+(q,v) \cdot a \eqdef  (p, v\tau) \qquad \text{where $\delta(q,a)=(p,\tau)$}	.
+\end{align*}
+After the entire word has been processed, with the last configuration being $(q,v)$,  the automaton outputs $out(q)$, with register names replaced by their contents in $v$.
+
+\begin{example}\label{ex:two-way}
+	Here is an automaton where the input and output alphabets are $\set{a}$, and the recognised function is $a^n \mapsto a^{5+ 3 \cdot 2^n}$. The automaton has one register and one state. The initial configuration stores the word $a$ in the unique register. When reading an input letter, the unique register $r$ is updated by
+$r:=rr$. The output function maps the unique state to  $aaaaarrr$.  
+
+The function recognised by this register transducer  is not recognised by  any two-way transducer. There reason is that the function has exponential growth, while a two-way transducer has necessarily at most linear blowup, because a position 
+in the input word can be visited at most once for each state. 
+\end{example}
+
+\paragraph*{Copyless restriction.} As argued in Example~\ref{ex:two-way},  register transducers can have exponential growth, and therefore are not in general equivalent to  deterministic two-way transducers.  
+ To recover equivalence with two-way transducers, we use the   \emph{copyless restriction} (also known as the \emph{single use restriction}) described in the following picture:
+\mypicc{32} 
+In other words, a register  update is copyless if every  vertex in the left column has outdegree at most one.  
+The intuition is that the register contents are physical objects and can only be moved around and not duplicated.
+
+\begin{definition}
+	A \emph{streaming string transducer}\footnote{The model and name of streaming string transducers comes from~\cite{Alur:2010gc}, although similar and essentially equivalent models have been known before in the literature on attribute grammars, e.g.~attributed tree transducers from~\cite{:1981vj}.
+} is a register transducer where the transition function produces only  copyless register updates.  
+\end{definition}
+
+ The output function need not be copyless.   Requiring it to be copyless would not weaken the model, though, because the output function is applied only once. For example, if the output function  uses each register at most $k$ times, then by taking $k$ disjoint copies of the registers we can make the output function copyless.
+
+The goal of this chapter is to prove that streaming string transducers are equivalent to deterministic two-way transducers.
+
+\begin{theorem}\label{thm:sst-two-way}
+	Streaming string transducers recognise the same word-to-word functions  as deterministic two-way transducers
+\end{theorem}
+The above theorem was proved by Alur and Cerny in~\cite{Alur:2010gc}. A similar result (using a model of streaming string transducers  with lookahead)  can also be recovered from earlier work of  Bloem, Engelfriet and Hogeboom: (a)  \mso transductions are equivalent to deterministic two-way transducers~\cite{Engelfriet:2001kv};  and (b) \mso transductions are equivalent (even over trees) to a   certain kind of  attribute transducers~\cite{Bloem:2000wq}.
+
+We begin by describing   the proof strategy. 
+Our goal is to prove the equality
+\begin{align}\label{eq:sst}
+\underbrace{\sstfun}_{\substack{\text{functions recognised by} \\ \text{streaming string transducers}}} = \underbrace{\twofun.}_{\substack{\text{functions recognised by} \\ \text{deterministic two-way transducers}}}	
+\end{align}
+As in the proof of Theorem~\ref{thm:two-way-seq-comp}, we  write $\ratfun$ for the class of rational functions.
+In Section~\ref{sec:sst-rational-equivalence}, we prove  the following inclusions
+\begin{align*}
+\sstfun \quad \stackrel{\text{Lemma~\ref{lem:sst-to-two-way}}}   \subseteq \quad \twofun \circ \ratfun \qquad\text{and} \qquad	   \sstfun \circ \ratfun \stackrel{\text{Lemma~\ref{lem:two-way-to-sst}}}  \supseteq \twofun.
+\end{align*}
+In other words, every streaming string transducer can be recognised by a deterministic two-way automaton with preprocessing by a rational function, and likewise in the opposite direction. Rational functions are easily seen to be closed under composition, using a straightforward product construction, see Exercise~\ref{zad:two-way-rat-comp-1}. Combining the inclusions from Lemmas~\ref{lem:sst-to-two-way} and~\ref{lem:two-way-to-sst}, and using closure of rational functions under composition, we get 
+  \begin{align}\label{eq:sst-precomp}
+\sstfun \circ \ratfun  = \twofun \circ \ratfun.
+\end{align}
+To finish the proof of Theorem~\ref{thm:sst-two-way}, it suffices to show that both streaming string transducers and deterministic two-way transducers are closed under preprocessing with rational functions. For deterministic two-way transducers, this was shown in  Theorem~\ref{thm:two-way-seq-comp} from Chapter~\ref{sec:two-way}. For  streaming string transducers, this will be done in  Lemma~\ref{lem:sst-precompose}, which is the most challenging construction in this chapter. Combining these results, we get
+\begin{align*}
+\sstfun \quad \stackrel{\text{Lemma~\ref{lem:sst-precompose}}} = \quad \sstfun \circ \ratfun \stackrel{\eqref{eq:sst-precomp}} = \twofun \circ \ratfun \quad \stackrel{\text{Theorem~\ref{thm:two-way-seq-comp}}} = \quad \twofun
+\end{align*}
+which completes the proof of Theorem~\ref{thm:sst-two-way}. It remains to prove Lemmas~\ref{lem:sst-to-two-way},~\ref{lem:two-way-to-sst} and~\ref{lem:sst-precompose}.
+
+
+
+\section{Equivalence after rational preprocessing}
+\label{sec:sst-rational-equivalence}
+
+In this section, we prove that streaming string transducers and  deterministic two-way transducers are equivalent if we allow   rational preprocessing
+
+\begin{lemma}\label{lem:sst-to-two-way} Every streaming string transducer can be decomposed as a rational function followed by a deterministic two-way transducer. In other words
+  \begin{align*}
+\sstfun \subseteq \twofun \circ \ratfun.	
+\end{align*}
+\end{lemma}
+\begin{proof}
+Fix a streaming string transducer. A run of the transducer looks like this: 
+\mypicc{44}
+It is not hard to see that there is a rational -- in fact left-to-right sequential --  transducer which transforms an input word 
+\mypicc{45}
+to a word describing the corresponding sequence of register updates: 
+\mypicc{46}
+By using the above rational transducer as a preprocessor, to prove the lemma  it is enough to find a deterministic two-way transducer which inputs a tree that describes the register updates, and outputs the final value. To do this, we use a depth-first search through the tree as explained in the following picture \mypicc{47}
+It is easy to implement a depth-first search using a deterministic two-way automaton. One simply has to remember the current register and the direction from which it came.
+\end{proof}
+
+
+\begin{lemma}\label{lem:two-way-to-sst} Every deterministic two-way transducer can be decomposed as a rational function followed by a streaming string transducer. In other words
+  \begin{align*}
+\twofun \subseteq \sstfun \circ \ratfun.	
+\end{align*}
+\end{lemma}
+\begin{proof} As in the proof of Theorem~\ref{thm:two-way-compose}, it  is more convenient to use a definition of two-way transducers where the initial configuration is  (initial state, end of input marker $\dashv$). 
+Consider the configuration graph of the two-way automaton over a given input word,
+as in the following picture:
+\mypicc{28}
+We begin with a naive idea, which will not work because of the copyless restriction. For a  vertex in the configuration graph, define its \emph{segment} to be the (unique, by determinism) path that begins in the configuration, and is cut off at the first visit to the  same column as the source configuration, as in the following picture:
+\mypicc{29}
+The segment might accept/reject/loop without returning to the column of the source configuration. The naive idea would be to store for each state $q$ the output word that is found by reading the labels on  the segment of the configuration that has  state $q$ in last read position.  The problem with this construction is that it violates  the copyless restriction, because  configurations can have more than one incoming edge, and therefore the labels of one segment can be shared by several longer segments.
+
+Like in the proof of Theorem~\ref{thm:two-way-compose}, the solution is to restrict the configuration graph to edges that are reachable from the initial configuration. As shown in Lemma~\ref{lem:two-way-reachable}, a rational function can be used to restrict the configuration graph to reachable configurations, so that the result looks like this:
+  \mypicc{30}
+ When only reachable edges are used, the indegree is at most one, because otherwise the automaton would loop, which cannot happen by the assumption that it defines a total function.  
+ Using the naive idea, one can write a streaming string transducer which inputs a configuration graph with only reachable edges -- represented as a word over a finite alphabet in any natural way -- and outputs the label of the segment corresponding to the initial configuration. 
+\end{proof}
+ 
+\section{Lookahead removal}
+\label{sec:pre-comp-sst}
+In this section we show that functions recognised by register transducers and streaming string transducers are closed under pre-composition with rational functions.  
+
+A different perspective on this result is that register transducers and streaming string transducers would not become more expressive if equipped with an oracle that gives regular information about the input word to the left and right of the head. Since the information about the word to the left of the head can be stored in the state, the interesting part of the oracle is the one that talks about the word to the right of the head. In other words, in this section we show that lookahead can be eliminated from the transducers without affecting expressive power.
+
+
+\begin{lemma}\label{lem:lookahead-register} Functions recognised by register transducers are closed under pre-composition with rational functions. \end{lemma}
+\begin{proof}
+Consider functions 
+\begin{align*}
+  \xymatrix{\Sigma^* \ar[r]^{\blue f} & \blue \Gamma^* \ar[r]^{\red g} & \red \Delta^*}
+\end{align*}
+such that $\blue f$ is rational and $\red g$ is recognised by a register automaton.
+We use the following colour coding.
+The  first  alphabet $\Sigma$  is written in black.  \blue{Blue} is used for the states and output alphabet  of  $\blue f$.  \red{Red} is for the states and output alphabet  of $\red g$. A run of the composition $\red g \circ \blue f $ looks like this: \mypicc{38} 
+The register transducer for the composition $\red f \circ \blue g$ stores a function
+\begin{align*}
+\text{states of lookahead $\blue f$} \qquad \to \qquad \text{configurations of $\red g$}
+\end{align*}
+which maps a state  $\blue q$ of $\blue f$ to the configuration that would be used by $\red g$ assuming that $\blue q$ is the state of the lookahead $\blue f$ after reading the unread part of the input (in a right-to-left pass). Such a function can be represented by using 
+\begin{align*}
+\text{(number of states in lookahead $\blue f$)}	 \times \text{(number of registers in  $\red g$)}	
+\end{align*}
+registers; and the representation can be updated in the transition function. After reading the entire word, the transducer for the composition looks at the value of the function under the initial state of $\blue f$, and then applies the output function of $\red g$. 
+\end{proof}
+
+The construction in the above lemma cannot be used for streaming string transducers because it violates the copyless restriction. 
+The violation comes from merging states in the right-to-left sequential function $\blue f$. For example, suppose that the state transformation of  $\blue f$ over some input letter $a \in \Sigma$ looks like this:
+\mypicc{36}
+Then the register transducer described in the  proof of Lemma~\ref{lem:lookahead-register} would duplicate the information stored for state $\blue{q_1}$,  using it for both $\blue{q_0}$ and $\blue{q_1}$. 
+
+To eliminate lookahead for streaming string transducers, we use a data structure, called  a transformation forest, which stores register updates organised in a forest structure so that composition can be done without copying. We describe this data structure below.
+
+\paragraph*{Composing register updates.} We begin with defining a composition operation on register updates. Here is the picture:
+\mypicc{33}
+The composition operation is defined so that if $\tau,\sigma$ are two register updates and $v$ is a register valuation, then 
+\begin{align*}
+v \cdot (\tau \cdot \sigma) = (v \cdot \tau) \cdot \sigma.
+\end{align*}
+Using the above composition, we can view the set of register updates -- for a fixed set of register names and output alphabet -- as a monoid.
+
+
+\paragraph*{Transformation forests.}  
+  Suppose that $M$ is a monoid and $Q$ is a finite set. (Our intended application is that $S$ is the monoid of register updates for some streaming string transducer, but the abstract definition requires less notation.)  Define a  \emph{transformation forest} (over $M$ and $Q$) to be any labelled forest of the following form:
+\mypicc{64}
+We now describe how transformation forests can be composed. Suppose that we have two transformation forests $\tau$ and $\sigma$, as illustrated below:
+\mypicc{65}
+Their composition $\tau\sigma$ is obtained by doing the following steps.
+\begin{enumerate}
+	\item To each root of $\sigma$ we can associate a unique leaf of $\tau$ with the same label, because roots of $\sigma$ have different labels and all labels appear in leaves of $\tau$. Merge each root of $\sigma$ with the associated  leaf of $\tau$:
+\mypicc{66}
+\item 
+Eliminate nodes that do not reach any node leaf of $\sigma$:
+\mypicc{67}
+\item Contract into a single edge every path that uses only nodes with unary branching (except the source and target):
+\mypicc{68}
+The label of a contracted path is the product, in the semigroup $S$, of the labels of edges on the path before the contraction.
+\end{enumerate}
+It is not hard to see that this operation is associative, i.e.~
+\begin{align*}
+\tau (\sigma \rho) = (\tau \sigma) \rho.
+\end{align*} Also, there is a neutral element, namely the transformation forest where each leaf is a root (and there are no edges).  Therefore, the set of transformation forests is a monoid, which we denote by $M^{[Q]}$.
+The reader might recognise transformation forests from Lemma~\ref{lem:mcnaughton-trees} from Chapter~\ref{sec:determinisation}. In that lemma, the monoid $M$ had two elements ``accepting'' and ``non-accepting''. In this chapter, $M$ will be the infinite monoid of copyless register updates. 
+
+
+\paragraph*{Lookahead elimination for streaming string transducers.} Equipped with the data structure of transformation forests, we are ready to prove the copyless variant of Lemma~\ref{lem:lookahead-register}.
+
+  \begin{lemma}
+	\label{lem:sst-precompose}  Functions recognised by streaming string transducers are closed under pre-composition with rational functions. In other words
+	\begin{align*}
+\sstfun = \sstfun \circ \ratfun.	
+\end{align*}
+\end{lemma}
+\begin{proof} 
+The left-to-right inclusion is immediate, since the identity is a rational function. For the converse inclusion, recall the following equality 
+\begin{align*}
+\ratfun \quad = \underbrace{\seqfun}_{\substack{\text{left-to-right}\\ \text{sequential functions}}} \circ \underbrace{\seqfunrev}_{\substack{\text{right-to-left}\\ \text{sequential functions}}}
+\end{align*}
+from Theorem~\ref{thm:rational-functions}. Since both streaming string transducers and left-to-right sequential functions are instances of left-to-right automata, a straightforward product construction can be used to  yield the  inclusion
+	\begin{align*}
+\sstfun \supseteq \sstfun \circ \seqfun
+\end{align*}
+Therefore, in order to prove the lemma it suffices to show 
+	\begin{align*}
+\sstfun = \sstfun \circ \seqfunrev.	
+\end{align*}
+Here we cannot use a simple product construction, because we compose automata that move in different directions.
+The rest of the proof is devoted to proving the above inclusion. 
+We use the same notation and colour convention as in the proof of Lemma~\ref{lem:lookahead-register}. Let
+\begin{align*}
+  \xymatrix{\Sigma^* \ar[r]^{\blue f} & \blue \Gamma^* \ar[r]^{\red g} & \red \Delta^*}
+\end{align*}
+be functions such that $\blue f$ is right-to-left sequential and $\red g$ is a streaming string transducer. 
+Our goal is to design a streaming string transducer   that recognises the composition $\red g \circ \blue f$.  To make notation lighter, we assume that $\blue f$ has empty end-of-input words. This assumption can be lifted without greater conceptual difficulty. 
+
+
+\paragraph*{Overview of the construction.} 
+The idea is that instead of storing register valuations, the streaming string transducer for $\red g \circ \blue f$  will store register updates, organised in a transformation forest. To illustrate this idea,  consider the configuration graph of  the right-to-left sequential function $\blue f$ over an  input word $w \in \Sigma^*$,  as shown in the following picture:
+ \mypicc{39}
+Nodes of the configuration graph are labelled by states of $\blue f$ and edges are labelled by output words of $\blue f$.
+ Because the $\blue f$ is right-to-left deterministic, the configuration graph is a forest, with the roots in the first column.  The output of $\blue f$ is obtained by  reading from left to right the labels on the path that goes from the unique leaf with the initial state of $\blue f$ to the unique root that is its ancestor.   (We use the assumption that the end-of-input words are empty; otherwise we would need to add one more column at the left end of the picture.)
+ 
+ The automaton recognising the composition $\red g \circ \blue f$ will store in its configuration a transformation forest  
+\begin{align*}
+t \in \underbrace{(\text{register updates of $\red g$})}_{\substack{\text{monoid of copyless register}\\ \text{updates for registers and }\\ \text{output alphabet of $\red g$}}}\ \! ^{[\text{states of $\blue f$}]}.
+\end{align*}
+The nodes of this transformation forest will correspond to the leaves of the configuration graph, their closest common ancestors, and the roots that are reachable from leaves, as represented by the big  yellow circles below:
+\mypicc{56}
+For a path connecting two adjacent yellow nodes, the transformation forest $t$ will store the register update done by $\red g$ on that path.   
+To describe the automaton in more detail, we begin by discussing how copyless register updates, and therefore also transformation forests over the monoid of copyless register updates,  can be stored in the configuration of  a streaming string transducer. 
+
+\paragraph*{Storing register updates.}  
+ Recall the graphical representation of register updates that was used when defining the copyless restriction. A copyless register update can be stored by a streaming string transducer like this:
+\mypicc{37}
+In general, to store a copyless register update we need a bounded number of bits to store the tree structure of the update plus
+\begin{align*}
+2 \cdot \text{(number of registers in $\red g$)}	
+\end{align*}
+registers to store the output words used in the update.   To store a transformation forest 
+ \begin{align*}
+t \in (\text{register updates of $\red g$})^{[\text{states of $\blue f$}]}.
+\end{align*}
+we use a bounded number of bits to store the structure of the forest and its labelling by states of $\blue f$, plus
+\begin{align*} 
+\underbrace{2 \cdot \text{(number of registers in $\red g$)}}_{\substack{\text{registers to store}\\ \text{a register update}}} \cdot  \underbrace{2 \cdot \text{(states in $\blue f$)}}_{\substack{\text{number of edges in}\\ \text{a transformation forest}}}
+\end{align*} 
+registers to store the register updates. The following claim says that transformation forests can be updated in a copyless way.
+
+\begin{claim}\label{claim:represent-transformation}	Fix a transformation forest 
+	\begin{align*}
+s \in (\text{register updates of $\red g$})^{[\text{states of $\blue f$}]}.
+\end{align*}
+	 Then the function 
+\begin{align*}
+t \in (\text{register updates of $\red g$})^{[\text{states of $\blue f$}]} \quad \mapsto \quad ts \in (\text{register updates of $\red g$})^{[\text{states of $\blue f$}]} 
+\end{align*}
+can be done using a copyless register update.	
+\end{claim}
+\begin{proof} 
+Almost by definition, copyless register updates can be composed using a copyless register update. The same is true when composing transformation forests $ts$, because each label from $t$ and each label from $s$ is used at most once in the composition. In fact, copyless register updates can be seen as a special case of transformation forests, see Exercise~\ref{zad:sst-transformation-forest}.
+\end{proof}
+
+  
+\paragraph*{The automaton.} Before describing the automaton, let us introduce some notation that will be used in its definition and correctness proof. Let  $\blue q$ be a state of $\blue f$ and let $\red p$ be a state of $\red g$. Define $\blue{f_q}$ to be the right-to-left sequential function obtained from $\blue f$ by changing the initial state to $\blue q$ and define $[\red p, w, \blue q]$ to be the run of $\red g$ -- viewed as a sequence of transitions -- which begins in state $\red p$ and reads the word $\blue {f_q}(w)$.  We have the following equality, which is obtained by unravelling the definitions: 
+\begin{align}\label{eq:sst-bracket-comp}
+[\red p, w a, \blue q]	 = [\red p, w, a \blue q] \cdot [\red p (\blue{f_q}(a)), a, \blue q] \qquad \text{for every $w \in \Sigma^*$ and $a \in \Sigma$}.
+\end{align}
+In the above, we write  $\_\blue q$ and $\red p\_$ for the state transformations of the automata underlying $\blue f$ and $\red g$. 
+
+Equipped with the above notation, we are ready to define the streaming string transducer recognising the composition $\red g \circ \blue f$.
+After reading an input word $w \in \Sigma^*$, the transducer will store  a transformation forest
+	\begin{align*}
+t_w \in (\text{register updates of $\red g$})^{[\text{states of $\blue f$}]}	
+\end{align*}
+whose intuitive meaning was described at the beginning of the proof. The transformation forest $t_w$ is stored as described before Claim~\ref{claim:represent-transformation}, and it  satisfies the following invariant:
+\begin{enumerate}
+  	\item[(*)]  Let  $\blue q$ be a state  of $\blue f$ and let $\pi$  be the unique root-to-leaf path in $t_w$ that ends in a leaf with label $\blue q$. Then the composition of register updates labelling $\pi$ is the same as the register update  done by the run $[\text{initial state of $\red g$}, w, \blue q]$.
+\end{enumerate} 
+To update its configuration, the transducer will also store in its finite state space
+the function $\delta_w$ defined by 
+\begin{align*}
+\blue q \in \text{states of $\blue f$} \quad \mapsto \quad \text{target state of the run $[\text{initial state of $\red g$}, w, \blue q]$}
+\end{align*}
+Using~\eqref{eq:sst-bracket-comp},  it is not hard to see how $\delta_{wa}$ can be computed from $\delta_{w}$ and an input letter $a$. It remains to show how to update the transformation forest $t_w$. 
+
+Initially, $t_\varepsilon$ is a forest with no edges and one leaf per state of $\blue f$, like this\mypicc{70}and therefore the invariant (*) is satisfied because $\pi$ is the empty path which yields an identity register update.  
+ When reading a letter $a$, the transformation forest  is updated as follows. The new transformation forest $t_{wa}$ is defined to be the composition -- in the monoid of transformation forests -- of $t_w$ with the following   transformation forest:\mypicc{69}
+Using the equality~\eqref{eq:sst-bracket-comp}, it is not hard to check that $t_{wa}$ satisfies the invariant. Furthermore, the update can be done while preserving the copyless discipline, by Claim~\ref{claim:represent-transformation}. 
+
+It remains to define the output function  so that the automaton recognises the composition $\red g \circ \blue f$. By the invariant, once the automaton has finished processing an input $w$, by looking at the transformation forest $t_w$ we can recover the register update $\tau$ that is done by the run of $\red{g}$ on $\blue f(w)$, i.e.~the run
+\begin{align*}
+[\text{initial state of $\red g$},\  w, \text{ initial state of $\blue f$}].
+\end{align*}
+To get the output of $\red g \circ \blue f$ on $w$, it remains to apply  $\tau$ to the empty register valuation, and finally apply the output function of $\red g$ to the resulting register valuation.  All of this can be done using the register representation of the transformation forest $t_w$.
+\end{proof}
+

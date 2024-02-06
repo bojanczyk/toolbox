@@ -1,0 +1,249 @@
+\label{sec:tarski}
+\newcommand{\bss}{\textsc{bss}\xspace}
+\newcommand{\Real}{\mathbb R}
+Consider the real numbers, equipped with binary functions for addition, subtraction, multiplication, and constants for zero and one, and a binary relation for the ordering
+\begin{align*}
+  (\Real, +, -, \times, 0, 1, <)
+\end{align*}
+The goal of this section is to prove a Theorem of Alfred Tarski, which says that the first-order theory of this structure is decidable, i.e.~there is an algorithm which inputs a sentence of first-order logic like
+\begin{align*}
+\forall x  \exists y \ y \times y + x = 0
+\end{align*}
+and says if the sentence is true in the real numbers. Remarkably this theorem represents a nontrivial algorithm dealing with first-order logic that was found in the late 1920s, before the notions of ``first-order logic'' and ``algorithm'' were well defined in the modern sense. Although proved earlier, the result was published only after the war~\cite{Tarski:1951vl}.
+
+There is some freedom in the choice of vocabulary. For example we could add division because it is definable in first order logic by
+\begin{align*}
+  x / y = z \qquad \eqdef \qquad z \times y = x.
+\end{align*}
+Conversely, we could remove subtraction, because it is definable in terms of addition, or we could remove the ordering, because it is defined by
+\begin{align*}
+  x < y \qquad \eqdef \qquad \exists z \ x + z \times z = y.
+\end{align*}
+Also, we could remove the constants for $0$ and $1$, because $0$ is the unit for addition and $1$ is the unit for multiplication. Summing up, as long as we care about first-order logic, the vocabulary could be reduced to have only $+$ and $\times$. Nevertheless, we will care about quantifier-free formulas, and some of the above definitions are not quantifier-free.
+
+\begin{theorem}\label{thm:tarski}
+	For every formula of first-order logic over 
+	\begin{align*}
+  (\Real, +, -, \times, 0, 1, <)
+\end{align*}
+possibly with free variables, one can compute an equivalent (over the real numbers) formula that is quantifier-free. In particular, one can decide if a sentence, i.e.~a formula without free variables, is true over the real numbers.
+\end{theorem}
+
+
+
+
+
+
+
+
+
+Before proving the theorem, we discuss its relation to decidability of first-order logic for other fields and rings, such as integers or rationals.
+
+\begin{example}
+The  first-order theory of the integers with addition, subtraction and multiplication
+\begin{align*}
+(\Int, +, -, \times, 0, 1, <)
+\end{align*}
+is undecidable. It follows that there is no first-order formula $\varphi(x)$  which defines the integers inside the real numbers. In contrast, every single integer can be defined.	
+
+A celebrated theorem of Julia Robinson says that there is a first-order formula that defines the integers inside the rational numbers, and therefore also the rational numbers cannot be defined inside the real numbers.
+\end{example}
+
+\begin{example}
+	A complex number can be coded as two real numbers, its real and imaginary parts. Addition, subtraction and multiplication of complex numbers can be reduced to analogous operations on the real and imaginary parts. It follows  that the first-order theory  of the complex numbers
+	\begin{align*}
+  (\mathbb C, +, -, \times, 0, 1)
+\end{align*}
+	is decidable (note that order is not mentioned above, since it is not defined on the complex numbers).
+\end{example}
+
+The rest of this chapter is devoted to proving Theorem~\ref{thm:tarski}. 
+The second part of the theorem (deciding which  sentences are true) is an immediate consequence of the first part (effective quantifier elimination). Indeed, if we want to know if a sentence is true in the real numbers, we first eliminate all quantifiers using the first part of the theorem, arriving at a Boolean combination of sentences that are similar to this example:
+\begin{align*}
+  (1  +  1) \times (1 + 1 + 0) - 0 \times (1 + 0) >  0.
+\end{align*}
+A straightforward evaluation leads to the desired true/false answer.  It is therefore enough to prove the effective quantifier elimination. Here, it is enough to show that a single existential quantifier can be eliminated, since multiple quantifiers can then be eliminated one by one, starting with the innermost quantifiers (and using closure of quantifier-free formulas under Boolean operations). 
+
+Therefore, the essence of Theorem~\ref{thm:tarski} is showing that for every
+formula 
+\begin{align*}
+  \exists x \underbrace{\varphi(x,y_1,\ldots,y_n) }_{\text{quantifier-free formula using $+,\times,-,0,1,<$}}
+\end{align*}
+there exists, and can be computed, an equivalent one that is quantifier-free over the same vocabulary. We first observe that the formula $\varphi$ can be without loss of generality assumed to be a Boolean combination of formulas of the form
+\begin{align*}
+  p(x,y_1,\ldots,y_n) > 0
+\end{align*}
+where each $p$ is a polynomial with integer coefficients and variables $x,y_1,\ldots,y_n$. So the goal is to understand the behaviour of the polynomials $p$, once the arguments $y_1,\ldots,y_n$ have been fixed, as a function of the quantified parameter $x$. To understand this behaviour, we will use basic operations from calculus and algebra, like differentiation and dividing polynomials with remainders, and then observe that the effect of these operations can be formalised using quantifier-free formulas. 
+
+Instead of working directly with quantifier-free formulas, we introduce an intermediate computation model for the reals and show that (a) computation in this model can be simulated using quantifier-free formulas; and (b) quantifier elimination can be done using the computation model. The point of using the computation model is that when proving (b), we can appeal to algorithmic intuitions, like loops and conditionals, which are more cumbersome to formalise when working directly with quantifier-free formulas. The results (a) and (b) are presented in Sections~\ref{sec:bss} and~\ref{sec:quantifier-elimination} below.
+
+
+
+
+
+
+
+\section{Computation on the reals}
+\label{sec:bss}
+Consider the following variant of a Turing machine, which we call a \emph{\bss machine}, standing for Blum Shub and Smale, who introduced the model. The purpose of a  \bss machine is to compute a  partial function  of type $\Real^* \to \Real^*$, i.e.~a partial function that inputs and output tuples of real numbers. The machine has a single tape, infinite in both directions (i.e.~indexed by integers), whose  cells store real numbers  plus a finite set $R$ of registers that also store real numbers. Cells of the tape and registers can be undefined.  At any given moment, the machine  is in a state  from a finite set of control states, and has a single head which points to one of the cells on the tape. In the initial configuration,  the tape stores the input of the function (i.e.~the $i$-th cell stores the $i$-th number of the input if the input has length $\ge i$, otherwise the cell is undefined), the registers are all undefined, the state is a  designated initial sate and the head points to the cell $0$ of the tape. Based on the answers to the following questions (the second question is actually several question, one for eachc of the finitely many registers):
+\begin{itemize}
+	\item what  the current state?
+	\item what are the signs of the registers (negative, zero, positive, undefined)?
+\end{itemize}
+the transition function of the machine indicates deterministically a new state and  an operation from the following set:
+\begin{align*}
+\text{accept} \qquad \text{move the head by } i \in \set{-1,1} \qquad   r := 1 \qquad  r := s\  \mathtt{op}\  t 
+\end{align*}
+where {\tt op} ranges over the arithmetic operations (addition, subtraction, multiplication, dvision) and $r,s,t$ range over registers or the contents of the cell under the head. For example, the effect of a transition can be that the contents of registers $r,s$ are multiplied and the result is stored in the cell under the head. If a division by zero is performed, then the computation is not aborted, but the cell/register $r$ storing the result becomes undefined. If the computation never performs the accept operation  then  the output of the computed  function is undefined. Otherwise, the output of the computed function is defined to be the contents of the defined cells, read from left to right. If the output is shorter than the input, then division by zero is used to make cells on the tape  undefined. The running time of a computation is defined to be the number of transitions that it uses.
+
+
+
+As defined above, a \bss machine computes a partial function. We can also view \bss machines as computing languages, i.e.~yes/no properties of tuples of reals, by assuming that the answer is ``yes'' if the function is defined and ``no'' otherwise. The following lemma shows that for languages of bounded dimension and running computation time, the \bss model can only compute quantifier-free properties. 
+\begin{lemma}\label{lem:bss-qf}
+If $S \subseteq  \Real^n$ is computed by a \bss machine which uses  at most $k$ computation steps in every accepting run, then $S$ is  definable by a quantifier-free formula using $+,-,\times,0,1,<$. Furthermore, this formula can be computed given the machine and $k$.
+\end{lemma}
+\begin{proof}
+By 	induction on the length of the computation, we can show that the control state, head position,  and signs of the registers can be determined by asking  quantifier-free queries to the input. In the induction step, we observe that, assuming that the history (sequence of transitions) of the computation is known, then the contents of each register/cell can be described by a term that uses the $n$ input numbers, integer constants, and arithmetic operations (addition, subtraction, multiplication and addition). Furthermore, if $t$ is such a term, then a straightforward induction on the size of $t$ shows that  the truth sign (negative, zero, positive)  of  $t$ can be expressed using a quantifier-free formula as in the statement of the lemma. (Note that the term $t$ is allowed to use division, but the quantifier-free formula is not.) For example, 
+\begin{align*}
+ \frac {x * y } {x - y + 1} > 0
+\end{align*}
+is equivalent to the quantifier-free formula
+\begin{align*}
+\underbrace{(x \times y > 0) \land (x -y +1 >0)}_{\text{enumerator and denominator are positive}} \quad \lor \quad \underbrace{(x \times y > 0) \land (x -y +1 >0)}_{\text{enumerator and denominator are negative}}
+\end{align*}
+\end{proof}
+
+
+\section{Quantifier elimination}
+\label{sec:quantifier-elimination}
+In Section~\ref{sec:bss} above we have shown that any bounded time procedure in the \bss model can be simulated using quantifier-free formulas. Therefore, to complete the proof of Theorem~\ref{thm:tarski}, it is enough to show that the truth values of formulas with one quantifier can be decided using the \bss model. In principle, the \bss model manipulates sequences of reals, but we will also use it to manipulate more structured entities, such as polynomials or finite sets of polynomials, implicitly using straightforward encodings as tuples of real numbers. 
+
+\begin{lemma}\label{lem:quant-elim} For every quantifier-free formula $\varphi(x,y_1,\ldots,y_n)$ there is  a \bss machine which computes the following:
+\begin{itemize}
+	\item {\bf Input.} Real numbers $a_1,\ldots,a_n$.
+	\item {\bf Output.} Is $ \exists x \varphi(x,a_1,\ldots,a_n)$ true in the real numbers?
+\end{itemize}
+Furthermore, the running time of the algorithm is bounded by a number $k$ that depends only on (and can be computed from) the formula $\varphi$, and does not depend on the numbers $a_1,\ldots,a_n$.
+\end{lemma}
+
+Together with  Lemmas~\ref{lem:bss-qf}, the above lemma completes the proof of Theorem~\ref{thm:tarski}, and therefore the rest of this chapter is devoted to proving the above lemma. 
+Let $\varphi$ and $a_1,\ldots,a_n$  be as in the lemma. Without loss of generality we assume that $\varphi$ is a Boolean combination of formulas of the form
+\begin{align}\label{eq:comparison-of-polynomial}
+  p(x,y_1,\ldots,y_n) > 0
+\end{align}
+where each $p$ is a polynomial with integer coefficients and $n+1$ variables.
+Given a tuple of real numbers $a_1,\ldots,a_n$ as in the input of the problem from Lemma~\ref{lem:quant-elim}, define $P$ to be the finite set
+\begin{align}\label{eq:polynomials-in-normal-form}
+  \set{ p(x,a_1,\ldots,a_n) : p(x,y_1,\ldots,y_n) > 0 \text{ appears in $\varphi$}}.
+\end{align}
+The set $P$  contains polynomials with one variable $x$ and real coefficients. The coefficients depend  on the parameters $a_1,\ldots,a_n$, in a way that can be computed in the \bss model.     Define the \emph{sign} of a real number to be one of  the three results (negative, zero, or positive) of comparing the number to $0$.  The truth value of the comparison in~\eqref{eq:comparison-of-polynomial} depends only on the sign of the left side, and therefore in order to determine if a real number $a$ satisfies  $\varphi(a,a_1,\ldots,a_n)$, it is enough to look at the sign of $p(a)$ for all   polynomials $p \in P$. This observation motivates the following definition. In the following definition, $\Real[x]$ stands for polynomials with real coefficients and one variable $x$, and  a nonzero polynomial is one with at least one nonzero coefficient.
+
+\begin{definition}[Sign table] Let  $P \subseteq \Real[x]$ be a finite set of nonzero polynomials, and let
+\begin{align*}
+  r_1 < r_2 < \cdots < r_n
+\end{align*}
+be all the real numbers that are a root of at least one polynomial in $P$. (There are finitely many such numbers, because a nonzero polynomial has finitely many roots.)  Define 
+the \emph{sign table} of $P$ to be the following information:
+\begin{itemize}
+	\item the number $n$;
+\item for each $p \in P$ and $i \in \set{0,\ldots,n+1}$, the sign of $p(r_i)$, where the sign in
+\begin{align*}
+  r_0 \eqdef - \infty \qquad   r_{n+1} \eqdef + \infty 
+\end{align*}
+ is defined by taking the limit in the natural way.
+ \item for each $p \in P$ and $i \in \set{0,\ldots,n}$, what is the sign of $p$ on the interval $(r_i;r_{i+1})$.
+\end{itemize}	
+\end{definition}
+
+From the discussion before the above definition, it follows that the truth of
+\begin{align*}
+  \exists x    \varphi(x,a_1,\ldots,a_n)
+\end{align*}
+can be (effectively) determined by looking at the sign table of the nonzero polynomials in $P$. Therefore, Lemma~\ref{lem:bss-qf} and thus also the Tarski Theorem will follow from the following lemma.
+
+
+
+
+
+\begin{lemma}\label{lem:bss-compute-sign-table}
+	The sign table of a finite set $P \subseteq \Real[x]$ of nonzero polynomials can be computed by a \bss machine in time bounded by a function of the sum of degrees of $P$.
+\end{lemma}
+\begin{proof}
+The proof is essentially the observation that the usual method of plotting polynomials that is taught in high school can be formalised in the \bss model\footnote{Tarski taught mathematics in a Warsaw  high school for girls. A lesser man would complain about having to teach calculus, Tarski proved that it could be automated.}
+We begin by observing that the \bss model can run the Euclidean algorithm.
+\begin{claim}
+	There is a \bss algorithm which inputs polynomials 
+	\begin{align*}
+  p,q \in \Real[x] \qquad \text{with} \qquad \text{degree of $q$} \le \text{degree of $p$}
+\end{align*}
+and  outputs a polynomial $r \in \Real[x]$ such that 
+\begin{align*}
+\text{degree of $r$} < \text{degree of $q$} \qquad \text{and} \qquad   p = q \times s + r \quad \text{for some $s \in \Real[x]$}.
+\end{align*}
+\end{claim}
+\begin{proof}
+Define a finite sequence of polynomials 
+\begin{align*}
+  p=p_0,p_1,\ldots,p_n=r
+\end{align*}
+subject to the following  invariant:  (a) the degrees in the sequence strictly decrease; and (b)  $q$ divides  $p-p_n$ for every $n$.  We begin with $p_0 = p$. Suppose that $p_i$ has been defined. If the degree of $p_i$ is stritly smaller than the degree of $q$, then we output $r = p_i$; otherwise we define $p_{i+1}$ to be the difference
+	\begin{align*}
+    p_i - \frac{\text{leading coefficient of $p_i$ }}{\text{leading coefficient of $q$ }} x^\text{(degree of $p_i$)- (degree of $q$)} \cdot q
+\end{align*}
+which preserves the invariant.  This procedure can clearly be implemented in the \bss model.
+\end{proof}
+
+
+Apart from computing remainders using the Euclidean algorithm, we  also use derivatives of polynomials (in the usual sense of calculus). 
+%Recall the derivation operation on polynomials
+%\begin{align*}
+%\sum_{i=0}^n c_i x^i \qquad \mapsto \qquad   \sum_{i=1}^n n \cdot c_i \cdot x^{i-1}
+%\end{align*}
+The derivative of a polynomial $p \in \Real[x]$ can clearly be computed in the \bss model.  By repeatedly applying derivation and the Euclidean algorithm, we can extend any finite set of polynomials to a bigger one that  is saturated in the following sense: it   is closed under derivations and applying the Euclidean algorithm. Since computing a sign table can only get harder after adding polynomials, in order to show the lemma, it suffices to show that sign tables can be computed for sets $P$ that are saturated.
+
+Suppose then that $P$ is a finite saturated set of polynomials.    Take some $p \in P$ of maximal degree.  The set $P - \set{p}$ is also saturated, because $p$ has maximal degree, and both derivation and the Euclidean algorithm decrease degrees. Therefore, we can use induction to compute the  sign table of $P - \set p$. Let 
+\begin{align*}
+  r_0 = -\infty \qquad r_1 < \cdots < r_n  \qquad r_{n+1} = +\infty
+\end{align*}
+be the numbers from  the definition of a sign table, as applied to  $P - \set{p}$. We do not know the exact values of these numbers, but we do know $n$ and we also know how the signs of the polynomials from $P - \set{p}$  behave in the points $r_i$ and the intervals that separate them. Our goal is to enrich this information to account for the polynomial~$p$. 
+
+\begin{claim}
+	For each $i \in \set{0,1,\ldots,n+1}$  we can compute the sign of $p(r_i)$.
+\end{claim}
+\begin{proof} For  $i=0$ and $i=n+1$ we simply look at the sign of the leading coefficient of $p$, and the parity of its degree. This information determines the sign of  $p$ in $\pm \infty$. We are left with the case of $i \in \set{1,\ldots,n}$. 
+By definition of $r_i$, there must be some polynomial $q \in P - \set{p}$ which has a root in $r_i$, and we can use the sign table to find that polynomial. Since $P$ is closed under applying the Euclidean algorithm, there must be some $r \in P - \set{p}$ such that 
+\begin{align*}
+  p = q \times s + r \qquad \text{for some $s \in \Real[x]$}.
+\end{align*}
+Since $r_i$ is a root of $q$, the sign of $p(r_i)$ is the same as the sign of $r(r_i$), and the latter sign is stored in the sign table. 	
+\end{proof}
+
+We now proceed to investigate the behaviour  of $p$ in the intervals separating the roots $r_i$. The important observation is that $p$ does not have any turning points in these intervals (a turning point is one where the polynomial changes behaviour between increasing/decreasing). The reason is that a turning point is also a root of the derivative, and all such roots are in the points $r_1,\ldots,r_n$ because the derivative of $p$ is belongs to  $P - \set p$. This observation yields the following claim:
+
+
+\begin{claim}\label{claim:derivative-nonzero}
+	For every $i \in \set{0,\ldots,n}$, $p$ has at most one root in the interval $[r_i;r_{i+1}]$. 
+\end{claim}
+\begin{proof}
+Otherwise there would be a turning point between $r_i$ and $r_{i+1}$. 	
+\end{proof}
+
+Using the above claim, we can  describe the behaviour of $p$ in an interval of the form $(r_i;r_{i+1})$. This is done using the following case analysis, which can readily be formalised in the \bss model.
+	\begin{itemize}
+ 		\item One of the signs of $p(r_i)$ and $p(r_{i+1})$  is zero, like this:
+ 		\begin{center}
+ 			picture
+ 		\end{center}
+ 		 In this case, thanks to Claim~\ref{claim:derivative-nonzero}, the other sign is nonzero,   $p$ has no roots in the interval $(r_i;r_{i+1})$ and its sign  on this interval is the same as in the nonzero endpoint. 
+
+		\item The  signs of $p(r_i)$ and $p(r_{i+1})$ are the same, like this:
+ 		\begin{center}
+ 			picture
+ 		\end{center} If $p$ would have a root in the interval $(r_i;r_{i+1})$, then it would also have a turning point in this interval, and this cannot happen. Therefore, $p$ has no roots in this interval, and its sign in the interval is the same as in either one of its endpoints. 
+		\item The  signs of $p(r_i)$ and $p(r_{i+1})$ are nonzero and different, like this:
+ 		\begin{center}
+ 			picture
+ 		\end{center} In this case $p$ has exactly one root in the interval, which splits the interval into two parts; on the left part the sign of $p$ is  as in $p(r_i)$ and on right part the sign is as in $p(r_{i+1})$. 
+	\end{itemize}
+Doing the above case analysis for all $i \in \set{0,\ldots,n}$, we  fill in the sign table for $P$.  This completes the proof of Lemma~\ref{lem:bss-compute-sign-table}, and therefore also of the Tarski Theorem.
+\end{proof}

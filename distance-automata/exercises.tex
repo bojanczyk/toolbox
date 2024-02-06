@@ -1,0 +1,101 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:04-01}{
+Show that limitedness remains decidable when distance automata are equipped with a reset operation. (The cost of a run is the biggest number of costly transitions between some two consecutive resets.)
+}
+{
+}
+
+\exercise{zad:04-03}{
+Let $\Aa$ be a distance automaton with input alphabet $\Sigma$. The problem of \emph{limitedness of $\A$ on regular language $L \subseteq \Sigma^*$} 
+asks whether there exists $n \in \N$ such that for every word $w \in L$ the cost of $w$
+with respect to $\A$ is not bigger than $n$.
+Show that this problem is decidable.
+}
+{
+We define distance automaton $\A'$ such that $\A'$ is limited on $\Sigma^*$ (which is decidable
+due to the theorem) iff $\A$ is limited on $L$. It is simple, $\A'$ is $\A$ with additional component, which
+has only costless transitions and accepts complement of language $L$.
+}
+
+
+
+\exercise{zad:04-04}{
+We say that a regular language $L$ has the  \emph{finite power property} if there exists $n \in \N$ such that $L^* = L^0 \cup L^1 \cup \ldots \cup L^n$. Show that one can decide if a regular language has the finite power property.
+is decidable.
+}
+{
+We will reduce to the problem of limitedness of distance automata on a given regular language.
+We take automaton for $L$ and add costly transitions over every letter $a \in \Sigma$
+from every accepting state to a state, which is reachable from initial state over $a$.
+These transitions correspond to starting new copy of $L$. One can easily verify that $L$
+has finite power iff the considered automaton is limited on $L^*$.
+}
+
+
+
+\exercise{zad:04-05}{We say that 
+languages $K \subseteq \Sigma^*$ and $L \subseteq \Sigma^*$ are \emph{separated by} language $S \subseteq \Sigma^*$
+if $K \subseteq S$ and $L \cap S = \emptyset$.
+For $u, v \in \Sigma^*$ we say that $u = a_1 \cdots a_k$ is a \emph{subsequence} of $v$,
+denoted $u \preceq v$, if $v \in \Sigma^* a_1 \Sigma^* \ldots \Sigma^* a_k \Sigma^*$.
+A language $L$ is called \emph{upward closed} if for every $u \in L$ and $u \preceq v$ also $v \in L$.
+Show that deciding whether two given regular languages $K$ and $L$ are separated by some upward
+closed language is decidable.
+}
+{
+For a language $K$ let $K^\uparrow = \{w \mid \exists_{u \in L} u \preceq w\}$. Let $\mathcal{UP}$ be the class
+of upward closed languages. We claim that $K$ and $L$ cannot be separated by some language from $\mathcal{UP}$
+iff $K^\uparrow \cap L \neq \emptyset$. Start with right to left implication. Clearly $K^\uparrow$ is the smallest language
+from $\mathcal{UP}$ which contains $K$. We if $K^\uparrow \cap L \neq \emptyset$ then every language from $\mathcal{UP}$
+which contains $K$ also intersects $L$, which means that $K$ and $L$ cannot be separated. To show implication from left to right
+observe that if $K^\uparrow \cap L = \emptyset$ then $K^\uparrow$ is a good separator.
+}
+
+
+
+
+\exercise{zad:04-06}{
+Let $\F$ be the class of finite unions of languages of the form $\Sigma^* w_1 \Sigma^* \ldots \Sigma^* w_k \Sigma^*$,
+where all $w_i$ are words from $\Sigma^*$. Show that for given regular languages $K$ and $L$ it is decidable whether
+they are separated by a set from $\F$. \\
+\emph{Remark:} Note that $\F$ contains all upward closed languages defined in the Problem \ref{zad:04-05}.
+To see this recall that Higman's Lemma implies that there is no infinite antichain in the $\preceq$ order.
+Therefore every upward closed language has finitely many minimal elements.
+Thus every upward closed language is a finite union of languages of the form
+$\Sigma^* a_1 \Sigma^* \ldots \Sigma^* a_k \Sigma^*$, where all $a_i \in \Sigma$.
+}
+{
+Here we will use decidability of limitedness problem for distance automata. For $K$ and $L$ we build a distance
+automaton $\A_L$ (depending only on $L$, not on $K$) such that: $K$ and $L$ can be separated by a language from $\F$
+iff automaton $\A_L$ is bounded on $K$. By decidability of limitedness problem it is enough how to construct such an automaton.
+For a word $w$ automaton $\A_L$ will output the smallest number $n$ such that there is a language
+$R = \Sigma^* w_1 \Sigma^* \ldots \Sigma^* w_k \Sigma^*$ with the property that $w \in R$, $R \cap L = \emptyset$
+and sum of length of $w_i$ equals $n$, so $\sum_{i=1}^k |w_i| = n$. First we show that if $\A_L$ will indeed compute such a number
+it will fulfill the above condition. Assume that $\A_L$ computes such a number $n$. If $\A_L$ is limited on $K$ this
+means that for every word $w \in K$ there is a short (not longer then $n$) expression which contains $w$, but does not touch $L$.
+However there is a finite number of such a short expressions. So if we take union of all of them not touching $L$ we will obtain
+a separator from $\F$, which separates $K$ and $L$. On the other hand if there is some separator $S \in \F$ it consists
+of finitely many expressions of the above form, such that every one does not touch $L$ and every word from $K$ belongs
+to at least one of these expressions. So if we take $n$ to be maximal size among these expressions forming $S$ we
+know that $\A_L$ outputs at most $n$ on every word from $K$ (so it is limited).
+
+It therefore suffices to show how to construct $\A_L$ computing such a number $n$.
+$\A_L$ will guess sign by sign the optimal expression, from the left to the right.
+For every letter of the input word it will choose between two options: either we add a new letter to the constructed
+expression (this will be costly) or we do not add and the input letter is consumed by current $\Sigma^*$ in the expression.
+All the time automaton has to remember which states of DFA of $L$ can be reached by words belonging to currently constructed
+expressions. So there should be at least $2^{\text{size of DFA of $L$}}$ states of $\A_L$. Moreover $\A_L$ has to know whether
+in the expression we currently have a letter at the end of $\Sigma^*$, because in this second option it can process
+input letter without addition $\Sigma^*$ and in the second not. This is all what $\A_L$ does, it finishes the proof.
+}
+
+
+
+\exercise{zad:04-02}{
+Show that it is decidable if a regular language is of star height one, i.e.~it can be defined by a regular expression that uses Kleene star, maybe multiple times, but does not nest it.
+}
+{
+}
+
+

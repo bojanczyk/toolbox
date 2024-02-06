@@ -1,0 +1,229 @@
+In this chapter, we talk about transducers, i.e.~automata that input words and output words. We cover three families  of transducers as shown below:  \mypic{92}
+\section{Sequential   functions}
+Recall the definition of a \emph{nondeterministic finite automaton with output} from Definition~\ref{def:nfa-with-output}. This is an \nfa  where every transition is labelled by a  (possibly empty) \emph{output word} over a designated output alphabet, and every final state is labelled by a (possibly empty)  \emph{end-of-input word}, also over the output alphabet. Here is an example:
+\mypic{114} 
+ The output of a run is obtained by concatenating the output words of all transitions used, followed by the end-of-input word of the last state used. The semantics of the automaton is defined to be the function which maps an input word to the multiset of words over the output alphabet that are produced by accepting runs (if the same output is produced by $n$ different accepting runs, then it appears $n$ times in the output multiset).
+ 
+  The automaton in the picture above has the following outputs: if the input word is empty, then the output multiset is empty; if the input word is nonempty, then the automaton produces exactly one output (i.e.~a multiset with one word) which is obtained from the input by deleting the first letter, doubling the other letters, and appending $b$ to the end.
+
+ Define a \emph{\dfa with output} to be the special case of an \nfa with output where: (a) the transition relation is a deterministic, i.e.~for every state there is a unique outgoing transition for each input letter; and (b) all states are final. Under these assumptions, the automaton produces exactly one output for every input, and therefore its  semantics can be viewed as a function from words over the input alphabet to words over the output alphabet. Any function obtained this way is called  a \emph{(left-to-right) sequential function}\footnote{ The name sequential is used for  at least four transducer models in the literature, starting with the original transducer models described by Shannon~\cite[Section 8]{shannon1948mathematical} and later developed by  Moore~\cite{Moore:gu}
+  and Mealy~\cite{Mealy:1955hu}. Both the Moore and Mealy models -- which are two non-equivalent models of letter-to-letter transducers -- were called sequential by their authors. In those days, sequential seems to have been a synonym for ``recognised by an automaton''. Then, Ginsburg introduced a model, called submachines, that could produce  words (and not just letters) in transitions~\cite{Ginsburg:1960ca}. Soon Ginsburg's model started to be called sequential, see e.g.~\cite[p.~298]{Eilenberg:1974vl}. Then,  Sch\"utzenberger extended submachines with end-of-input words~\cite{Schutzenberger:1977ck}. Now  it is Sch\"utzenberger's model -- originally called subsequential -- that is  being called sequential, e.g.~\cite{Filiot:2016iw}, and this is the convention that we adopt here.   }
+ .  Here is  an example: \mypic{46}
+ The transducer above erases $a$'s at even-numbered positions, and appends $\#$ or nothing to the output, depending on the parity of the input length.
+Other examples of  left-to-right sequential functions  include: ``erase all appearances of letter $a$'' or ``erase all appearances of letter $a$ at even-numbered input positions''.
+
+  Define a \emph{right-to-left sequential function} symmetrically: the syntax is the same, except that in the semantics, the input letters are read from right to left, and the end-of-input word is produced after reading the leftmost position. The function ``identity if the input ends with $a$, otherwise empty output'' is a right-to-left sequential function but not a left-to-right sequential function.
+
+
+ 
+
+\section{Rational functions} We now move to a richer class of functions from words to words, called the \emph{rational functions}\footnote{The name rational comes from Eilenberg. Eilenberg introduced rational subsets of any monoid~\cite[Chapter VII]{Eilenberg:1974vl}, which covers the special case of rational relations~\cite[Chapter IX]{Eilenberg:1974vl} defined  as rational subsets of monoids of the form~$\Sigma^* \times \Gamma^*$, which in turn covers the special case of \emph{rational functions} which are functional rational relations. }.  This class admits several equivalent definitions; we give five.  Another advantage is that the class is symmetric, i.e.~there is no need to define ``right-to-left rational functions''. We begin with two definitions that use \nfa's with output.
+
+\paragraph*{Functional and unambiguous \nfa's with output.}
+We say that  an  \nfa with output  is \emph{functional} if for every input word, the output multiset contains exactly one word, but possibly with multiplicities.  In other words,  there might be several accepting runs, but all accepting runs produce the same output word, and there is always at least one accepting run. 
+We say that an \nfa with output  is \emph{unambiguous} if for every input word, the output multiset contains exactly one word, used exactly one time.   In other words, for every input there is exactly one accepting run. Functional, and therefore also unambiguous,  \nfa's with output can be viewed as recognising functions from words to words, by mapping an input word to the unique output word  in the output multiset. Functional \nfa's with output are essentially the same as the original definition of rational functions given by Eilenberg in~\cite[Chapter IX]{Eilenberg:1974vl}.
+
+We will later show that -- when viewed as recognisers of functions from words to words (without multiplicities of outputs) --  functional and unambiguous automata have the same expressive power, i.e.~nothing is gained by using functional but possibly ambiguous \nfa's with output. 
+
+%\begin{example}
+%The following unambiguous \nfa with output realises the function "identity if the last letter is $a$, otherwise erase the entire word".
+%\mypic{88}
+%	\end{example}
+
+\paragraph*{Lookahead \dfa with output.}
+A \emph{lookahead \nfa with output} is a model that extends an \nfa with output as follows: instead of pairs (input letter, word over the output alphabet), the transitions are pairs (regular language over the input alphabet,  word over the output alphabet). A transition  labelled by a pair $(L,w)$ can be applied if the unread part of the input belongs to $L$; the effect of using such transition is that $w$ gets added to the output and one input letter is consumed. Here is a picture of a run:
+\mypicc{52} 
+ A \emph{lookahead \dfa with output} is the special case where (a)  for every state, the regular languages labelling outgoing transitions form a partition of all nonempty words; and (b) every state is final.
+
+
+\begin{example}
+The following lookahead \dfa with output swaps the first and last letters: \mypic{115}
+\end{example}
+
+
+\paragraph*{Eilenberg bimachine.} We now present Eilenberg bimachines, which are essentially another syntax for lookahead \dfa with output. An \emph{Eilenberg bimachine}~\cite[Chapter XI.7]{Eilenberg:1974vl} consists of two finite automata $\Aa, \Bb$ over the input alphabet -- with $\Aa$ left-to-right deterministic and $\Bb$  right-to-left  deterministic --  as well as an output function of type
+\begin{align*}
+\text{states of $\Aa$} \times \text{input alphabet} \times \text{states of $\Bb$} \quad \to \quad (\text{output alphabet})^*.
+\end{align*}
+In the automata $\Aa,\Bb$ the final states are irrelevant and can be omitted from the syntax.
+The semantics of the bimachine is defined as follows. Given a nonempty input word,  define for each position in the input word an output word as described in the following picture: \mypicc{53}
+The output of the bimachine is defined to be the concatenation of the output words, in the order inherited from the input positions.  To deal with empty inputs, an Eilenberg bimachine is equipped with an designated output word that is used for the empty input.
+
+
+\paragraph*{Equivalence of the models.} The following theorem shows that all  the models described above are equivalent. We use the name \emph{rational function} for a word-to-word function that is defined by any one of the  equivalent models in the theorem. 
+  \begin{theorem}\label{thm:rational-functions}
+The following models are equivalent, in terms of the functions from words to words that they define:
+\begin{enumerate}
+	\item functional \nfa with output;
+\item  lookahead \dfa with output;
+ \item  unambiguous \nfa with output.
+ \item  Eilenberg bimachines.
+ \item compositions of right-to-left sequential functions with  left-to-right sequential functions.
+\end{enumerate}	
+\end{theorem}
+
+\begin{proof}[Proof sketch.]\ 
+\begin{itemize}
+	\item[1 $\subseteq$ 2] Consider a functional \nfa with output $\Aa$. We define an equivalent  lookahead \dfa as follows. The lookahead \dfa computes some run of the functional \nfa that can be extended to an accepting run. Each transition is chosen using the lookahead, to determine if it can be extended to an accepting run.  If more than one transition can be chosen, some arbitrary tie-breaking mechanism is used.
+\item[2 $\subseteq$ 3] Consider some  lookahead \dfa with output $\Aa$. We define an equivalent Eilenberg bimachine as follows.  Let $\Bb$ be a   right-to-left \dfa (without output) that simultaneously recognises all the languages which are used in the transitions of $\Aa$, i.e.~the lookahead languages. The simulating \nfa with output guesses the runs of these two automata (the run for $\Bb$ is right-to-left, and the run for $\Aa$ is left-to-right, and depends on the run of $\Bb$). This guess is unambiguous, because the automata $\Aa$ and $\Bb$ are unambiguous.
+\item[3 $\subseteq$ 4] Consider an unambiguous \nfa with output $\Aa$. We define an equivalent  Eilenberg bimachine as follows.  The left-to-right automaton is a left-to-right powerset construction applied to states of $\Aa$, i.e.~its states are sets of states in $\Aa$ and the transition function is defined by
+\begin{align*}
+P \cdot a  = \set{ q : \text{the automaton $\Aa$ has a transition $p \stackrel {a/w} \to q
+$ for some $p \in P$ }}	.
+\end{align*}
+The right-to-left automaton is defined symmetrically, i.e.~its transition function is defined by
+\begin{align*}
+a \cdot P   = \set{ p : \text{the automaton $\Aa$ has a transition $p \stackrel {a/w} \to q
+$ for some $q  \in P$ }}	
+\end{align*}
+The output function maps a triple $(P,a,Q)$ to the unique output  word $w$ such that the automaton has a transition
+\begin{align*}
+p \stackrel {a/w} \to q \qquad p \in P, q \in Q.
+\end{align*}
+This function is well defined by the assumption that $\Aa$ is unambiguous.
+\item[4 $\subseteq$ 1] Consider an Eilenberg bimachine $\Aa$. We define an equivalent functional  -- in fact, unambiguous -- \nfa with output as follows. The states of the simulating automaton are pairs (state of the left-to-right automaton in $\Aa$, state of the right-to-left automaton $\Aa$). The transition relation is defined by
+\begin{align*}
+(q,a p) \stackrel {a/w} \to (q a, p)	
+\end{align*}
+$w$ is the output word in the bimachine that is associated to the triple $(q,a,p)$. This automaton is unambiguous by the determinism assumptions in the definition of a bimachine.
+\item[2 $\subseteq$ 5] A right-to-left sequential function can label the input word with states of right-to-left automata recognising the lookahead, and a left-to-right  sequential function can then simulate the \dfa with lookahead.
+\item[5 $\subseteq$ 3] Functional \nfa with output are closed under compositions and  generalise both left-to-right and right-to-left sequential functions.
+\end{itemize}	
+
+\end{proof}
+
+
+
+\section{Deterministic two-way transducers}
+We now turn to the most powerful class of transducers discussed in this chapter, namely \emph{deterministic two-way transducers}. In the next chapter, we will present an equivalent one-way model, which uses registers to store parts of the output.
+
+\begin{definition}
+	A \emph{deterministic two-way transducer} consists of:
+\begin{itemize}
+	\item finite \emph{input and output alphabets} $\Sigma$ and $\Gamma$;
+\item  a finite set of \emph{states} $Q$ with a distinguished \emph{initial} state;
+\item a transition function
+$$ \delta : Q \times (\Sigma \cup \set{\vdash,\dashv}) \to \set{\text{accept}} \cup (Q \times \set{\text{left, stay, right}} \times \Gamma^*)$$
+
+\end{itemize}
+
+\end{definition}
+The semantics of the transducer are defined similarly to Turing machines. Actually, the model is equivalent to a Turing machine where there is one read-only input tape and one append-only output tape. The automaton begins in the following configuration:
+\mypicc{54} 
+(For two-way automata, the head is over a letter, as opposed to one-way automata, where the head is between letters.) At any given moment, the automaton applies its transition function to its current state and the symbol under the head. The result of the transition might be ``accept'', in which case the automaton ends its run, or a triple (state, direction, output word), in which case the new state is assumed, the head is moved in the direction, and the output word is  appended to the output. The output letters are used in chronological order, i.e. those which are output at the beginning of the run are at the beginning of the output, regardless of the position of the head when executing the transition. The run of the automaton might fail, either by moving out of the word (i.e. moving left on the left marker or moving right on the right marker), or by entering an infinite computation that never sees a final state; such failing runs do not produce any output, and therefore the semantics of the automaton is a partial function from $\Sigma^*$ to $\Gamma^*$. 
+
+Typical things that can be done using a two-way transducer are duplication or reversing the input. 
+The main result of this chapter is that deterministic two-way automata are closed under composition.
+
+\begin{theorem}[\cite{Aho:1970is,Chytil:1977wh}]\label{thm:two-way-compose}
+	Functions recognised by deterministic two-way transducers are closed under composition.
+\end{theorem}
+ For sequential and rational functions, closure under composition is done using a straightforward product construction. For two-way automata, the construction is much more challenging, since the automata begin composed might choose to move in different directions. 
+ 
+The rest of this chapter is devoted to proving Theorem~\ref{thm:two-way-compose}.
+We do it in two steps. First, we show in Lemma~\ref{thm:two-way-seq-comp} a weaker version -- namely that deterministic two-way automata are closed under pre-composition with rational functions.  Then we bootstrap the weaker version to get composition with deterministic two-way automata.
+
+\paragraph*{Rational preprocessing.}  We begin by proving that deterministic two-way transducers can be pre-composed with rational functions.
+A different perspective on this result is that deterministic two-way transducers would not become more expressive if  equipped with ``regular lookaround'', i.e.~transitions that depend not only on the letter under the head, but also on some regular properties of the words to the left and right of the head.
+
+\begin{lemma}\label{thm:two-way-seq-comp} Deterministic two-way transducers are closed under pre-composition with rational functions. In symbols,
+\begin{align*}
+\underbrace{\twofun}_{\substack{\text{functions recognised by} \\ \text{deterministic two-way automata}}}  = \qquad  \twofun \qquad \circ  \underbrace{\ratfun}_{\text{rational functions}}\end{align*}
+\end{lemma}
+\begin{proof}
+The left-to-right inclusion is immediate, because the identity is a rational function.
+For the converse inclusion, recall the following characterisation 
+\begin{align*}
+\ratfun = \underbrace{\seqfun}_{\substack{\text{left-to-right}\\ \text{sequential functions}}} \circ \underbrace{\seqfunrev}_{\substack{\text{right-to-left}\\ \text{sequential functions}}}
+\end{align*}
+from Theorem~\ref{thm:rational-functions}. By the above, to prove the theorem it is enough to show  
+	\begin{align*}
+\twofun \supseteq \twofun \circ \seqfun \qquad \twofun \supseteq \twofun \circ \seqfunrev.
+\end{align*}
+By symmetry of two-way automata, it is enough to prove the first inclusion. Summing up, it suffices to show that if $f$ is left-to-right sequential  and $g$ is recognised by a deterministic two-way transducer, as in the following diagram,
+\begin{align*}
+ \xymatrix@C=4cm{\Sigma^* \ar[r]^{\text{left-to-right sequential $f$}} \ar[dr]_{f \circ g} & \Gamma^* \ar[d]^{\text{two-way $g$}} \\ & \Delta^*}
+\end{align*}
+then the composition $f \circ g$ is also recognised by a deterministic two-way automaton. The difficulty is the  machines for $f$ and $g$ have different types of movement. 
+
+	The idea for the proof comes from Hopcroft and Ullman~\cite[Lemma 3]{Ullman:2013ip}. To simplify notation, we assume that $f$ is letter-to-letter, i.e.~each transition of the underlying \dfa with output produces exactly one output letter, and there are no end-of-input words.  The proof for the general case -- without  the letter-to-letter assumption -- can be easily inferred from the special case.
+	
+Suppose that the two-way automaton recognising $g$ is in state $p$ over  the $i$-th position of its input (which is the output of $f$), like in the following picture: 
+	\mypic{87}
+ 	Then the simulating two-way  automaton for the composition $g \circ f$ has its head over the $i$-th position of the input word (which is the input of $f$), and knows the states $p$ and $q$ described in the picture above.
+	The question is how to maintain this information, especially when the simulated two-way automaton $g$ wants to move its head to the left.
+The key insight is to consider the graph which describes the states of $f$ and how they are updated by the transition function. This graph looks likes this:
+\mypic{97}
+The vertices of the graph are configurations of $f$, i.e. pairs (state of $f$, column between positions in the word), and the edges correspond to transitions of the automaton. Each edge is labelled by an output letter. We number the columns beginning with 1. Because $f$ is deterministic, the graph is a forest.
+
+Define $q_i$ to be the state of $f$  in the $i$-th column, i.e. after reading the first $i-1$ letters of the input word. The simulating  two-way automaton  uses the state $q_{i}$ to get the $i$-th letter in the output $f(w)$. Suppose that the head of the simulating two-way automaton is over some position $i$ in the input word, and the state $q_{i}$ of the oracle is known, as indicated by a red circle in the following picture:
+\mypic{98}
+
+We show below how to maintain the state of $f$  when simulating  one transition of the two-way automaton $g$. If the transition of the two-way automaton $g$ does not move the head, or moves it to the right, there is no problem, since the transition function of $f$ can be simply applied to the known state $q_i$.
+
+The issue is when the simulated two-way automaton $f$ wants to move the head to the left, and we need to compute the state $q_{i-1}$. 
+
+Here is the solution. In terms of the forest in the pictures above, we want to determine the unique child of the red node which has the initial configuration in its subtree. To find this unique child, we do the following.
+We start by moving the head one step to the left, which identifies all possible candidates for the predecessor configurations. Here is the picture, with the candidates being coloured yellow:  
+\mypic{99} 
+
+
+If there is only one yellow configuration, i.e. only one candidate for the predecessor, then we are done. The more interesting case is when there is more than one yellow configuration. In this case, we keep moving to the left, and use green to colour all descendants of the yellow configuration (and therefore of the red configuration as well). For each green configuration we remember which of the yellow configurations is its ancestor.  Two cases may happen. 
+
+\begin{enumerate}
+	\item We might reach a column where all green configurations are descendants of the same  yellow configuration, as in this picture: \mypic{100}
+
+
+
+
+
+In this case, the unique yellow configuration is the one that we want to compute. The question is how to return to this unique configuration? The solution is this: suppose that we stopped in column $i$, i.e.~all green configurations in column $i$ are descendants of the same yellow configuration, but this is not true for column $i+1$. We store  in our memory the state of the unique yellow configuration that is the ancestor of all green configurations in column $i$. Then we start moving to the right, storing in each column that states reachable from the green configurations in column $i+1$. We stop when this set becomes a singleton -- this happens exactly when we reach the column with the red node. Then we can move one step to the left and use our stored yellow state to determine the predecessor configuration of the red one.
+\item  The remaining case is when we reach the first column at the beginning of the input. Here we do the same trick to return to the red configuration, and we can keep in our state which branch of the subtree corresponds to the computation of the past oracle. 
+
+\end{enumerate}
+
+
+\end{proof}
+
+\paragraph*{Closure under composition.} Using Lemma~\ref{thm:two-way-seq-comp} on pre-compositions with rational functions, we  complete the proof of Theorem~\ref{thm:two-way-compose} on composition closure  of deterministic two-way transducers. For our proof, it is more convenient to use a definition -- clearly equivalent in terms of expressive power -- of two-way transducers where the initial configuration is  (initial state, end of input marker $\dashv$). 
+
+ Fix  two deterministic two-way transducers  
+\begin{align*}
+  \xymatrix{\Sigma^* \ar[r]^{\blue f} & \blue \Gamma^* \ar[r]^{\red g} & \red \Delta^*}.
+\end{align*}
+We use the following colour coding.
+The  first  alphabet $\Sigma$  is written in black.  \blue{Blue} is used for the states and output alphabet  of  $\blue f$.  \red{Red} is for the states and output alphabet  of $\red g$.  Our goal is to give a deterministic two-way transducer which recognises the composition $\red g \circ \blue f$.
+
+We begin with a naive construction that will not work. Take some input word $w \in \Sigma^*$, and consider the configuration graph of $\blue f$ on this input word, which looks like this:
+\mypicc{28}
+Vertices of the graph -- the blue dots -- are pairs (state, position in $w$ extended with end markers), and the edges correspond to transitions. The transitions are labelled by output words from the intermediate alphabet $\blue \Gamma$. We 
+can represent the configuration graph as a labelling of the input word, with arrows stored in the positions where they originate, and the descriptions of the end markers stored in the adjacent input positions.
+
+The natural construction for the composition $\red g \circ \blue f$ would be to have an automaton which stores a state of $\red g$ and a pointer to one of the letters from $\blue \Gamma$ that are in the  label of an edge in the configuration graph, as in the following picture:
+\mypicc{71}
+The problem with this construction is that a vertex in the configuration graph might have several incoming edges. For example, suppose that in the situation from the above picture, the automaton $\red g$ decides to move its head to the  left and change the state to~$\red p$. Then the automaton for the composition $\red g \circ \blue f$ would not know which of the following two choices should be made:
+\mypicc{72}
+
+
+The solution -- and also the reason why we use rational preprocessing from Lemma~\ref{thm:two-way-seq-comp} --  is to restrict the configuration graph of $\blue f$ to edges that are reachable from the initial configuration.
+
+\begin{lemma}\label{lem:two-way-reachable}
+The following function is rational. The input is  a configuration graph of $\blue f$, like this:
+  \mypicc{55}
+The output is the same graph, but only with those edges that are  reachable from the initial configuration, like this:
+  \mypicc{30}
+\end{lemma}
+\begin{proof} 
+We assume that a configuration graph is represented as word   where each letter represents the outgoing transitions from one column (i.e.~position in the input word with end markers). Here is a picture of a letter
+\mypicc{50}
+For this claim,  it is convenient to use an Eilenberg bimachine as the representation of rational transducers. Given a position $i$ in a configuration graph, the bimachine generates the following information:
+\mypicc{51}
+The information can be generated by deterministic automata, as required by the definition of an Eilenberg bimachine, using the standard conversion of two-way automata (without output) to one-way automata.  
+Based on this information and the label of the position $i$, one can determine which states in position $i$ are reachable from the initial configuration. In its output, the bimachine only leaves edges that originate from reachable states. 
+\end{proof}
+
+By Lemma~\ref{thm:two-way-seq-comp}, deterministic two-way transducers are closed under rational preprocessing, and by Lemma~\ref{lem:two-way-reachable} a rational function can restrict a configuration graph to reachable configurations. Therefore, 
+ in order to find a deterministic two-way transducer for the composition $\red g \circ \blue f$, it suffices to give a deterministic two-way transducer which inputs configuration graph of $\blue f$ restricted to reachable configurations, like this:
+\mypicc{30}
+and outputs the value of $\red g$ on the labelling of the unique path from the starting configuration  to the  accepting configuration. Since the blue nodes have indegree at most one, this can be done using the naive construction described before Lemma~\ref{lem:two-way-reachable}.
+

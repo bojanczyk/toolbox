@@ -1,0 +1,326 @@
+
+\newcommand{\definablereal}{\mathbb F}
+
+In this chapter, we show that one can decide if a polynomial grammar -- a type of grammar that generates  numbers -- has its language contained in $\set{0}$. The key tool is the Hilbert Basis Theorem.
+The application of the Hilbert Basis Theorem to problems in formal language theory dates back at least to the solution of the Ehrenfeucht Conjecture by Albert and Lawrence~\cite{Albert:1985eu}. The presentation here is inspired by the more recent results from~\cite{Seidl:2015ik} and~\cite{Benedikt:2017eq}.
+
+
+\paragraph*{Definable reals.}
+As our notion of ``numbers'', we use \emph{definable reals}, which are those reals that can be defined in the first-order theory of the reals. More formally, $a$ is definable real if and only if there is formula of first-order logic $\varphi(x)$ with one free variable that uses $+,\times,-,0,1,<$ and such that $a$ is the unique real number which satisfies $\varphi(x)$. 
+
+For example, the formula
+\begin{align*}
+x^2 = 2 \land x > 0
+\end{align*}
+is true only in  $\sqrt 2$, and hence $\sqrt 2$ is a definable real. It is easy to see that the definable reals are a field -- i.e.~they are closed under addition, multiplication and inverses. We write $\definablereal$ for the definable reals. 
+
+%\begin{lemma}\label{lem:algebraic}
+%  definable reals can be represented in a finite way so that  multiplication and addition can be computed.
+%\end{lemma}
+%\begin{proof}We present a short proof, which is far from optimal, but uses the first-order theory of the  field of real numbers
+%\begin{align*}
+%(\mathbb R, + , \cdot , 0 ,1).
+%\end{align*}
+%that was shown decidable in Section~\ref{sec:tarski}. As discussed in Example~\ref{ex:complex}, the field of complex numbers has a decidable first-order theory. This result remains true if we add a unary relation ``$x$ is a real number'' which selects numbers whose imaginary part is zero.  Using this structure (complex numbers with a relation selecting the reals), we show below that each  definable real is definable, i.e.~there is a  first-order formula with one free variable that is true only for the given  definable real.
+%
+%The imaginary number $i$  is definable as the square root of $-1$. Since definable numbers are closed under addition, multiplication and division, it follows that  every \emph{Gaussian rational}  (a complex number where both the real and imaginary parts are rational numbers) is definable. To define an arbitrary definable real $a$, we give a univariate polynomial with rational coefficients where $a$ is one of the finitely many roots, a Gaussian rational $b$, and a rational $\epsilon > 0$ such that $a$ is the only root of $p$ which is at distance at most $\epsilon$ from $b$. (To talk about distance at most $\epsilon$ it is convenient to have the unary relation selecting the reals.) 
+%
+%We represent an definable real by any formula which defines it (and therefore our representation is one-to-many, i.e.~one definable real can have many representations, although a one-to-one representation can also be obtained). Given two representations, one can check if they represent the same number, by writing a suitable formula over the real numbers.  The ring operations are clearly computable under this representation, even appealing to the decidability of the  theory of the field of reals.
+%\end{proof}
+
+An \emph{algebraic number} is defined to be a complex number that is a root of some nonzero polynomial in $\Int[x]$, i.e.~a complex root of a nonzero univariate polynomial with integer coefficients. The following lemma shows that the definable reals are exactly the algebraic numbers that are also real (i.e.~have no imaginary part).
+\begin{lemma}\label{lem:}
+A real number is a definable real if and only if it is a root of  some  nonzero polynomial in $\Int[x]$. 
+\end{lemma}
+\begin{proof}
+For the right-to-left implication, we observe that all roots of such a polynomial $p$ are definable, the formulas being ``first real root of $p$'', ``second real root of $p$'', etc. Note how we use the order on the reals here.
+
+For the left-to-right implication, we use Theorem~\ref{thm:tarski}, which says that if $a$ is definable, then it is definable by a quantifier-free formula $\varphi(x)$. Such a formula is a finite Boolean combination of inequalities $p(x) > 0$ or $p(x) = 0$, where each $p \in \Int[x]$. If $\varphi(x)$ is true for a unique real $a$, then $a$ has to be a root of one of the polynomials appearing in $\varphi(x)$, since otherwise there would be some other solution to $\varphi(x)$ in a sufficiently small neighbourhood of $a$.
+\end{proof}
+
+
+Why do we use definable reals in this section?
+What about other fields or rings, e.g.~the rings of reals, complex numbers, rationals or 
+integers? None of these are going to work for us. The reals and complex numbers are uncountable, so they cannot be represented. Integers can be easily represented, but they raise another problem: they are not algebraically closed, and what is more, it is undecidable if a polynomial (with integer coefficients, and possibly more than one variable) has a root which uses  only integers --  this is the famous undecidability of  Hilbert's 10th problem, see~\cite{Poonen:2008wc} for a brief history. In our approach, we  need to find roots of polynomials, so the undecidability of Hilbert's 10th problem  rules out the integers as a candidate for our ring.  Similar problems arise with the rational numbers -- it is unknown if the rational version of Hilbert's 10th problem is decidable, see~\cite[p.~348]{Poonen:2008wc}.
+
+
+\paragraph*{Polynomial grammars.} 
+When talking about  polynomials, we mean polynomials where  the coefficients are definable reals.
+ In the definitions below, it will be  convenient to use polynomial functions from vectors to vectors. Define a \emph{polynomial function} to be a function of the form
+\begin{align*}
+  p : \definablereal^n \to \definablereal^k \qquad \text{for }n,k \in \set{0,1,2,\ldots}
+\end{align*}
+which is given by $k$ polynomials representing the coordinates of the output vector, each one with $n$ variables representing the coordinates of the input vector. 
+
+
+A polynomial grammar is a variant of a context free grammar. It generates  definable reals (as opposed to words) and  uses polynomial functions in the rules (as opposed to concatenation). Also, nonterminals are allowed to generate tuples of definable reals, although we require the starting nonterminal to generate only individual definable reals (this restriction is not important).
+\begin{definition}[Polynomial grammar]
+	A \emph{polynomial grammar} consists of 
+	\begin{itemize}
+		\item a set $\Xx$ of nonterminals, each one with an assigned \emph{dimension} in $\set{1,2,\ldots}$;
+		\item a designated starting nonterminal of dimension 1;
+		\item a finite set of productions of the form
+	\begin{align*}
+	X \leftarrow p(X_1,\ldots,X_k)
+\end{align*}
+where  $k \in \set{0,1,\ldots}$,  $X_1,\ldots,X_k,X$ are nonterminals, and
+\mypic{52} is a polynomial function.
+	\end{itemize}
+\end{definition}
+If a nonterminal has dimension $n$, then it   generates a set of $n$-tuples of definable reals, which  is defined as follows by induction. (The language generated by the grammar is  defined to be the subset generated by its starting nonterminal.) Suppose that
+\begin{align*}
+  	X \leftarrow p(X_1,\ldots,X_k)
+\end{align*}
+is a production and we already know that vectors $v_1,\ldots,v_k$ are generated by the terminals $X_1,\ldots,X_k$ respectively. Then the vector $p(v_1,\ldots,v_k)$ is generated by nonterminal $X$.  The induction base is the  special case of $k=0$, where the polynomial $p$ is a constant.  
+
+In all of our examples, the rules in the grammars will only use positive integers, and therefore the grammars will only generate tuples of positive integers. The fact that the grammars are allowed to use definable reals is  an artefact of the method that we use to solve the grammars, and does not come from any desire to model definable reals.
+
+\begin{example}
+	This grammar (there is only the starting nonterminal, which has dimension one) generates all odd natural numbers
+	\begin{align*}
+  X \leftarrow 1 \qquad X \leftarrow X+2.
+\end{align*}
+If we replace $X+2$ by $X \times 2$, then we get the powers of two. The following grammar generates numbers of the form $2^{2^n}$:
+	\begin{align*}
+  X \leftarrow 2 \qquad X \leftarrow X^2.
+\end{align*}
+We can also generate  factorials. Apart from the starting nonterminal $X$, we have a nonterminal $Y$ of dimension two which generates pairs of the form $(n,n!)$.  The crucial rule is this:
+\begin{align*}
+  Y \leftarrow p(Y) \qquad \mbox{where $p$ is defined by }(a,b) \mapsto (a+1,(a+1) \cdot b).
+\end{align*}
+The remaining rules are $Y \leftarrow (1,1)$ and $X \leftarrow \pi_1(Y)$ where $\pi_1$ is defined by $(a,b) \mapsto a$.
+\end{example}
+
+As usual, one can adopt an alternative fix-point view on grammars. We present this view since it will be used in the proof of Theorem~\ref{thm:decidable-zeroness}.
+Define a \emph{solution} to  a grammar to be a function $\eta$ which associates to  each nonterminal $X$ a set of vectors of definable reals of same dimension as $X$, and 
+which satisfies all of the productions in the sense that 
+\begin{align*}
+  \underbrace{X \leftarrow p(X_1,\ldots,X_k)}_{\text{is a production}} \qquad \mbox{implies} \qquad \eta(X) \supseteq p(\eta(X_1) \times \cdots \times(\eta(X_k))
+\end{align*}
+It is not difficult to see that the function which maps a nonterminal to the set of vectors generated by it 
+is a solution, and it is the least solution with respect to coordinate-wise inclusion.
+
+This chapter shows the following theorem.
+\begin{theorem}\label{thm:decidable-zeroness}
+One can decide if the language of a polynomial grammar is contained in~$\set{0}$. 
+\end{theorem}
+
+The nonzeroness problem mentioned in the above theorem is clearly semi-decidable: one can  enumerate all derivations of the grammar, and stop when a derivation is found that generates a nonzero number. The interesting part of the theorem is that the problem is also co-semi-decidable, i.e.~one can find a  finite witness proving that the generated language is contained in $\set{0}$. For this, we use the Hilbert Basis Theorem.
+
+
+
+\paragraph*{Hilbert's Basis Theorem.} Let $X$ be a set of variables.  Define an \emph{ideal} to be a set
+$  I \subseteq \definablereal[X]$ 
+with the following closure properties:
+\begin{align*}
+  \underbrace{p, q \in I \quad \Rightarrow \quad p+q \in I}_{\text{addition inside $I$}} \qquad \underbrace{p \in I, q \in \definablereal[X] \quad \Rightarrow \quad pq \in I}_{\text{multiplication by arbitrary polynomials}}.
+\end{align*}
+If $P \subseteq \definablereal[X]$ is a set of polynomials, then the ideal generated by $P$, denoted by $\gener P$, is the set of polynomials of the form
+\begin{align*}
+  p_1 q_1 + \cdots + p_n q_n \qquad \text{where }p_i \in P, q_i \in \definablereal[X].
+\end{align*}
+This is the inclusion-wise least ideal that contains $P$. We  now state the Hilbert Basis Theorem.
+\begin{theorem}
+	If $X$ is a finite set of variables, then every ideal in $\definablereal[X]$ is finitely generated, i.e.~of the form $\gener P$ for some finite set of polynomials. 
+\end{theorem}
+
+\paragraph*{Algebraic closure.} We say that a polynomial function $p : \definablereal^n \to \definablereal$ \emph{vanishes} on a set $X \subseteq \definablereal^n$ if $p$ is the constant zero over this set. For a fixed dimension $n$, consider the following two operations $\mathsf{pol}$ and $\mathsf{zero}$ which go from sets of vectors to sets of polynomials, and back again: \mypic{51}
+The picture above is a special case of what is known as a \emph{Galois connection}.
+Note that the operation $\mathsf{pol}$ produces only ideals. For a set of vectors $A \subseteq \definablereal^n$, define its \emph{closure} as follows:
+\begin{align*}
+  \bar A \quad \eqdef \quad \mathsf{zero}(\mathsf{pol}(A)).
+\end{align*}
+The closure operation defined above  is easily seen to be a closure operator, in the sense that it can only add elements to the set, it is monotone with respect to inclusion, and applying the closure a second time adds nothing.  
+A \emph{closed set} is defined to be any set obtained as the closure, equivalently a closed set is the vanishing set for some   ideal of polynomials.  By the Hilbert Basis Theorem,  ideals of polynomials can be represented by giving a finite basis. Therefore,  closed sets can be represented by giving a finite basis for the corresponding ideal of polynomials.
+
+
+
+\begin{example} Suppose that the dimension is $n=1$. A univariate polynomial in $\definablereal[x]$  has infinitely many zeros if and only if it is constant zero. Therefore $\mathsf{pol}(A)$ contains only the constant zero polynomial whenever $A$ is infinite. This means that the algebraic closure of any infinite set $A \subseteq \definablereal$ is the whole space $\definablereal$. On the other hand, when $A$ is finite, then there is a polynomial which vanishes exactly on the points from $A$, and therefore $\bar A = A$. For higher dimensions, an example of a closed set is the unit circle, because in this case the ideal $\mathsf{pol}(A)$ is generated by the polynomial $x^2 + y^2 = 1$.
+\end{example}
+
+
+
+
+
+
+
+
+
+
+The following lemma is the key to deciding if a grammar generates only zero.
+
+\begin{lemma}\label{lem:closed-valuation}
+  Let $\Gg$ be a polynomial grammar with nonterminals $\Xx$, and let $\eta$ be a solution (not necessarily the least solution). Then $\bar \eta$, defined by $X \in \Xx \mapsto \overline {\eta(X)}$ is also a solution.
+	\end{lemma}
+\begin{proof}
+	We first prove two inclusions, \eqref{eq:closure-polynomial} and~\eqref{eq:closure-product}, which show how closure interacts with polynomial images and Cartesian products. The first inclusion is about polynomial images:
+\begin{align}\label{eq:closure-polynomial}
+	 p(\bar A) \subseteq \bar{p(A)} \qquad \mbox{for every $A \subseteq \definablereal^n$ and polynomial $p: \definablereal^n \to \definablereal^m$}.
+\end{align}
+To prove the above inclusion, we need to show that if a polynomial vanishes on $p(A)$, then it also vanishes on $p(\bar A)$. Suppose that a polynomial $q$ vanishes on $p(A)$. This means that the polynomial $q \circ p$ vanishes on $A$, which means that $q \circ p$ also vanishes on $\bar A$, by definition of closure. Therefore $q$, vanishes on $p(\bar A)$.
+
+The second inclusion is about Cartesian products:
+\begin{align}\label{eq:closure-product}
+  \bar A \times \bar B \subseteq \bar {A \times B} \qquad \text{for every $A \subseteq \definablereal^n$ and $B \subseteq \definablereal^m$.}
+\end{align}
+We need to show that if a polynomial vanishes on $A \times B$, then it also vanishes on $\bar A \times  \bar B$. Suppose that $q$ vanishes on $A \times B$. Take some $b \in B$. The polynomial $q(\_,b)$ vanishes on $A$, and therefore it vanishes on $\bar A$ by definition of closure. Therefore,  $q$ vanishes on $\bar A \times B$. Applying the same reasoning again, we get that $q$ vanishes on $\bar A \times \bar B$, proving the inclusion~\eqref{eq:closure-product}. 
+
+We are now ready to prove the lemma. Let $\eta$ be some solution to the grammar.  Take some rule $X \leftarrow p(X_1,\ldots,X_n)$ in the grammar $\Gg$. The following shows that $\bar \eta$ is compatible with the rule, and therefore $\bar \eta$ is a solution to the grammar by arbitrary choice of the rule.
+\begin{eqnarray*}
+  p(\bar \eta (X_1),\ldots, \bar \eta (X_n)) &=& \text{by definition of $\bar \eta$} \\
+    p(\bar{ \eta (X_1)},\ldots, \bar {\eta (X_n)}) &\subseteq & \text{repeated application of~\eqref{eq:closure-product}}  \\
+  p(\bar{ \eta (X_1) \times \cdots \times  \eta (X_n)}) &\subseteq & \text{by~\eqref{eq:closure-polynomial}}  \\
+  \bar{  p( \eta (X_1) \times \cdots \times  \eta (X_n))} &\subseteq & \text{because $\eta$ is solution and closure is monotone}  \\
+    \bar{  \eta(X)} &=& \text{by definition of $\bar \eta$}\\
+    \bar \eta (X)
+\end{eqnarray*}
+This completes the proof of the lemma. Note that the proof is not very specific to polynomials and definable reals, and it would work for more abstract notions of algebra, as will be  defined in Section~\ref{sec:applications-of-zeroness}.
+\end{proof}
+
+	
+We now complete the proof of Theorem~\ref{thm:decidable-zeroness}. We use two semi-algorithms, as in Chapter~\ref{sec:wqo}.  By enumerating derivations, there is  an algorithm that terminates if and only if the grammar generates some nonzero vector. We now give an algorithm that terminates if and only if the grammar generates a language contained in $\set{0}$. The algorithm simply enumerates through all  \emph{closed solutions} to the grammar, i.e.~solutions which map each nonterminal to a closed set. By Lemma~\ref{lem:closed-valuation}, the generated language is contained in $\set{0}$ if and only if there is a an assignment $\eta$ which maps nonterminals to closed sets such that:
+\begin{enumerate}
+\item $\eta$ is a solution to the grammar; and 
+	\item  $\eta$ maps the starting nonterminal to a subset of $\set{0}$.
+\end{enumerate}
+	We assume  that a closed set $A$ is represented by a finite basis of the ideal $\mathsf{pol}(A)$.
+  By Hilbert's Basis Theorem, we can enumerate candidates for $\eta$, by using finite sets of polynomials to represent closed sets. It remains show that, given $\eta$, one can check if conditions 1 and 2 above are satisfied. To do this, we use decidability of the first-order theory of the reals from Theorem~\ref{thm:tarski}, although there are more efficient algorithms that have been developed in the area computational algebraic geometry, see~\cite[Theorem 11]{Bigatti:2017cm}.
+  \begin{lemma}
+Given a set of variables $X$ and two finite   sets $P, Q \subseteq \definablereal[X]$ of polynomials, one can decide if $\mathsf{zero}(P) \subseteq \mathsf{zero}(Q)$. 
+\end{lemma}
+\begin{proof}
+The question can be formalised in first-order logic; but  there is a slightly subtle point, which needs to be explained.  Let us write 
+\begin{align*}
+  \mathsf{zero}_{\mathbb R}(P) \supseteq \mathsf{zero}_{\definablereal}(P)
+\end{align*}
+for the set of tuples of reals (respectively, definable reals) where all polynomials from $P$ vanish. Even if the coefficients of $P$ are definable reals, the two sets above are typically not the same (although they would be the same if there would be only one variable in $X$). The question in the statement of the lemma is 
+\begin{align}\label{eq:definable-containment}
+ \mathsf{zero}_{\definablereal}(P)  \subseteq \mathsf{zero}_{\definablereal}(Q)
+\end{align}
+while a call to Theorem~\ref{thm:tarski} allows us to decide the answer to the question
+\begin{align}\label{eq:real-containment}
+ \mathsf{zero}_{\mathbb R}(P)  \subseteq \mathsf{zero}_{\mathbb R}(Q).
+\end{align}
+However, the answers to the questions~\eqref{eq:definable-containment} and~\eqref{eq:real-containment} are the same. The reason is that the symmetric difference  
+\begin{align*}
+   \mathsf{zero}_{\mathbb R}(Q) \oplus   \mathsf{zero}_{\mathbb R}(Q).
+\end{align*}
+is a definable set of reals, i.e.~it can be defined in first-order logic. Every definable set of reals contains at least one definable real; which is most easily proved assuming that the definition is quantifier-free.
+\end{proof}
+
+From the above lemma, it follows that inclusion  on closed sets is decidable, and hence condition 2 is decidable.   Condition 1 boils down to testing a finite number of inclusions of the form
+  \begin{align*}
+p^{-1}(A) \supseteq A_1 \times \cdots \times A_n	
+\end{align*}
+for closed sets $A,A_1,\ldots,A_n$ and some polynomial $p$.  In Exercise~\ref{zad:hilbert-prod-inv} we show that closed sets are (effectively, using our representation) closed under products  and inverse images of polynomials, which completes the algorithm. 
+  
+  
+
+
+
+
+
+\section{Application to equivalence of register automata}
+\label{sec:applications-of-zeroness}
+In this section, we  use Theorem~\ref{thm:decidable-zeroness} to decide equivalence for automata which use registers to manipulate values in certain kinds of algebras. In this section, we use the notion of algebra from universal algebra, 
+i.e.~ an \emph{algebra} is defined to  be a set equipped with some operations. Examples include
+\begin{align*}
+  (\definablereal, + , \times) \qquad (\set{a,b}^*, \cdot).
+\end{align*}
+We adopt the convention that boldface letters like $\aalg$ and $\balg$ range over algebras, and the universe (the underlying set) of an algebra $\aalg$ is denoted by $A$.
+Define a  polynomial with variables $X$  in an algebra $\aalg$ to be a term built out of operations from the algebra, variables from $X$  and elements of the universe. Here is a picture of a polynomial with variables $\set{x,y}$ in an algebra where the universe is $\set{a,b,c}^*$ and the operations are concatenation (binary) and reverse (unary):
+\mypic{54}
+We write $\aalg[X]$ for the set of polynomials over variables $X$ in the algebra $\aalg$. Such a polynomial represents a function of type $A^X \to A$ in the natural way. We extend this notion to function of type $A^n \to A^m$ by using $m$-tuples of polynomials with $n$ variables.
+
+\begin{example}
+	If the algebra is $(\definablereal, + ,\times)$, then the polynomials are the polynomials in the usual sense, e.g.~a binary polynomial is
+	\begin{align*}
+x^2 + 3x^3 y^4  + 7.
+\end{align*}
+If we choose the algebra to be $\definablereal$ with the operations being addition and the family of scalar multiplications $\set{x \mapsto ax}_{a \in \definablereal}$, then the polynomials are exactly the affine functions.
+\end{example}
+
+\begin{definition}[Register automaton]\label{def:hilbert-register-automaton} Let $\aalg$ be an algebra.
+	The syntax of a \emph{register automaton over $\aalg$} consists of:
+	\begin{itemize}
+		\item a finite input alphabet $\Sigma$;
+		\item a finite set $R$ of registers;
+		\item a finite set $Q$ of states;
+		\item an initial configuration in $Q \times A^R$;
+		\item a transition function $  \delta : Q \times \Sigma \to Q \times  (\aalg[R])^R$;
+\item an output dimension $n$ and an \emph{output function} $F : Q \to (\aalg[R])^n$.
+	\end{itemize}
+	The semantics of the automaton is a function of type $\Sigma^* \to A^n$  defined as follows. The automaton begins in the initial configuration. After reading each letter, the configuration is updated according to
+	\begin{align*}
+  (q,v) \stackrel a \mapsto (p,f(v)) \qquad \mbox{where }\delta(q,a) = (p,f).
+\end{align*}
+If the configuration after reading the entire input is $(q,v)$, then the output of the automaton is obtained by applying $F(q)$ to $v$.
+\end{definition}
+
+\begin{example}
+	A language $L \subseteq \Sigma^*$ is regular if and only if its characteristic function $\Sigma^* \to \set{0,1}$ is recognised by a register automaton with no registers over the algebra with universe $\set{0,1}$ and no operations.
+\end{example}
+
+\begin{example}
+Let $\Sigma$ be a finite alphabet. Here is a register automaton over the algebra $(\Sigma^*,\cdot)$ which implements the reverse function $\Sigma^* \to \Sigma^*$. The automaton has one register, call it $x$ and one state. When it reads a letter $a \in \Sigma$, it executes the register update given by the polynomial $a \cdot x$. The output function is the identity. 
+\end{example}
+
+\begin{example}\label{ex:register-automaton-on-strings}
+	Consider an algebra $\aalg$ where the universe is the set of trees (viewed as directed graphs, with edges directed away from the root), and which has one binary operation 
+	depicted as follows:
+	\mypic{53}
+	It is not difficult to write a register automaton over the algebra $\aalg$, with input alphabet $\set a$, which maps a word $a^n$ to a balanced binary tree of depth $n$.
+\end{example}
+
+The following result is a direct corollary of Theorem~\ref{thm:decidable-zeroness}. The result was first shown in~\cite[Theorem 4]{Benedikt:2017eq}, were the proof was also based on the Hilbert Basis Theorem. 
+
+\begin{theorem}\label{thm:decidable-equivalence}
+	The  following problem is decidable:
+	\begin{itemize}
+		\item {\bf Input.} Two functions $ \Sigma^* \to \definablereal^n$ given by register automata over $(\definablereal,+,\times)$;
+		\item {\bf Question.} Are the functions equal?
+	\end{itemize} 
+\end{theorem}
+The above theorem generalises Theorem~\ref{thm:decidable-equivalence-weighted}, because weighted automata can be viewed as a special case of register automata over $(\definablereal,+,\times)$ where only linear maps are allowed as the register updates, instead of arbitrary polynomials, as allowed in Theorem~\ref{thm:decidable-equivalence}.   The generalisation of Theorem~\ref{thm:decidable-equivalence-weighted} is  only in terms of decidability, since the running time of the algorithm for Theorem~\ref{thm:decidable-equivalence} is not estimated in any way, not to mention polynomial time. In fact, a lower bound of Ackermann time is given in~\cite[Theorem 1]{Benedikt:2017eq}.
+\begin{proof}
+Suppose that the input functions are $f,g$. By doing a natural product construction, we can compute a register automaton that recognises the difference function $f-g$. Therefore, the problem boils down to deciding if a function $h$, e.g.~the difference, is constant equal to zero. For this we use a grammar. Suppose that $h$ is recognised by an register automaton with states $Q$ and $n$ registers. Define a grammar where the nonterminals are 
+\begin{align*}
+ \underbrace{Q}_{\text{dimension $n$}} + \underbrace{1}_{\text{dimension 1}}.
+\end{align*}
+The starting nonterminal is 1. By copying the transitions of the automaton, we can write the rules of the grammar so that nonterminal $q$ generates exactly those tuples $\bar a \in \definablereal^n$ such that configuration $(q,\bar a)$ can be reached over some input. By using the output function of the automaton, we can ensure that the starting nonterminal produces exactly the outputs of the automaton. Therefore, the language defined by the grammar is contained in $\set{0}$ if and only if the automaton can only produce $0$, and the former is decidable by Theorem~\ref{thm:decidable-zeroness}. 
+\end{proof}
+Note that the above theorem, with the same proof, would also work for tree register automata, i.e.~a  generalisation of register automata for inputs that are trees.
+
+\paragraph*{Other algebras.} In Theorem~\ref{thm:decidable-equivalence}, we showed that equivalence is decidable for register automata over the algebra $(\definablereal,+,\times)$. From this we can infer decidability for  some other algebras, by coding them into rational numbers according to the following definition.
+
+\begin{definition}
+	Let $\aalg$ and $\balg$ be algebras. We say that $\aalg$ can be  simulated  by polynomials of   $\balg$ (no relation to polynomial time computation) if there is some dimension $n$ and an injective function
+	\begin{align*}
+  \alpha : A \to B^n
+\end{align*}
+with the following property. For every operation $f : A^m \to A$ in the algebra $\aalg$, there is a polynomial $g : B^{m \times n} \to B^n$ of $\balg$ which makes the following diagram commute
+\begin{align*}
+  \xymatrix{A^{m} \ar[d]_f \ar[r]^{(\alpha,\ldots,\alpha)} & B^{m \times n} \ar[d]^g \\
+  A \ar[r]_\alpha & B^{n}}
+\end{align*}
+\end{definition}
+It is easy to see that if $\aalg$ can be simulated by polynomials of $\balg$, then decidability of equivalence of register automata over $\balg$ implies decidability  equivalence of register automata over $\aalg$. 
+\begin{corollary}\label{cor:register-automata-equivalence} For every finite alphabet $\Sigma$, 	the equivalence problem is decidable for register automata over  the algebra $(\Sigma^*, \cdot)$.
+\end{corollary}
+\begin{proof} By Theorem~\ref{thm:decidable-equivalence}, 
+	it suffices to show that $(\Sigma^*,\cdot)$ can be simulated by polynomials of $(\definablereal,+,\times)$.
+	The proof is the same as in Lemma~\ref{lem:digit-lemma}.
+	 Assume without loss of generality that $\Sigma$ is $\set{0,\ldots,n-1}$. We use the  coding:  
+	\begin{align*}
+a_i a_{i-1} \cdots a_0 \in \Sigma^* \qquad \stackrel \alpha \mapsto \qquad   (n^i, \underbrace{a_i n^i + \cdots a_0 n^0}_{\text{input as a number in base $n$}}) \in \definablereal^2
+\end{align*}
+The unique operation of the algebra $(\Sigma^*,\cdot)$, namely string concatenation, is encoded by the polynomial
+\begin{align*}
+  ((a,b),(a',b')) \quad \mapsto \quad (a \times a', b \times a' + b')
+\end{align*}
+By the remarks after Theorem~\ref{thm:decidable-equivalence}, the decidability result would extend to tree automata over the algebra $(\Sigma^*,\cdot)$. This  yields the result that equivalence is decidable for tree-to-string transducers, as considered in~\cite{Seidl:2015ik}.
+
+\end{proof}
+
+
+

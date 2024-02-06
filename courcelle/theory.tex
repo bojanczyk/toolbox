@@ -1,0 +1,200 @@
+\label{sec:treewidth}
+In this chapter, by graphs, we mean  finite undirected graphs. We treat a graph as a logical structure, where the universe is the vertices and there is a binary edge relation, which is necessarily symmetric (for a different representation, see the exercises). 
+We  present  Courcelle's Theorem, which says that every formula of \mso on graphs can be evaluated in linear time on  graphs that have bounded treewidth.  
+  Treewidth is a graph parameter, i.e. every  graph has a some treewidth, which is a natural number. The treewidth of a graph describes the smallest width of a tree decomposition that can produce the graph. The general idea is that small width tree decompositions can be obtained for graphs that are similar to trees. Treewidth is not the only way of quantifying similarity to a tree, alternatives include cliquewidth, see~\cite[Section 2.5]{Engelfriet:2012wq} or treedepth~\cite[Chapter 6]{Nesetril:2012bv}.
+
+
+\section{Treewidth and how to compute it}
+
+%Bodlaender and Kloks  show that tree decompositions can be computed in linear time, when the width is fixed, i.e. for every $k \in \Nat$ there is a linear time algorithm which inputs a graph and outputs, if it exists, a tree decomposition of width $k$. The constant in the linear time is exponential in $k$. We will show an easier result, which is weaker in two ways: the algorithm is not linear, and the computed tree decomposition is not optimal.
+%
+%Theorem 1. For every $k \in \Nat$ there is a cubic time algorithm which inputs a graph and fails or outputs a tree decomposition of width $<3k$. The algorithm succeeds if the graph has treewidth $< k$.
+%
+%Theorem 1 is proved here. The constant in the running time is exponential in $k$.
+%
+%The second ingredient in Courcelle's theorem is that, once the tree decomposition is given,  mso formulas can be evaluated in linear time.
+%
+%Theorem 2. Let $k \in \Nat$  and let $\varphi$ be an mso formula over the vocabulary of graphs, i.e. using a binary relation $E(x,y)$.  There is a linear time algorithm which inputs a tree decomposition of width $k$ and decides if the underlying graph satisfies $\varphi$.
+%
+%Theorem 2 is proved in two steps: we introduce automata over trees and show that they are equivalent to mso and then we show that evaluating mso on a graph of bounded treewidth can be simulated by running a tree automaton over a tree decomposition. The constant in the running time is non-elementary in $\varphi$, i.e. it is more than exponential, more than doubly exponential, etc. Combining the two results above we get the following.
+%
+%Corollary (Courcelle's Theorem). Let $k \in \Nat$ and let $\varphi$ be an mso formula over the vocabulary of graphs, i.e. using a binary relation $E(x,y)$.  There is a cubic algorithm which inputs an unidrected graph and fails or answers if the graph satisfies $\varphi$. The algorithm succeeds if the graph has treewidth $\le k$.
+%
+%Note that in the algorithm above, there are three possible outcomes: fail (don't know), satisfies $\varphi$, and does not satisfy $\varphi$. Using the stronger, linear time, version of Theorem 1, we could get a linear running time for the algorithm in Courcelle's Theorem.
+
+
+
+Consider a  graph $G$. Define a \emph{tree decomposition} of $G$  to be a tree, where each node of the tree is labelled  by a set of vertices in the graph, called the \emph{bag of the node}, subject to conditions (1) and (2) depicted in the following picture:
+\mypic{4}
+In the tree decomposition, we allow nodes to have unbounded arity, i.e.~there is no requirement that each node has at most two children. The tree in the tree decomposition is unordered (i.e.~there is no ordering on the siblings), but it is rooted, i.e.~it makes sense to talk about descendants and children.
+Define the \emph{width} of a tree decomposition to be the maximal size of a bag minus one. In the picture above, the width is 2, because the maximal bag size is 3. The reason for the minus one is so that trees have treewidth one.  Another reason is that the width of a tree decomposition is the intersection between neighbouring bags (assuming the tree decomposition does not use the same bag twice, which can be assumed without loss of generality). 
+The \emph{treewidth} of a graph is the minimal width of a tree decomposition of it.  Treewidth is a fundamental concept in graph theory, which plays a prominent role in the graph minor project of Robertson and Seymour. 
+
+An alternative way of drawing tree decompositions is in the following picture:
+\mypic{75}
+
+\begin{fact}\label{fact:tw-sparse}
+	If a graph has treewidth $k$, then the number of edges in the graph is at most $k \cdot (k+1) / 2$ times the number of vertices.
+\end{fact}
+\begin{proof}
+	A tree decomposition can always be modified so that the bag of a node contains at least one vertex that is not present in the bags of its descendants. Therefore, the number of nodes in the tree decomposition is at most the number of vertices in the underlying graph. Each edge must be present in some node, and each node can have at most $k \cdot (k+1) / 2 $ edges, which proves the fact.  The bound in the fact is optimal, as witnessed by   a clique over $k+1$ vertices.
+\end{proof}
+
+
+\paragraph*{Computing a tree decomposition.}  We present  an algorithm that computes tree decompositions of approximately optimal width (at most four times worse, see below for the exact statement) and which runs in quadratic time when the treewidth is fixed. The algorithm is from Robertson and Seymour, see also~\cite[Theorem 7.18]{Cygan:2015wu}.
+\begin{theorem}\label{thm:compute-tree-decomposition}
+There is a function $f : \Nat \to \Nat$ and an algorithm which runs in time $f(k) \cdot n^2$ that approximates tree decompositions in the following sense:
+\begin{itemize}
+	\item {\bf Input}. $k$ and a graph with $n$ vertices;
+\item{\bf Output.}  A tree decomposition of the graph which has width  $<4k$, or a certificate that the graph has treewidth  $\ge k$.
+\end{itemize}
+\end{theorem}
+The algorithm from the  theorem is not optimal. The optimal algorithm, by Bodlaender~\cite{Bodlaender:1993da}, runs in linear time  instead of  quadratic  time, and  computes tree decompositions of optimal width (i.e.~$<k$ instead of $<4k$). The function $f(k)$ is exponential, and there is little hope for improvement, because the following problem is {\sc np}-complete~\cite{Arnborg:1987jy}: given $k$ and a graph, decide if the graph has treewidth at most $k$.
+The theorem gives a (prototypical) example of a an algorithm that is \emph{fixed parameter tractable}, i.e.~the input has  two parameters $k,n$ and the  running time is of the  form:\mypic{3}
+
+
+
+\vfill
+
+The algorithm   uses the following lemma on computing separators.
+Recall that a separator of vertex sets $X$ and $Y$ in a graph $G$ is a set of vertices $S$ disjoint from $X \cup Y$ such that $G-S$ does not contain any path connecting $X$ with $Y$, as in the following picture:
+\mypic{74}
+
+\begin{lemma}\label{lem:ford-fulkerson}
+Given a graph $G$ and disjoint sets of vertices $X,Y$, one can compute  a separator of minimal size in time 
+\begin{align*}
+\Oo ((\text{number of edges} + \text{number of vertices}) \cdot (\text{size of the separator})).\end{align*}
+\end{lemma}
+
+We do not prove the above lemma, it can be shown using the Ford-Fulkerson algorithm for computing maximum flow, see the discussion in~\cite[p.~198]{Cygan:2015wu}. When the treewidth is fixed, the number of edges is linear in the number of vertices, and the size of the separator is bounded by a function of $k$ (see the proof of Lemma~\ref{lem:rob-split}), and therefore the running time of the algorithm is linear.
+The main step in proving Theorem~\ref{thm:compute-tree-decomposition} is the following lemma. 
+
+
+\begin{lemma}\label{lem:rob-split}
+Let $k \in \Nat$. There is a linear time algorithm which does this:
+	\begin{itemize}
+	\item {\bf Input.} $k$ and a graph $G$ with  $\le 3k$ distinguished vertices;
+\item {\bf Output.}  A certificate that the graph has treewidth $\ge k$, or a set $S$ of  $ \le k$ vertices so that $G-S$ has at least two connected components, and  each connected component has  $\le 2k$ distinguished vertices.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+	We begin with the algorithm, and then justify why it succeeds on graphs of treewidth $<k$.  We enumerate all possible partitions of the distinguished vertices into three parts as follows
+	\mypic{103}
+	 The idea is that $S_1$ is the intersection of the separator with the distinguished vertices. The number of such partitions is exponential in $k$, but is a constant if $k$ is assumed to be fixed. For each such partition,  compute a minimal size separator $S_2$ of $X$ and $Y$ in the graph $G-S_1$, as depicted in the following picture
+	 \mypic{104}
+	  Report success if the size of $S_1 \cup S_2$ is at most $k$, and return $S_1 \cup S_2$ as the separator. This completes the algorithm. The running time is linear, because the size of the separator is fixed, and the number of edges is linear in the number of vertices by Fact~\ref{fact:tw-sparse}.
+
+We now justify that if $G$ has treewidth $<k$ then the algorithm succeeds. If the graph has treewidth $<k$, then there is a tree decomposition where all bags have size  $\le k$. Let $t$ be this tree decomposition. Choose a node $x$ of the tree decomposition so that  half or more of the distinguished vertices of $G$ appear in bags of $x$ and its descendants, but this is no longer true for any of the children of $x$. Here is a picture:
+\mypic{76}
+ Define $S$ to be the bag of $x$. The size of $S$ is  $\le k$. By choice of $x$ we know that every connected component of $G-S$ has at most half of the distinguished vertices. In particular, there must be at least two connected components, because
+ \begin{align*}
+\underbrace{3k}_{\substack{\text{distinguished}\\ \text{vertices}}} > \underbrace{k}_{\substack{\text{distinguished}\\ \text{vertices in $S$} }} + \underbrace{3k/2}_{\substack{\text{distinguished}\\ \text{vertices in each} \\ \text{connected component} }}
+\end{align*}
+
+ For each connected component of $G-S$, we count the number of distinguished nodes in that component; this is a number that is at most half of $3k$.  The following claim, when applied to the numbers of distinguished vertices in the connected components of $G-S$, shows that the connected components can be grouped into two groups, so that each group has at most $2k$ distinguished vertices, thus proving the lemma.
+ \begin{claim}
+ 	Let $n_1 \ge n_2 \ge \cdots \ge n_p$ be numbers in $\set{1,\ldots,2k}$ with sum $\le 3k$. Then
+ 	\begin{align*}
+ 		\overbrace{n_1 + \cdots + n_i}^{\text{ $\le 2k$}}  \quad \overbrace{n_{i+1} + \cdots + n_p}^{\text{ $\le 2k$}} \qquad \text{for some $i$}
+ 	\end{align*}
+ \end{claim}
+ \begin{proof}
+ Take the first $i$ such that the sum of the first $i$ elements is $\ge k$.  
+ \end{proof}
+\end{proof}
+
+
+\begin{proof}[Proof of Theorem~\ref{thm:compute-tree-decomposition}]
+We use a more detailed   statement of the algorithm, as described below. 
+\begin{itemize}
+	\item {\bf Input} $k$ and a graph with   $\le 3k$ distinguished vertices;
+\item {\bf Output.}  A certificate that the graph has treewidth $\ge k$, or a tree decomposition of the graph which has width  $<4k$ and where the root bag consists exactly of the distinguished vertices.
+\end{itemize}
+Suppose that $G$ is the graph. If there are  $< 3k$ distinguished vertices, we add some arbitrary vertices to make the set have size exactly $3k$. Apply Lemma~\ref{lem:rob-split}, computing $S,X$ and $Y$. If the input graph has treewidth $<k$ then the algorithm from the lemma must succeed. Find all connected components of the graph $G-S$, of which there are at least two. Each connected component has   $ \le 2k$ distinguished vertices. Here is a picture: \mypic{77}
+For each connected component $U$ of the graph $G-S$, define $G_U$ to be the graph induced by $U \cup S$. This graph is smaller than $G$, because $G-S$ has at least two connected components. Here are are the graphs $G_U$ for our picture above:
+\mypic{79}
+For each of the graphs $G_U$, 
+ recursively call the algorithm, with the distinguished vertices being $S$ plus the original distinguished vertices from $U$. We are allowed to do the recursive call, since $U$ has   $\le 2k$ distinguished vertices and $S$ has at $ \le k$ vertices. Combine the tree decompositions yielded by the recursive calls into a single tree as follows:
+ \mypic{78}
+ It is not difficult to check that this is a tree decomposition of $G$. The size of bags is $\le 4k$, and therefore the width of the decomposition is $< 4k$ (recall that the width was size of bags plus one). The algorithm does a linear computation, followed by recursive calls to smaller instances; and therefore its running time is quadratic. 
+\end{proof}
+
+\section{Courcelle's Theorem}
+In this section we prove Courcelle's Theorem, which says that \mso can be evaluated efficiently on graphs of bounded treewidth. The key ingredient is the following lemma, which is proved the same way as Courcelle's original result that \mso definable graph properties are recognisable, see~\cite[Theorem 4.4]{Courcelle:1990fj}.
+\begin{lemma}\label{lem:courcelle}
+	For every $k \in \Nat$ and every formula of \mso $\varphi$ on graphs, there is a linear time algorithm which does the following:
+	\begin{itemize}
+		\item {\bf Input.} A graph together with a tree decomposition of width $\le k$;
+		\item {\bf Question.} Does the graph satisfy $\varphi$?
+	\end{itemize}
+\end{lemma}
+
+The proof of the lemma is essentially this: we view the tree decomposition as a tree over a finite alphabet, convert the formula $\varphi$ into a tree automaton, and then run the tree automaton over the tree in linear time. 
+If we combine the lemma with an algorithm that computes tree decompositions, we do not need to get the tree decomposition on input.  This yields the following formulation of   Courcelle's Theorem (the algorithm for computing tree decompositions in these notes gives only a quadratic running time, for the linear time bound one needs the algorithm of Bodlaender from~\cite{Bodlaender:1993da}):
+\begin{theorem}[Courcelle's Theorem]
+	For every $k \in \Nat$ and every formula of \mso $\varphi$ on graphs, there is a linear time algorithm evaluates $\varphi$ on graphs of treewidth $\le k$.
+\end{theorem}
+
+The rest of this chapter is devoted to proving Lemma~\ref{lem:courcelle}. To this end,  we present a more algebraic way of defining treewidth, so that tree decompositions can be viewed as trees over a finite ranked alphabet.
+
+\paragraph*{The algebra of tree decompositions.} Define a \emph{sourced graph} to be a graph with some but not necessarily all vertices being assigned natural numbers. The vertices with numbers are called the \emph{sources} and the numbers are called the \emph{source names}. Each source name can be used for at most one source.  A width $k$ sourced graph is one where the source names are from $\set{0,\ldots,k}$, note that $k+1$ source names are allowed; this corresponds to bags having size $k+1$ in a width $k$ tree decomposition. A sourced graph with no sources is the same as a graph.  Here is a picture of a width 4 sourced graph, which does not use source names 0 and 3: 
+
+\mypic{5}
+
+
+The  purpose of sourced graphs is to combine them using the following  fusion operation. The fusion operation inputs two sourced graphs, and  outputs their disjoint union  with each pair of sources that have the same name being merged together into a single vertex, as in the following picture
+\mypic{7}
+Besides fusion, we also use an operation that  forgets some source names, illustrated below:
+\mypic{6}
+For $k \in \Nat$, define \emph{the algebra of width $k$ sourced graphs} to be the algebra where the universe is width $k$ sourced graphs, and which is equipped with  a binary fusion operation and a family of unary forget operations (one for every subset of source names).  Here is  a term in the algebra of width $k$  sourced graphs that generates a cycle of length 6:
+\mypic{8}
+
+
+\begin{fact}\label{fact:algebraic-treewidth}
+A graph has treewidth $k$ if and only if  (when viewed as a sourced graph without any sources) it can be generated by a term in the  algebra of width $k$ sourced graphs, starting with  constants that have at most $k+1$ vertices.	\end{fact}
+
+\begin{proof}
+We only do the top-down implication.  Consider a tree decomposition (in the standard, non-algebraic way) of width $k$. Using at top-down greedy algorithm, one can colour the vertices of the graph with colours $\set{0,\ldots,k}$ so that for each bag of the tree decomposition, all vertices in the bag have different colours. For a node $x$ of the tree decomposition, define a sourced graph as follows:
+\begin{itemize}
+	\item the graph is the subgraph induced by the union of bags of $x$ and its descendants (this is sometimes known as the \emph{cone} of node $x$);
+	\item the sources are the bag of $x$, with source names taken from the colouring.
+\end{itemize}
+By induction on the number of descendants of $x$, we show that the sourced graph corresponding to $x$ in the above sense can be generated by a term in the algebra of sourced graphs as in the statement of the fact. In the induction step, we do the following. For every child $y$ of $x$, we combine the sourced graph generated by the subtree of $y$ with the bag of $x$ as follows: 
+\mypic{81}
+% Here is a picture of the induction step:
+%\mypic{11}
+Then we fuse all of the resulting graphs, with $y$ ranging over children of $x$.	
+\end{proof}
+A term as in Fact~\ref{fact:algebraic-treewidth} can be viewed as a tree over a ranked alphabet $\Sigma_k$ where:
+\begin{itemize}
+	\item leaves are  width $k$ sourced graph with at most $k+1$ vertices;
+	\item unary nodes are forget operations for subsets $I \subseteq \set{0,\ldots,k}$;
+	\item binary nodes all have the same label ``fuse''.
+\end{itemize}
+A width $k$ tree decomposition can be converted into a corresponding tree over the above alphabet in linear time. Since the fusion operation as used in $\Sigma_k$ has arity two, the conversion produces tree decompositions with binary branching (which can break properties, like no bag being used twice). 
+By Theorem~\ref{thm:thatcher-wright}, for finite trees over alphabet $\Sigma_k$, \mso is equivalent to tree automata. Since tree automata can be evaluated in time linear in the size of the input tree (it is easier to use the bottom-up deterministic variant), it follows that \mso formulas on trees can also be evaluated in linear time. 
+ Therefore, Lemma~\ref{lem:courcelle} will follow once we prove the following lemma.
+
+\begin{lemma}
+Let $k \in \Nat$ and let $\varphi$ be an \mso formula over graphs. There is a \mso formula $\hat \varphi$ on trees over alphabet $\Sigma_k$ such that
+\begin{align*}
+	\text{$t$ satisfies $\hat \varphi$} \qquad \text{iff} \qquad \text{the graph of $t$ satisfies $\varphi$} 
+\end{align*}
+holds for every width $k$ tree decomposition, viewed as a tree over $\Sigma_k$.
+\end{lemma}
+\begin{proof}
+	Consider a tree $t$ as in the statement of the lemma.  To a node  $x$ in the tree and a source name $i \in \set{0,\ldots,k}$, there corresponds  a vertex $[x,i]$ of the graph  generated by $t$ in the natural way, as depicted in the following picture:
+	\mypic{9}
+	The encoding $(x,i) \mapsto [x,i]$ is partial, because it is undefined if the source name $i$ is not  present in the sourced graph that is generated by the subtree of $x$. It is not hard to see that for every source names $i,j \in \set{0,\ldots,k}$ the following binary relations on nodes $x,y$ of $t$ are definable in \mso:
+	\begin{itemize}
+	\item   $[x,i],[y,i]$ are both defined and equal;
+	\item  the graph has an edge from $[x,i]$ to $[y,j]$.		
+	\end{itemize}
+	 Using the above relations, one can simulate an \mso  formula $\varphi$ over the graph generated by $t$  using an \mso formula over $t$ itself.  When $\varphi$ quantifies over a set of vertices $U$, then $\hat \varphi$ quantifies over $k+1$ sets of nodes, namely:
+\begin{align*}
+\set{x : [x,0] \in U}, \ldots, \set{x : [x,k] \in U}.
+\end{align*}
+The professional terminology for the construction described above is  ``the graph generated by $t$ can be produced from $t$ using an \mso transduction'', see~\cite[Section 1.7]{Engelfriet:2012wq}.
+\end{proof}
+
+

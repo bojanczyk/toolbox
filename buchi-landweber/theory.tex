@@ -1,0 +1,214 @@
+In this chapter, we prove the Büchi-Landweber Theorem~\cite[Theorem 1]{Buchi:1969iq}, see also~\cite[Theorem 6.5]{Thomas:1997ec}, which shows how to solve games with $\omega$-regular winning conditions. These are games where two players move a token around a graph, yielding an infinite path, and the winner is decided based on some property of this path that is recognised by an automaton on $\omega$-words. 
+The Büchi-Landweber Theorem gives an algorithm for deciding the winner in such games, thus answering a question posed in~\cite{Church:1962wp} and sometimes called  ``Church's Problem''.
+
+\section{Games}
+In this chapter, we consider games played by two players (called 0 and 1), which are zero-sum, perfect information, and most importantly, of potentially infinite duration. 
+
+
+\begin{definition}[Game]
+A \emph{game} consists of 
+\begin{itemize}
+	\item a directed graph, not necessarily finite, whose vertices are called positions;
+\item  a distinguished initial position;
+\item a partition of the positions into positions controlled by player 0  and positions controlled by player 1;
+\item a labelling of edges by a finite alphabet $\Sigma$, and a \emph{winning condition}, which is a function from $\Sigma^\omega$ to the set of players $\set{0,1}$.
+\end{itemize}	
+\end{definition}
+Intuitively speaking, the winning condition inputs a sequence of labels produced in an infinite play, and says which player wins. The definition is written in a way which highlights the symmetry between the two players; this symmetry will play an important role in the analysis.
+Here is a picture.
+\mypicc{1}
+
+
+The game is played as follows. The game begins in the initial position. The player who controls the initial position chooses an outgoing edge, leading to a new position. The player who controls the new position chooses an outgoing edge, leading to a new position, and so on. If the play reaches a position with no outgoing edges (called a dead end), then the player who controls the dead end loses immediately. Otherwise, the play continues forever, and yields an infinite path and the winner is given by applying the  winning condition to the sequence of edge labels seen in the play.
+
+
+To formalise the notions in the above paragraph, one uses the concept of a strategy. A \emph{strategy} for player $i \in \set{0,1}$ is a function which inputs a history of the play so far (a path, possibly with repetitions,  from the initial position to some position controlled by player $i$), and outputs the new position (consistent with the edge relation in the graph). Given strategies for both players, call these $\sigma_0$ and $\sigma_1$, a unique play (a path in the graph from the initial position) is obtained, which is either a finite path ending in a dead end, or an infinite path. This play is called winning for player $i$ if it is finite and ends in a dead end controlled by the opposing player; or if it is infinite and winning for player $i$ according to the winning condition. A  strategy for player $i$ is defined to be winning if  for every every  strategy  of the opponent, the resulting play is winning for player $i$.
+
+\begin{example}\label{ex:winning-strategy}
+In the game from the picture above, player $0$ has a winning strategy, which is to always select the fat arrows in the following picture.
+\mypicc{4}
+	\end{example}
+
+
+
+\paragraph*{Determinacy.} A game is called \emph{determined} if one of the players has a winning strategy. Clearly it cannot be the case that both players have winning strategies. One could be tempted to think that, because of the perfect information, one of the players must have a winning strategy. However, because of the infinite duration, one can use the axiom of choice to come up with strange games where neither of the players has a winning strategy.
+
+The goal of this chapter is to show a theorem by Büchi and Landweber: if the winning condition of the game is recognised by an automaton, then the game is determined, and furthermore the winning player has a finite memory winning strategy, in the following sense.
+
+\begin{definition}[Finite memory strategy]
+	\label{def:finite-memory-strategy}
+	 Consider a game where the positions are $V$. Let $i$ be one of the players. A strategy for player $i$ with memory $M$ is given by:
+	 \begin{itemize}
+	 	\item a deterministic automaton with states $M$ and input alphabet $V$; and
+\item for every position $v \in V$ controlled by $i$, a function $f_v$ from $M$ to the neighbours of $v$.
+	 \end{itemize}
+The two ingredients above define a strategy for player $i$ in the following way: the next move chosen by player $i$ in a position $v$ is obtained by applying the function $f_{v}$ to the state of the automaton after reading the history of the play, including $v$. 
+\end{definition}
+We will apply the above definition  to games with possibly infinitely many positions, but we only care about finite memory sets $M$.
+An important special case is when the set $M$ has only one element, in which case the strategy is called  \emph{memoryless}. For a memoryless strategy, the new position chosen by the player only depends on the current position, and not on the history of the game before that. The strategy in Example~\ref{ex:winning-strategy} is memoryless.
+
+\begin{theorem}[Büchi-Landweber Theorem] Let $\Sigma$ be finite and let 
+\begin{align*}
+\win : \Sigma^\omega \to \set{0,1}	
+\end{align*}
+be $\omega$-regular, i.e.~the inverse image of $0$  (and therefore also  of $1$) is recognised by a deterministic  Muller automaton.  Then there exists a finite set $M$ such that for every game with winning condition $\win$, one of the players has a winning strategy that uses memory $M$.	
+\end{theorem}
+
+The proof of the above theorem has two parts. The first part is to identify a special case of games with $\omega$-regular winning conditions, called parity conditions, which map a sequence of numbers to the parity $\in \set{0,1}$ of the smallest number seen infinitely often.
+
+\begin{definition}[Parity condition] A parity condition is any function of the form
+\begin{align*}
+w \in I^\omega \qquad \mapsto \qquad \begin{cases}
+	0 & \text{if the smallest number appearing infinitely often in $w$ is even}\\
+	1 & \text{otherwise}
+\end{cases}	
+\end{align*}
+for some finite set $I \subseteq \Nat$.  A \emph{parity game} is a game where the winning condition is a parity condition.
+\end{definition}
+Parity games are important because not only can they be won using finite memory strategies, but even memoryless strategies are enough.
+
+\begin{theorem}[Memoryless determinacy of parity games]\label{thm:parity-memoryless}
+For every parity game, one of the players has a memoryless winning strategy.	
+\end{theorem}
+
+In fact, for edge labelled games (which is our choice) the parity condition is the only condition that admits memoryless winning strategies regardless of the graph structure of the game, among conditions that are prefix independent, see~\cite[Theorem 4]{Colcombet:2006fv}.
+
+
+The above theorem is proved in Section~\ref{sec:memoryless-determinacy}. The second step of the Büchi-Landweber theorem is a reduction to parity games. 
+ This essentially boils down to transforming deterministic Muller automata into deterministic parity automata, which are defined as follows: a parity  automaton has  a ranking function from states to numbers, and a run is considered accepting if the smallest rank appearing infinitely often is even. This is a special case of the Muller condition, but it turns out to be expressively complete in the following sense:
+
+\begin{lemma}\label{lem:muller-to-parity}
+For every deterministic Muller automaton, there is an equivalent deterministic parity automaton.
+\end{lemma}
+\begin{proof}
+The lemma can be proved in two ways. One way is to show that, by taking more care in the determinisation construction in McNaughton's Theorem, we can actually produce a parity automaton. Another way is to use  a data structure called the later appearance record~\cite{Gurevich:1982kx}. The construction is presented in the following claim.
+
+\begin{claim}
+For every finite alphabet $\Sigma$, there exists a deterministic automaton with input alphabet $\Sigma$, a totally ordered state space $Q$, and a function $$g : Q \to \powerset \Sigma$$ with the following property. For every input word, the set of letters appearing infinitely often in the input is obtained by applying $g$ to the smallest state that appears infinitely often in the run.	
+\end{claim}
+\begin{proof}The state space $Q$ consists of data structures that look like this:
+\mypic{33}
+More precisely, a state is a (possibly empty) sequence of distinct letters from $\Sigma$, with distinguished blue suffix. The initial state is the empty sequence.  After reading the first letter $a$, the state of the automaton is 
+\mypic{34}
+When that automaton reads an input letter, it moves the input letter to the end of the sequence (if it was not previously in the sequence, then it is added), and marks as blue all those positions in the sequence which were changed, as in the following picture:
+\mypic{35}
+Consider a run of this automaton over some infinite input $w \in \Sigma^\omega$. Take some blue suffix of maximal size that appears infinitely often in the run. Then the letters in this suffix are exactly those that appear in $w$ infinitely often.
+Therefore, to get the statement of the claim, we order $Q$ first by the number of white (not blue) positions, and in case of the same number of white positions, we use some arbitrary total ordering. The function $g$ returns the set of blue positions. This completes the proof of the claim.
+\end{proof}
+
+The conversion of Muller to parity is a straightforward corollary of the above lemma: one applies the above lemma to the state space of the Muller automaton, and defines the ranks according to the Muller condition. 
+\end{proof}
+
+Let us now finish the proof of the Büchi-Landweber theorem. Consider a game with an $\omega$-regular winning condition. By Lemma~\ref{lem:muller-to-parity}, there is a deterministic parity automaton which accepts exactly those sequences of edge labels where player $0$ wins. Consider a new game, call it the \emph{product game}, \label{page:product-game}   where the positions are pairs (position of the original game, state of the deterministic parity automaton). Edges in the product  game are  of the form
+\begin{align*}
+  (v,q) \stackrel b \to (w,p)
+\end{align*}
+such that $v \stackrel a \to w$ is an edge of the original game (the label of the edge is on top of the arrow),  the deterministic parity automaton goes from state $q$ to state $p$ when reading  label $a$, and $b$ is the number assigned to state $q$ by the parity condition.
+  It is not difficult to see that the following conditions are equivalent for every position $v$ of the original game and every player $i \in \set{0,1}$:
+\begin{enumerate}
+	\item player $i$ wins from position $v$ in the original game;
+\item player $i$ wins from position $(v,q)$ in the product game, where $q$ is the initial state of the deterministic parity automaton recognising $L$.
+\end{enumerate}
+
+The implication from 1 to 2 crucially uses determinism of the automaton and would fail if a nondeterministic automaton were used (under an appropriate definition of a product game). Since the product game is a parity game, Theorem~\ref{thm:parity-memoryless} says that  for every position $v$, condition 2 must hold for one of the players; furthermore, a positional strategy in the product game corresponds to a finite memory strategy in the original game, where the memory is the states of the deterministic parity automaton.
+
+This completes the proof of the Büchi-Landweber Theorem. It remains to show memoryless determinacy of parity games, which is done below.
+\section{Memoryless determinacy of parity games}
+\label{sec:memoryless-determinacy}
+In this section, we prove 
+Theorem~\ref{thm:parity-memoryless} on memoryless determinacy of parity games. The proof we use is based in~\cite{Zielonka:1998dw} and~\cite{Thomas:1997ec}.
+ Recall that in a parity game,
+ the positions are assigned numbers (called ranks from now on) from a finite set of natural numbers, and the goal of player $i$ is to ensure that for infinite plays, the minimal number appearing infinitely often has parity $i$. Our goal is to show that one of the players has a winning strategy, and furthermore this strategy is memoryless. The proof of the theorem is by induction on the number ranks used in the game. We choose the induction base to be the case when there are no ranks at all, and hence the theorem is vacuously true. For the induction step, we use the notion of attractors, which is defined below.
+
+
+
+
+
+\paragraph*{Attractors.}
+Consider a set of edges $X$ in a parity game (actually the winning condition and labelling of edges are irrelevant for the definition). For a player $i \in \set{0,1}$, we define below the $i$-attractor of $X$, which intuitively represents positions where player $i$ can force a visit to an edge from $X$. The attractor is approximated using ordinal numbers. (For a reader unfamiliar with ordinal numbers, just think of natural numbers, which are enough to treat the case of games with finitely many positions.) Define $X_0$ to be empty. For  an ordinal number $\alpha >0$, define $X_\alpha$ to be all positions which satisfy one of the conditions (A), (B) or (C) depicted below:
+\mypic{32}
+The set $X_\alpha$ grows as the ordinal number $\alpha$ grows, and therefore at some point it stabilises. If the game has finitely many positions -- or, more generally, finite outdegree -- then it stabilises after a finite number of steps and ordinals are not needed.
+This stable set is called the \emph{$i$-attractor of $X$}. Over positions in the $i$-attractor, player $i$ has a memoryless strategy which guarantees that after a finite number of steps, the game will use  an edge from $X$, or end up in a dead end owned by the opponent of player $i$. This strategy, called the attractor strategy,  is to choose the neighbour that belongs to  $X_\alpha$ with the smallest possible index $\alpha$.
+
+
+%
+%
+%\paragraph*{Induction base.} Recall that we prove memoryless determinacy by induction on the number of ranks that are used in the game. The induction base is when only one rank is used. Let $i$ be the parity of the only rank, without loss of generality we assume $i \in \set{0,1}$. This means that every infinite play is won by player $i$. This does not necessarily mean that player $i$ wins the game, because the game might end up in a dead end owned by player $i$.  Let $X$ be the  $(1-i)$-attractor of the empty set (i.e.~the attractor from the point of view of the opponent of player $i$). We claim that on positions from $X$, the opponent of player $i$ has a memoryless winning strategy, and on positions outside $X$, player $i$ has a memoryless winning strategy. For positions in $X$, the opponent of player $i$ plays the attractor strategy, which guarantees reaching a dead end position owned by player $i$ in a finite number of steps. For positions outside $X$, we make the following observation, which follows immediately from the definition of $X$:
+%\begin{itemize}
+%	\item if player $i$ owns a position outside $X$, then some outgoing edge leads to a position outside $X$; and
+%	\item if the opponent of  player $i$ owns a position outside $X$, then all outgoing edges lead to a position outside $X$.
+%\end{itemize}
+%
+%
+%It follows that if the play begins outside $X$, then player $i$ has a memoryless strategy that guarantees avoiding $X$ forever, in particular this strategy is winning.
+%
+%
+%
+%
+
+\paragraph*{Induction step.}
+Consider a parity game.  By symmetry, we assume that the  minimal rank used in the game is an even number. By shifting the ranks,  we assume that the minimal rank is  $0$.  For $i \in \set{0,1}$ define $W_i$ to be the set of positions $v$ such that if the initial position is replaced by $v$, then player $i$ has a memoryless winning strategy. Define $U$ to be the vertices that are in neither $W_0$ nor in $W_1$. Our goal is to prove that $U$ is empty. Here is the picture:
+\mypic{30}
+
+By definition, for every position in $w \in W_i$, player $i$ has a memoryless winning strategy that wins when starting in position $w$. In principle, the memoryless strategy might depend on the choice of $w$, but the following lemma shows that this is not the case.
+\begin{lemma}\label{lem:unique-memoryless}
+Let $i \in \set{0,1}$ be one of the players. There is a memoryless strategy $\sigma_i$ for player $i$, such that if the game starts in $W_i$, then player $i$ wins by playing $\sigma_i$.
+\end{lemma}
+\begin{proof}
+By definition, for every position $w \in W_i$ there is a memoryless winning strategy, which we call the \emph{strategy of $w$}. We want to consolidate these strategies into a single one that does not depend on $w$.  	Choose some well-ordering of the vertices from $W_i$, i.e.~a total ordering which is well-founded. Such a well-ordering exists by the axiom of choice. For a position  $w \in W_i$, define its \emph{companion} to be the least position $v$ such that the strategy of $v$  wins when starting in $w$.
+The companion is well defined because we take the least element, under a well-founded ordering, of some set that is nonempty (because it contains $w$). Define a consolidated strategy as follows: when in position $w$, play according to the strategy of the companion of $w$. 
+The key observation is that for every play using this consolidated strategy, the sequence of companions is non-increasing in the well-ordering, and therefore it must stabilise at some  companion $v$; and therefore the play must be winning for player $i$, since from some point on it is consistent with the strategy of $v$.
+\end{proof}
+
+Define the game restricted to $U$ to be the same as the original game, except that we only keep positions from $U$. In general restricting a game to a subset of positions might create new dead ends. However, in this particular case, no new dead ends will be created: if a position controlled by player $i$ has all of its outgoing edges to $W_0 \cup W_1$, then a short analysis shows that the position is already in either $W_0 \cup W_1$. 
+Define $A$ to be the $0$-attractor, inside the game limited to $U$, of the rank $0$ edges in $U$ (i.e.~both endpoints are in  $U$). Here is a picture of the game restricted to $U$:
+\mypic{28} 
+
+Consider a position in $A$ that is controlled by player 1. In the original game, all outgoing edges from the position go to $A \cup W_0$; because if there would be an edge to $W_1$ then the position would also be in $W_1$. It follows that:
+\begin{itemize}
+	\item[(1)]  In the original game, if the play begins in a position from $A$ and player $0$ plays the attractor strategy on the set $A$, then the play is bound to either use an edge inside  $U$ that has minimal rank $0$, or in the set $W_0$.
+\end{itemize}
+Consider the following game $H$: we restrict the original game  to positions from $U-A$, and remove all edges which have minimal rank $0$ (these edges necessarily originate in positions controlled by player $1$, since otherwise they would be in $A$). Since this game does not use rank $0$, the induction assumption can be applied to get a partition of $U - A$ into two sets of positions $U_0$ and $U_1$, such that on each $U_i$ player $i$ has a memoryless winning strategy in the game~$H$:
+\mypic{29}
+
+
+
+
+Here is how the sets $U_0,U_1$ can be interpreted in terms of the bigger original game. 
+\begin{itemize}
+	\item[(2)] In the original game, for every $i \in \set{0,1}$, if the play begins in a position from $U_i$ and player $i$ uses the memoryless winning strategy corresponding to $U_i$, then  either (a) the play eventually visits a position from $A \cup W_0 \cup W_1$ or an edge with rank $0$; or (b) player $i$ wins.
+\end{itemize}
+
+Here is a picture of the original game with all sets:
+\mypic{31}
+
+
+\begin{lemma}
+$U_1$ is empty.	
+\end{lemma}
+\begin{proof}
+	Consider this memoryless strategy for player $1$ in the original game:
+	\begin{itemize}
+		\item in $U_1$ use the winning memoryless strategy inherited from the game restricted to $U-A$;
+		\item in $W_1$ use the winning memoryless strategy from Lemma~\ref{lem:unique-memoryless};
+\item  in other positions do whatever. 
+	\end{itemize}
+We claim that the above memoryless strategy is winning for all positions from $U_1$, and therefore $U_1$ must be empty by assumption on $W_1$ being all positions where player $1$ can win in a memoryless way. Suppose player $1$ plays the above strategy, and the play begins in $U_1$. If the play uses only edges that are in the game $H$, then  player $1$ wins by assumption on the strategy. The play cannot use an edge of rank $0$ that has both endpoints in $U$, because these were removed in the game $H$. The play cannot enter  the sets  $W_0$ or $A$, because this would have to be a choice of player $0$, and  positions with such a choice already belong to $W_0$ or $A$. Therefore, if the play leaves $U-A$, then it enters $W_1$, where player $1$ wins as well. 
+\end{proof}
+
+
+
+
+In the original game, consider the following memoryless strategy for player $0$:
+\begin{itemize}
+	\item in $U_0$ use the winning memoryless strategy  from the game $H$;
+	\item in $W_0$ use the winning memoryless strategy from Lemma~\ref{lem:unique-memoryless};
+	\item in $A$ use the attractor strategy to reach a rank $0$ edge inside $U$;
+	\item on other positions, i.e. on $W_1$, do whatever.
+\end{itemize}
+
+We claim that the above strategy wins on all positions except for $W_1$, and therefore the theorem is proved. We first observe that the play can never enter $W_1$, because this would have to be a choice of player $1$, and such choices are only possible in $W_1$.  If the play enters $W_0$, then player $0$ wins by assumption on $W_0$. Other plays will reach positions of rank $0$ infinitely often,  or will stay in $U_0$ from some point on. In the first case, player $0$ will win by the assumption on $0$ being the minimal rank. In the second case, player $0$ will win by the assumption on $U_0$ being winning for the game restricted to $U-A$. 
+
+This completes the proof of memoryless determinacy for parity games, and also of the Büchi-Landweber Theorem.
+
+

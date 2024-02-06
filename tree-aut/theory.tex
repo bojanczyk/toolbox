@@ -1,0 +1,197 @@
+\label{sec:mso}
+
+In this section we discuss the connection between  monadic second-order logic (\mso) and automata, specifically tree automata. The presentation here is largely based on~\cite{Thomas:1997ec}. One of the crowning achievements of logic in computer science  is Rabin's Theorem~\cite{Rabin:1969kx}, which says that \mso on infinite trees is decidable, and has the same expressive power as automata. We prove Rabin's Theorem in this chapter.
+
+Actually, we already have the  tools to prove Rabin's Theorem\footnote{Büchi says this in~\cite[page 2]{Buchi:1983in}: 
+"Given the statement of this lemma [the complementation lemma for automata on infinite trees], and given McNaughton's handling of sup-conditions by order vectors, and given time, everybody can prove Rabin's theorem."}, namely McNaughton's Theorem on determinisation of $\omega$-automata from Chapter~\ref{sec:determinisation}, and memoryless determinacy of parity games from Chapter~\ref{sec:buchi-landweber}. It remains only to deploy the appropriate definitions and put the tools to work. 
+
+
+
+\section{Monadic second-order logic}
+Monadic second-order logic (\mso) is a logic with two types of quantifiers: quantifiers with lowercase variables $\exists x$  quantify over elements, and quantifiers with uppercase variables $\exists X$ quantify over sets of elements. The term "monadic" means that one cannot quantify over sets of pairs, or over sets triples, etc. The syntax and semantics of the \mso are explained in the following example.
+
+\begin{example}\label{ex:mso-graphs}
+Suppose that we view an directed graph as relational structure (i.e. a model as in logic), where the universe is the vertices and there is one binary relation $E(x,y)$ for the edges; this relation is not necessarily symmetric because the graph is directed. The  formula $$ \forall x \forall y \ E(x,y)$$ says that the graph is a directed clique. The formula only quantifies over vertices, i.e. it uses only first-order quantification. Now  consider a formula which uses also set quantification, which  says that the input graph is not strongly connected:
+
+$$ \underbrace{\exists X}_{\text{exists a set}} \ \underbrace{(\forall x \forall y\ x \in X \land E(x,y) \Rightarrow y \in X)}_{\text{$X$ is closed under outgoing edges}} \land \underbrace{(\exists x \ x \in X) \land (\exists x \ x \not \in X)}_{\text{$X$ is neither empty nor full}}$$
+
+The above formula illustrates all syntactic  constructs in \mso: one can quantify over elements, over sets of elements, one can test membership of elements in sets, and one can use the relations available in the input model (in the case of directed graphs, only one binary relation).
+
+Here is another example for graphs. The following \mso formula says that the input graph is three colourable (in the formula, the direction of the edges plays no role):
+
+$$\exists X_1 \exists X_2 \exists X_3 \underbrace{\forall x \bigvee_{i}x \in  X_i}_{\text{every vertex is coloured}} \land \quad \underbrace{\forall x \forall y \ E(x,y) \Rightarrow \bigwedge_{i}x \not \in  X_i \lor y \not \in X_i}_{\text{no edge has both endpoints with the same colour}}$$
+	
+\end{example}
+
+We say that a property of relational structures over some vocabulary (e.g.~graphs as in the above example) is \emph{\mso definable} if there is a formula of \mso which is true exactly in those structures  which have the property. In this chapter, we use \mso to describe properties of trees (finite and infinite). In the next chapter, we talk about finite graphs.
+
+\section{Finite trees}\label{sec:finite-trees}
+ Define a \emph{ranked alphabet} to be a finite set $\Sigma$ where every element $a \in \Sigma$ has an associated arity in $\set{0,1,\ldots}$. Here is a picture of a ranked alphabet:
+\mypicb{10}
+A  tree over a ranked alphabet $\Sigma$ is defined as in the following picture:
+\mypicb{9}
+In this section, Section~\ref{sec:finite-trees}, we will be interested only in finite trees.
+Trees as defined above are sometimes called \emph{ranked and ordered}. One can consider other variants, where the label does not determine the number of children (unranked) or where the siblings are not ordered (unordered).  The goal of this section is to show that, over finite trees, automata have the same expressive power as \mso.
+
+\paragraph*{Tree automata.} We begin by defining automata for finite trees.
+
+\begin{definition}
+A \emph{nondeterministic  tree automaton} consists of:
+\begin{itemize}
+	\item an input alphabet $\Sigma$, which is a ranked alphabet;
+	\item a finite set of states $Q$ with a distinguished subset of root states $R \subseteq Q$
+\item for every letter $a \in \Sigma$ of rank $n$, a transition relation $ \delta_a \subseteq Q^n \times Q$.
+\end{itemize}
+A tree automaton is called \emph{bottom-up deterministic} if every transition relation is  a function $Q^n \to Q$. An automaton is called \emph{top-down deterministic} if it has one root state and the  transition relation is  a partial function $Q^n \leftarrow Q$.	 A tree is accepted by the automaton if there exists an accepting run, as explained in the following picture:
+\mypic{66}
+\end{definition}
+
+
+\begin{lemma}\label{lem:tree-aut-bool-alg}
+  Languages recognised by nondeterministic tree automata are closed under union, intersection and complementation.
+\end{lemma}
+\begin{proof} For union,  take the disjoint union of two nondeterministic tree automata. Intersection can be done using a cartesian product, or by using union and complementation.  For complementation, we use determinisation: the same proof as for automata on words -- the subset construction -- shows that for every nondeterministic tree automata there is an equivalent one that is bottom-up deterministic (top-down deterministic automata are strictly weaker, see Exercise~\ref{zad:tree-aut-01}.). Since bottom-up deterministic automata can be complemented by complementing the root states, we get the lemma.
+\end{proof}
+
+\paragraph*{\mso on finite trees.} We now define how \mso can be used to define a tree language, and show that tree languages defined this way are exactly those that are recognised by tree automata.
+
+A  tree   (finite or infinite) over an alphabet $\Sigma$ is viewed as a relational structure in the following way:
+\mypicb{92}
+We say that an \mso formula is true in a tree if it is true in the relational structure described above. This only makes sense for formulas that have no free variables (sentences), and which use the vocabulary (relation names) described above, i.e.~unary relations for labels and binary relations for child numbers. 
+
+We say that a set of finite trees $L$ over a ranked alphabet $\Sigma$ is \mso definable if there is an \mso formula $\varphi$ such that $$  \text{$\varphi$ is true in $t$} \quad \mbox{iff} \quad t \in L \qquad \mbox{for every finite tree $t$ over $\Sigma$}$$
+The formula does not need to check if its input is a finite tree. However, the set of finite trees is \mso definable, as a subset of all relational structures over the appropriate set of relation names, and therefore the definition of \mso definable languages of finite trees would not be affected by requiring the formula to check that inputs are finite trees. 
+
+
+%\begin{align*}
+%  \exists X \ \land \forall x \begin{cases}
+% 	\text{leaf}(x) \Rightarrow x \in X \\
+% 	\neg \text{leaf}(x) \Rightarrow (x \in X \iff ())
+% \end{cases}
+%\end{align*}
+
+\begin{example}
+	Suppose that the ranked alphabet is 
+	\mypic{65}
+	The set of trees with an odd number of nodes is \mso definable, namely the formula is ``true''. This is because all trees over the above ranked alphabet have an odd number of nodes. More effort is required for ``odd number of leaves''. Here the formula says that there exists a set $X$ of nodes, which contains the root, and such that every node belongs to $X$ if and only if it has an even number of children in $X$.
+\end{example}
+
+The following theorem shows that for finite trees, tree automata have the same expressive power as monadic second-order logic.
+The connection of between automata and \mso was originally discovered simultaneously by three authors: Büchi~\cite{Buchi:1960bh}, Elgot~\cite{Elgot:1961fq} and Trakthenbrot~\cite{Trakthenbrot:1962ud}, in their quest to answer a question by Tarski: ``is the \mso theory of the natural numbers with successor decidable''?  We present below the version of the result for finite trees, which has essentially the same proof as for finite words (a word can be viewed as a tree over a ranked alphabet where all letters have arity zero or one), and was first observed in~\cite{Thatcher:1968fs}.
+
+\begin{theorem}\label{thm:thatcher-wright}
+The following conditions are equivalent for every set of finite trees over a finite ranked alphabet:
+\begin{enumerate}
+	\item  definable in \mso;
+	\item  recognised by a nondeterministic (equivalently, bottom-up deterministic) tree automaton.
+\end{enumerate}
+\end{theorem}
+\begin{proof}\ 
+\begin{itemize}
+	\item[1 $\Leftarrow$ 2] Let $\Aa$ be a nondeterministic tree automaton. We show that \mso can formalise the statement ``there exists an accepting run of $\Aa$''. Without loss of generality, assume that the states of $\Aa$ are numbers $\set{1,\ldots,n}$. Here is the sentence that defines the language of $\Aa$: \mypic{69}
+	 Formally speaking, $\mathrm{root}(x)$ is a shortcut for a formula which says that $x$ is not a child of any node, and $\mathrm{child}_i(x) \in X_{q_i}$ is a shortcut for a formula which says that there exists a node that is the $i$-th child of $x$ (because we have children as relations and not functions) and belongs to $q_i$. 
+	\item[1 $\Rightarrow$ 2] By induction on formula  size, we show that every \mso formula can be converted into an automaton. The  main issue is that when we go to subformulas, free variables appear, and  we need to say how an automaton deals with free variables. Consider a formula $\varphi$ of \mso whose set of free variables is $\Xx$ (some of these variables are first-order, some are second-order). To encode a tree together with a valuation of free variables $\Xx$, we use a tree over an extended alphabet like this: \mypic{70}
+	A tree as above is said to satisfy $\varphi$ if $\varphi$ is true under the valuation which maps each first-order variable to the unique node that has it in the label, and maps each second-order label to the set of nodes that have it in their label. Define the \emph{language} of $\varphi$ to be the trees (over the extended alphabet with sets of variables) that satisfy $\varphi$. 
+By induction on the size of an \mso formula, we show that its language, as defined above, is recognised by a tree automaton.  For Boolean operations we use Lemma~\ref{lem:tree-aut-bool-alg}, for existential quantification we use nondeterminism.
+\end{itemize}
+\end{proof}
+
+\cite{Figueira:2017hn}
+
+
+\section{Infinite trees}
+\label{sec:rabin}
+We now move to infinite trees and Rabin's Theorem. For simplicity of notation, we use ranked alphabets where all letters have rank 2. For such alphabets, the set of nodes is always the same, and can be identified with $\set{\text{left child},\text{ right child}}^*$. For arbitrary alphabets, infinite trees can have various shapes, e.g.~an infinite tree is allowed to have subtrees that are finite.
+To recognise properties of infinite trees, we use parity automata.
+
+\begin{definition}\label{def:nondeterministic-parity}
+	The syntax of a nondeterministic parity tree automaton consists of 
+	\begin{itemize}
+		\item an input alphabet $\Sigma$, which is a finite ranked set where all letters have rank 2;
+		\item a finite set of states $Q$ with a distinguished root state;		\item a parity ranking function $Q \to \Nat$;
+		\item for every letter $a 
+		\in \Sigma$,  a set of transitions $\delta_a  \subseteq Q^2 \times  Q$.
+		 	\end{itemize}
+The automaton accepts an infinite tree over $\Sigma$ if there exists an accepting run as explained in the following picture: \mypic{71}
+\end{definition}
+
+We now state Rabin's Theorem. Rabin's original proof did not use the parity acceptance condition, but what  is now called the \emph{Rabin condition}, see~\cite{Thomas:1997ec}.
+\begin{theorem}[Rabin's Theorem]\label{thm:rabin} The following conditions are equivalent for every set of  (necessarily) infinite trees over a finite ranked alphabet  where all letters have arity~2:
+\begin{enumerate}
+	\item definable in \mso;
+	\item recognised by a nondeterministic parity tree automaton.
+\end{enumerate}
+\end{theorem}
+
+The proof has the same structure as in the case of finite trees. The only difference is that for infinite trees, closure under complementation, as stated in the following lemma, is far from obvious. 
+\begin{lemma}[Complementation Lemma]
+  Languages recognised by nondeterministic parity automata are closed under complement.
+\end{lemma}
+The difficulty in the Complementation Lemma  is that  we use only nondeterministic automata; in fact no deterministic model for infinite trees is known that would be equivalent to \mso. Rabin's Theorem will follow immediately once the Complementation Lemma is proved, so 
+ the rest of this chapter is devoted to proving the Complementation Lemma.
+ 
+A corollary of the  statement of Rabin's Theorem as in Theorem~\ref{thm:rabin}, and of decidability of emptiness for nondeterministic parity tree automata (see Exercise~\ref{zad:tree-aut-emptiness-parity})  is that the following logical structure has decidable \mso theory: the universe is the nodes of the complete binary tree, and there are two binary relations for left child and right child. This corollary is the 
+original statement of Rabin's Theorem, see~\cite[Theorem 1.1.]{Rabin:1969kx}.
+
+\paragraph*{Alternating parity tree automata.} To show complementation of nondeterministic tree automata, we  pass through a more powerful model. The syntax of an \emph{alternating parity tree automaton} is defined the same as in Definition~\ref{def:nondeterministic-parity} for nondeterministic automata, with the following differences: (1) to each state we assign an \emph{owner}, which is either ``player $0$'' or ``player $1$''; and (2) for each letter $a$, the transition relation has form
+\begin{align*}
+ \delta_a \subseteq Q \times  \set{\epsilon,0,1} \times Q .
+\end{align*}
+To define whether or not an automaton $\Aa$ accepts an input tree $t$ over $\Sigma$, we consider a parity game $G_\Aa(t)$ defined as follows. The positions of the game are pairs (state of the automaton, node of the input tree). The initial position is (root state, root of the tree). Suppose that the current position is $(q,v)$, and assume that state $q$ is owned by player $i \in \set{0,1}$. In such a position, player $i$ chooses some pair $(x,p)$ such that $(q,x,p)$  belongs to the transition relation corresponding to the label of $v$. If there is no such pair, then player $i$ loses immediately. Otherwise, the new position is set to $(p,v \cdot x)$, and the play continues. If the play continues forever, then the winner is declared using the parity condition, i.e.~player $0$ wins if and only if the maximal rank of a state appearing infinitely often is even. This completes the definition of the game $G_\Aa(t)$. A tree $t$ is accepted if player $0$ has a winning strategy in the game.
+
+
+
+
+
+\begin{theorem}[Dealternation Theorem]\label{thm:alternating}\ 
+\begin{enumerate}
+	\item 	For every nondeterministic parity tree automaton, one can compute  an alternating one that recognises the same language. 
+	\item Languages recognised by alternating parity tree automata are closed under complement.
+	\item For every  alternating  parity  tree automaton, one can compute a nondeterministic  one that  recognises the same language.
+\end{enumerate}
+\end{theorem}
+
+Before proving the above result, we show how it completes the proof of the Rabin's Theorem. Recall that the only missing ingredient was the Complementation Lemma. Using the Dealternation Theorem, we can easily complement nondeterministic parity tree automata: (1) make the automaton alternating, (2) complement it, (3) make it nondeterministic again.
+
+\begin{proof}[Proof of Theorem~\ref{thm:alternating}]
+For item 1, let $\Aa$ be a nondeterministic parity tree automaton with states $Q$. The simulating alternating automaton has states $Q + Q^2$. The initial state is the root state of $\Aa$, and the transitions are explained in the following picture: 
+\mypic{102}
+ The  parity condition for states from $Q$ is inherited from the original nondeterministic automaton, and all states from $Q^2$ are assigned the least important rank. 
+
+For item 2, let $\Aa$ be an alternating parity tree automaton. Define $\bar \Aa$ to be the alternating parity tree automaton obtained from $\Aa$ by swapping the roles of players $0$ and $1$, and incrementing the ranking function so that even ranks become odd and vice versa, but the precedence order on ranks is maintained. To prove that $\bar \Aa$ is the complement of $\Aa$, we show below that the following conditions are equivalent for every input tree $t$:
+\begin{enumerate}
+\item $\Aa$ accepts $t$;
+	\item player $0$ has a winning strategy in the game $G_{\Aa}(t)$;
+	\item player $1$ has a winning strategy in the game $G_{\bar \Aa}(t)$. 
+ 	\item player $1$ does not have a winning strategy in the game $G_{\bar \Aa}(t)$. 
+ 	\item $\bar \Aa$ rejects $t$.
+\end{enumerate}
+The equivalences $1 \Leftrightarrow 2$ and $4 \Leftrightarrow 5$ are by definition of the language recognised by an alternating automaton. The equivalence $2 \Leftrightarrow 3$ is by construction of $\bar \Aa$. The equivalence $3 \Leftrightarrow 4$ is because  $G_{\bar \Aa}(t)$ is a parity game, and it is therefore  determined, i.e.~one of the players has a winning strategy. The reason why this proof works is that: (a) the parity condition is self-dual, which allows one to define $\bar \Aa$; and (b) games with the parity condition are determined.
+
+It remains to show the last item of the theorem, namely that alternating parity tree automata can be made nondeterministic. Suppose that $\Aa$ is an alternating parity tree automaton, with states $Q$ and  input alphabet $\Sigma$. By memoryless determinacy of parity games, it follows that a tree $t$ is accepted if and only if player $0$ has a   memoryless winning strategy $\sigma_0$ in the game $G_\Aa(t)$. We will find a  nondeterministic  parity automaton on trees which checks this. Define 
+$\Gamma$ to be an alphabet which consists of functions from states controlled by player $0$ to pairs in $Q \times \set{\epsilon,0,1}$. 
+Here is a picture of a such a letter:
+\mypic{72}
+A memoryless strategy $\sigma_0$ for player $0$ can be represented  as a tree  over this alphabet as follows: the label of node $v$ is the function which maps state $q$ to the pair $(p,x)$ such that strategy $\sigma_0$ goes from $(q,v)$ to $(p,v \cdot x)$. 
+
+
+
+We will show that  the  language 
+	\begin{align}\label{eq:strategy-language}
+  \set{\underbrace{(t,\sigma_0)}_{\substack{\text{tree over $\Sigma \times \Gamma$}\\ \text{representing $t$ and $\sigma_0$}}} : \text{$\sigma_0$ is a memoryless strategy for player $0$ in $\Gg_\Aa(t)$}}
+\end{align}
+is recognised  by a (even deterministic top-down) parity automaton on trees. This will  complete the proof of the Dealternation Theorem, because a nondeterministic parity automaton can guess the part of the  labelling that describes $\sigma_0$. The key observation is the following claim. (A branch is defined to be an inclusion-wise maximal set of nodes that are totally ordered by the descendant relation.)
+\begin{claim}
+There is  a \emph{nondeterministic} parity automaton  $\Bb$ over $\omega$-words over the alphabet $\Sigma \times \Gamma \times \set{0,1}$ such that the following conditions are equivalent for every tree $t$,  branch $\pi$ and memoryless strategy $\sigma_0$ for player $0$:
+\begin{enumerate}
+	\item There exists a strategy of player $\sigma_1$ such that if the players use strategies $(\sigma_0,\sigma_1)$ in  the game $\Gg_\Aa(t)$, then the resulting play  stays on the branch $\pi$ and \emph{violates} the parity condition.
+	\item The automaton $\Bb$ accepts the $\omega$-word $(t,\sigma_0)|\pi$
+ defined as follows: the  $i$-th letter is of the label of the $i$-th node in $\pi$ as well as the turn that $\pi$ takes after that node. Here is a picture:
+\mypic{73}
+\end{enumerate}	
+\end{claim}
+\begin{proof}The automaton $\Bb$ uses nondeterminism to choose the moves of the strategy $\sigma_1$. 
+\end{proof}
+
+Apply the above claim, yielding a nondeterministic parity automaton. By McNaughton's Theorem, see Chapter~\ref{sec:determinisation}, there exists an equivalent deterministic parity automaton, call it  $\Dd$. It is not difficult to see that a memoryless strategy $\sigma_0$ wins in the game $G_\Aa(t)$ if and only if every branch in the tree $(t,\sigma_0)$ is rejected by the automaton $\Dd$. This can be checked by a (deterministic top-down) parity automaton on trees, which runs the automaton $\Dd$ on every  branch (and has the acceptance condition complemented).
+\end{proof}

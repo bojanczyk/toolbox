@@ -1,0 +1,116 @@
+% !TEX root = ../main.tex
+
+
+\exercise{zad:08-01}{
+Construct weighted automata over unary alphabet, which for a word of length $n$ output
+\begin{enumerate}
+  \item $n^2$;
+  \item $n^2 + 2n$;
+  \item $n^3$;
+  \item $n^k$ for constant $k \in \N$;
+  \item $p(n)$ for any polynomial $p \in \Q[x]$, i.e.~a univariate polynomial with rational coefficients.
+\end{enumerate}
+}
+{
+
+}
+
+
+
+
+
+
+\exercise{zad:08-02}{
+Show that for weighted automata with $2$ states  over a unary alphabet, it is decidable whether the automaton  assigns value $0$ to some word.
+\emph{Remark:} for weighted automata over a unary alphabet with an arbitrary number of states, this is an important open problem, called the Skolem Problem in~\cite{Ouaknine:2015gv}.
+}
+{
+
+}
+
+
+
+
+
+\exercise{zad:linear-automata-proba}{
+A probabilistic automaton is  a vector space automaton where the initial state $q \in \mathbb{Q}^d$ is a probability distribution on $\set{1,\ldots,d}$,  the linear updates are such that they preserve probability distributions, and the output function sums the coordinates corresponding to some accepting subset $F \subseteq \set{1,\ldots,d}$. Show that the following questions are undecidable for probabilistic automata:
+\begin{enumerate}
+  \item is there some input word which produces output exactly $1/2$?
+  \item for fixed $p \in (0, 1)$, is there some input word which produces output exactly $p$?
+  \item is there some input word which produces output at least $1/2$?
+\end{enumerate}
+}
+{
+}
+
+
+
+\exercise{zad:08-03}{
+Show that the following question is decidable for probabilistic automata: is there some input word which produces output equal exactly $0$?
+}
+{
+It is just a reachability question: can some accepting state be reached from some initial state over transitions with non-zero weight?
+}
+
+\exercise{zad:linear-schmude}{
+Show that for every weighted automaton there is an isomorphic (using the notion of isomorphism inherited from vector space automata) one which has one initial and one final state.
+}
+{
+}
+
+\exercise{zad:linear-automata-quotient}{Let $E \subseteq \field^n \times \field^n$ be a linear subspace which is an equivalence relation. Let  $f_1,\ldots,f_k : \field^n \to \field^n$ be linear maps which respect the equivalence relation, 
+ i.e.~if inputs  are equivalent, then also outputs are also equivalent.  Show that one can compute in polynomial time linear maps 
+ \begin{align*}
+h : \field^n \to \field^m	\qquad f_1',\ldots,f'_k : \field^m \to \field^m
+\end{align*}
+so that $E$ is the kernel of $h$, and the diagram
+\begin{align*}
+\xymatrix{\field^n \ar[r]^{f_i} \ar[d]_h & \field^n \ar[d]^h \\ \field^m \ar[r]_{f'_i} & \field^m}	
+\end{align*}
+ commutes for every $i \in \set{1,\ldots,k}$.}{}
+
+
+\exercise{zad:linear-automata-nfa-with-output}{Consider a more symmetric model of \nfa with output, as in Definition~\ref{def:nfa-with-output}, where there is also a \emph{start of input} word associated to each initial state, and the output of a run begins with the start of input word for its first state. Show that this model has the same expressive power as in Definition~\ref{def:nfa-with-output}.
+}{}
+
+
+\exercise{zad:linear-automata-unambig}{Call an \nfa \emph{unambiguous} if for every input there is at most one accepting run. Show that equivalence -- i.e.~are the same input words accepted -- for unambiguous automata can be decided in polynomial time.  }{}
+
+
+
+
+\exercise{zad:08-05}{
+Construct an \nfa  with $n$ states such that shortest rejected word rejected  has length
+exponential wrt. $n$.
+}
+{
+An \nfa can have different components counting modulo prime numbers $2, 3, 5, 7, \ldots$ and accepting iff residuum is different
+than zero. Then if it counts modulo $k$ first primes size of automaton is around $p_1 + \ldots + p_k$, while shortest rejected
+word is of length $p_1 \cdot \ldots \cdot p_k$. This construction gives an exponential blowup, but not of the form $c^n$ for constant $c$.
+One can construct also quite simple automata obtaining $c^n$ for alphabet size bigger than one.
+}
+
+
+\exercise{zad:08-04}{
+Show that if an  \nfa  with $n$ states is unambiguous and rejects at least one word, then it rejects some word of  length
+at most $n-1$.
+}
+{
+
+}
+
+
+
+\exercise{zad:08-06}{ Show a polynomial time algorithm that decides  if an  \nfa  is unambiguous.
+}
+{
+It is easy to construct an automaton $\Bb$, which accepts there words, which have at least two accepting runs over $\Aa$.
+Then unambiguity of $\Aa$ amounts to checking emptiness of $\Bb$, which can be easily done in polynomial time.
+}
+
+
+\exercise{zad:linear-boiret}{ Give a more direct proof of Theorem~\ref{thm:undecidable-weighted} which uses the Post Correspondence Problem. Recall that the Post Correspondence Problem is the question: given two homomorphisms $f,g : \Sigma^* \to \Gamma^*$, decide if there is some nonempty word $w$ such that $f(w)=g(w)$. This problem is undecidable.
+}
+{
+}
+

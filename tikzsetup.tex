@@ -1,0 +1,68 @@
+
+\usetikzlibrary{automata}
+\usetikzlibrary{decorations}
+\usetikzlibrary{decorations.pathreplacing}
+
+\tikzstyle{ubrace} = [draw, thick, decoration={brace, mirror, raise=0.0cm}, decorate,
+    every node/.style={anchor=north, yshift=-0.1cm}]
+\tikzstyle{rbrace} = [draw, thick, decoration={brace, mirror, raise=0.0cm}, decorate,
+    every node/.style={anchor=west, xshift= 0.1cm}]
+
+\tikzstyle{obrace} = [draw, thick, decoration={brace, raise=0.0cm}, decorate,
+    every node/.style={anchor=south, yshift= 0.1cm}]
+\tikzstyle{lbrace} = [draw, thick, decoration={brace, raise=0.0cm}, decorate,
+    every node/.style={anchor=east, xshift=-0.1cm}]
+    
+\usetikzlibrary{arrows,automata,backgrounds,decorations}
+\usetikzlibrary{shapes.multipart}
+\usepgflibrary{decorations.pathreplacing} 
+\usetikzlibrary{arrows,calc,topaths}
+\usepackage{tikz-3dplot}
+\tikzstyle{small}=[font=\footnotesize]
+
+\tikzset{
+    every picture/.style={>=stealth,auto,node distance=2cm},}
+% end TIKZ\usetikzlibrary{arrows, automata,calc,shapes.arrows, petri, backgrounds, fadings,intersections,  decorations.markings, positioning, decorations.pathmorphing}
+\usetikzlibrary{shadows}
+\tikzfading[name=fade out, inner color=transparent!0,
+  outer color=transparent!100]
+\tikzset{
+    every picture/.style={>=stealth,auto,node distance=2cm,}%double equal sign distance},
+    %every edge/.style={font=\small,double equal sign distance},
+    %every state/.style={fill=red,draw=none,text=white}
+}
+\tikzstyle{every state}=[
+    inner sep=0pt,
+    minimum size=0.7cm,
+    fill= blue,
+    fill opacity=0.1,
+    draw= blue,
+    %thick,
+    text= blue,
+    text opacity=1,
+    ]
+
+\tikzset{
+    place/.style={
+        circle,
+        thick,
+        draw=blue!75,
+        fill=blue!20,
+        minimum size=6mm,
+    },
+    transitionH/.style={
+        rectangle,
+        thick,
+        fill=black,
+        minimum width=8mm,
+        inner ysep=2pt
+    },
+    transitionV/.style={
+        rectangle,
+        thick,
+        fill=black,
+        minimum height=8mm,
+        inner xsep=2pt
+    }
+}    
+    

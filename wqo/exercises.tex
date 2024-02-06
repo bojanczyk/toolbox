@@ -1,0 +1,198 @@
+% !TEX root = ../main.tex
+
+
+\exercise{zad:wqo-wqo}{
+Show that the following conditions are equivalent for every quasi-order (a binary relation that is transitive and reflexive, but not necessarily anti-symmetric):
+\begin{enumerate}
+	\item  every infinite sequence contains an infinite subsequence that is  increasing (not necessarily strictly);
+\item there are no infinite strictly decreasing sequences (i.e.~the quasi-order is well-founded) and no  infinite antichains (an antichain is  a set of pairwise incomparable elements);
+\item every upward closed set is the upward closure of a finite set.
+\end{enumerate}
+A quasi-order that satisfies the above conditions is called a wqo.
+}
+{
+	We prove the equivalences 1 $\Leftrightarrow$ 2 and 2 $\Leftrightarrow$ 3. The implications 1 $\Rightarrow$ 2 and 3 $\Rightarrow$ 2 are straightforward, so only prove the converses.
+	\begin{itemize}
+\item 2 $\Rightarrow$ 1. Take some infinite sequence of elements in the quasi-order. By the Ramsey Theorem, there is an infinite subsequence where either: (a) elements are strictly decreasing; (b) elements are pairwise incomparable; or (c) elements are (not necessarily strictly) increasing. Item 2 rules out cases (a) and (b), so we are left with case (c).
+\item 2 $\Rightarrow$ 3. Take some upward closed set $U$, and consider the minimal elements. Because the quasi-order is well founded (by item 2), every element of $U$ is above some minimal element, and therefore $U$ is the upward closure of its minimal elements. If we take one minimal element for each equivalence class (i.e.~equivalence in the sense of both bigger and smaller), then we are left with an antichain, and this antichain is necessarily finite (by item 2).
+	\end{itemize}
+}
+
+
+\exercise{zad:09-01}{
+Which of the  following ordered sets are  wqo's?
+\begin{enumerate}
+  \item $\N^2$ with lexicographic order;
+  \item $\{a, b\}^*$ with lexicographic order;
+  \item $\N$ with divisibility order, i.e. $x$ smaller than $y$ if $x \ | \ y$;
+  \item $\Sigma^*$ with prefix order;
+  \item $\Sigma^*$ with infix order;
+  \item line segments with an order: $[a,b]$ smaller than $[c,d]$ if $(b < c) \vee (a = c \wedge b \leq d)$;
+  \item graphs with subgraph order (remove some edges and some vertices);
+  \item trees with subtree order (remove some nodes, but keep the descendant ordering).
+\end{enumerate}
+}
+{
+Answers are the following.
+\begin{enumerate}
+  \item Yes. Any pair, which is dominating in Dickson's order is also dominating in lexicographic
+  order. So by Dickson's lemma lexicographic order is also a wqo.
+  \item No. An infinite descending sequence is of the form: $b, ab, aab, aaab, \ldots$.
+  \item No. Prime numbers are an infinite antichain.
+  \item No. An infinite descending sequence is of the form: $b, ab, aab, aaab, \ldots$.
+  \item No. An infinite descending sequence is of the form: $bb, bab, baab, baaab, \ldots$.
+  \item Yes. There is no infinite descending sequence, because sum $a+b$ is decreasing.
+  There is also no infinite antichain. Assume there is one. Let $[a,b]$ be an element of it.
+  Any $[c,d]$ in the antichain has to have $c \leq b$. So there are finitely many options for $c$,
+  so some two segments in the antichain are of the form $[c,d_1]$ and $[c,d_2]$. However
+  they have to be comparable, contradiction.
+  \item No. Cycles $C_n$ for $n \geq 3$ are an infinite antichain. The same works also for induced subgraph order.
+  \item No. An infinite antichain is formed by trees, which are paths of length $n$ such that both end vertices have
+  additionally two neighbors (all together three neighbors). The same example works for induced subgraph
+  order.
+\end{enumerate}
+}
+
+
+
+
+\exercise{zad:09-08}{
+Show that if $(X, \leq_X)$ and $(Y, \leq_Y)$ are both wqos then
+also $(X \times Y, \leq)$ is wqo, where $(x, y) \leq (x', y') \iff x \leq_X x' \wedge y \leq_Y y'$.
+}
+{
+Consider an infinite sequence of elements of $X \times Y$.
+By the fact that $\leq_X$ is wqo there exists an infinite subsequence such that
+first coordinates form an increasing subsequence. Then in that subsequence by the fact
+that $\leq_Y$ is wqo there exists a dominating pair on second coordinates. This pair
+is thus also a dominating pair in the order $\leq$.
+}
+
+
+
+
+
+\exercise{zad:09-02}{
+Prove the Infinite Ramsey Theorem: in every infinite clique, with edges coloured on finitely many colours
+there is an infinite monochromatic subgraph, i.e. subgraph such that all the edges in it are coloured by the same colour.
+}
+{
+We sort vertices from left to right. First vertex has infinitely many outgoing edges, at least one color appears infinitely
+many times. We choose such a color an leave only neighbors of this first vertex $v_1$ which have such colored edge
+to $v_1$. Then we take $v_2$ (in the filtered sequence), there also exists a color such that $v_2$ has infinitely many
+neighbors (to the right) with this color. We one more time filter vertices to the right of $v_2$
+leaving only these which have appropriately colored edge with $v_2$.
+In that way we also define $v_3, v_4, \ldots$. We always keep already defined vertices to the left untouched.
+In that way we define $v_k$ for every $k \in \N$ so we have an infinite sequence of vertices $v_i$.
+Every one has a distinguished color, so there exists a color in which there are infinitely many vertices.
+They form a monochromatic clique.
+}
+
+
+
+\exercise{zad:09-03}{
+Let $(X, \preceq)$ be a wqo. Show that there is no infinite growing sequence of upward-closed subsets $X$,
+i.e. no sequence
+\[
+U_1 \subsetneq U_2 \subsetneq \ldots,
+\]
+s.t. for all $i \in \N$ set $U_i \subseteq X$ is upward-closed wrt. $\preceq$.
+}
+{
+Assume towards contradiction that such an growing sequence exists.
+Let $x_1 \in U_1$ and for $i > 1$ let $x_i \in U_i \setminus U_{i-1}$.
+Because $\preceq$ is wqo there are some $i < j$ such that $x_i \preceq x_j$.
+This means that $x_i \in U_i \subseteq U_{j-1}$ and by the fact that $U_{j-1}$ is upward-closed also $x_j \in U_{j-1}$.
+Contradiction.
+}
+
+
+%mikolaj: w jakiej reprezentacji compute?
+\exercise{zad:09-04}{
+Show that given a  $d$-dimensional VAS and $s \in \N^d$, one can compute the  set of all configurations from which $s$ is coverable.
+Hint: use Problem~\ref{zad:09-03}.
+}
+{
+
+}
+
+
+
+
+
+
+\exercise{zad:09-05}{
+Show that given a vector addition system with a distinguished source configuration, one can decide if the set of configurations reachable from the source is finite.
+}
+{
+We build a tree with root being vector $s$ and children of every vector $v$ being all
+the $v+t$ for $t \in T$ such that $v+t \in \N^d$. However we can this tree in the following way.
+If there is some vertex $v \in \N^d$ such that there exists its ancestor vertex $u \in \N^d$ with $u \preceq v$ then we do not
+continue expanding vertex $v$. There are two cases. If $v$ is strictly bigger than $u$ on some coordinate by detecting dominating
+pair $(u, v)$ on this path we know that reachability set is infinite. In the other case, if $u = v$, we know that it makes no sense
+to expand this path, because we will not reach anything new. By Dickson's lemma we know that every path is finite.
+Tree is finitely branching, therefore by K{\"{o}}nigs lemma the whole tree is finite. Therefore at some moment
+we will compute the whole tree an algorithm will be finished. If all dominating pairs where $u = v$ then reachability set
+is finite, otherwise it is infinite.
+}
+
+
+
+
+
+
+\exercise{zad:wqo-higman}{
+Prove the following version of Higman's Lemma: if $\Sigma$ is a finite alphabet, then $\Sigma^*$ ordered by (not necessarily connected) subword is a wqo.}
+{
+}
+
+\exercise{zad:wqo-lossy}{
+Define a \emph{rewriting system} over an alphabet $\Sigma$ to be finite set of pairs $w \to v$ where $w,v \in \Sigma^*$. Define $\to^*$ to be the least binary relation on  $\Sigma^*$ which contains $\to$, is transitive,  and satisfies
+\begin{align*}
+  w \to^* v \qquad \text{implies} \qquad aw \to^* av \text{ and } wa \to^* va \qquad \text{for every }a \in \Sigma.
+\end{align*}
+There exist rewriting systems where $\to^*$ is an undecidable relation. Show that $\to^*$ is decidable if the rewriting system is \emph{lossy} in the following sense: for every letter $a \in \Sigma$, the rewriting system contains  $a \to \varepsilon$.}
+{
+}
+
+\exercise{zad:wqo-zvass}{Define a \emph{$\Int$-vector addtion system} in the same way as a vector addition system, except that configurations are vectors in $\Int^d$.  Show that the reachability problem is decidable, i.e.~one can decide if there is a run connecting two given configurations.}
+{
+}
+
+
+\exercise{zad:vass}{Define a \emph{vector addition system with states} to be a finite set of states $Q$, a dimension $d$, and a finite set $\delta \subseteq Q \times \Int^d \times Q$. A configuration is an element of $Q \times \Nat^d$, and a transition is a pair 
+\begin{align*}
+(q,x) \to (p,y)	 \qquad \text{such that }(q,y-x,p) \in \delta.
+\end{align*}
+Show that the following problem is decidable: given states $p,q$ decide if there is a run from the configuration $(p,\bar 0)$  to some configuration with state $q$.
+}
+{
+}
+
+
+\exercise{zad:wqo-vass-exponential}{
+\wojtek{Moze lepiej zrobic zadanie o zbiorze osiagalnosci przy ustalonym poczatku, a nie relacji osiagalnosci?
+Latwiej sie mysli wg mnie.}
+Find a vector addition system, say of dimension $d$, where the reachability relation
+\begin{align*}
+\set{(x,y) : \text{there is a run from from $x$ to $y$}} \subseteq \Nat^{2d}
+\end{align*}
+is not semilinear. Hint: use states and try to simulate exponentiation.
+}
+{
+}
+
+%mikolaj: czy dimension ma byc fixed czy nie?
+\exercise{zad:wqo-vass-reach}{
+Find a family of  vector addition systems with states, say of dimension $d$ (the dimension does not need to be fixed for the family), where the reachability set
+\begin{align*}
+\set{v : \text{there is a run from from the origin to $v$}} \subseteq \Nat^{d}
+\end{align*}
+is finite, but
+\begin{enumerate}
+  \item of doubly exponential size,
+  \item of tower size
+\end{enumerate}
+with respect to the number of transitions.}
+{
+}

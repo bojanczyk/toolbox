@@ -1,0 +1,85 @@
+The syntax of a distance automaton is the same as for a nondeterministic finite automaton, except that it has a distinguished subset of transitions, called the \emph{costly transitions}. The \emph{cost} of a run is defined to be the number of costly transitions that it uses. 
+
+\begin{example}
+	Here is a cost automaton, with the costly transitions (one transition, in this particular example) depicted in red.
+	\mypic{42}
+	The nondeterminism of the automaton consists of: choosing the initial state (first or second), and in case the first state was chosen as initial, then choosing the moment when the second horizontal transition is used. This nondeterminism corresponds to selecting a block of $a$ letters, and the cost of a run is the length of such a block, as in the following picture:
+	\mypic{43}
+\end{example}
+
+In this chapter, we prove the following theorem, originally proved by Hashiguchi in~\cite{Hashiguchi:1982js}. The theorem was part of Hashiguchi's solution~\cite{Hashiguchi:1988eu} to the star height problem, i.e.~the problem of determining what is the least number of nested Kleene stars that is needed to define a given regular language.
+
+\begin{theorem}
+The following problem is decidable:
+\begin{itemize}
+	\item {\bf Input.} A distance automaton.
+\item {\bf Question.} Is the automaton bounded in the following sense: there is some $m \in \Nat$ such  that every input word admits an accepting run of cost  $<m$.
+\end{itemize}	
+\end{theorem}
+
+The problem in the above theorem was called  \emph{limitedness} in~\cite{Hashiguchi:1982js}. The algorithm we use, based on~\cite{Bojanczyk:2015hk}, uses the Büchi-Landweber Theorem~\cite{Buchi:1969iq} discussed in Chapter~\ref{sec:buchi-landweber}. The algorithm leads to an {\sc ExpTime} upper bound on the limitedness problem; the optimal complexity is~{\sc PSpace}, which follows as a special case of~\cite[Theorem 2.2]{Kirsten:2005fm}.
+
+
+
+\paragraph*{The limitedness game.}
+Fix a distance automaton. For a number $m \in \set{1,2,\ldots, \omega}$, consider the following game, call it the \emph{limitedness game with bound $m$}. The game is played in infinitely many rounds $1,2,3,\ldots$, by two players called Input and Automaton. In each round:
+\begin{itemize}
+	\item player Input chooses a letter of the input alphabet;
+	\item player Automaton responds with a set of transitions over this letter.
+\end{itemize}
+A move of player Automaton in a given round, which is a set of transitions, can be visualised as a bipartite graph, which says how the letter can take a state to a new state, with costly transitions being red and non-costly transitions being black, like below:
+\mypic{37}
+
+For the definition of the game, it is important that player Automaton does not need to choose all possible transitions over the letter played by player Input, only a subset. Actually, as we will later see, in order to win, player Automaton need only use tree-shaped sets like this:
+\mypic{101}
+ After all rounds have been played, the situation looks like this:
+\mypic{36}
+The winning condition for player Automaton is the following:
+\begin{enumerate}
+	\item In every column, at least one accepting state must be reachable from some initial state in the first column; and
+	\item Every path contains  $<m$ costly edges. In case of $m = \omega$, this means that every path contains finitely many costly edges.
+\end{enumerate}
+
+If either of the conditions above is violated, then player Input wins. The following lemma implies the decidability of the limitedness problem.
+
+\begin{lemma}\label{lem:limitedness}
+	For a distance automaton, the following conditions are equivalent, and furthermore one can decide if they hold:
+	\begin{enumerate}
+		\item the automaton is limited;
+\item there is some $m \in \set{1,2,\ldots}$ such that player Automaton wins the limitedness game with bound $m$;
+\item player Automaton wins the limitedness game with bound $m=\omega$
+	\end{enumerate}
+\end{lemma}
+\begin{proof}
+The implications from 2 to 1 and from 2 to 3 are immediate. For the other implications and the decidability part, the key is the observation that for every choice of $m \in  \set{1,2,\ldots,\omega}$,  the limitedness game is a special case of a game with a finite arena and an $\omega$-regular condition.  In particular, one can apply the Büchi-Landweber theorem, yielding that a) the winner can be decided; b) the winner needs finite memory. Condition a) shows that  item 3  in the lemma is decidable, while condition b) will be used in the implication from 3 to 2.
+
+\paragraph*{Implication from 1 to 2.}
+We want to prove that if the automaton is limited, then player Automaton has a winning strategy for some finite $m$, which will turn out to be the same $m$ as in the definition of limitedness. Define a run $\rho$ of the distance automaton over an input word $w$ to be \emph{optimal} if it has minimal cost among runs that have the same input word, same source state and same target state. The strategy of player Automaton is as follows.
+Suppose that player Input has played a sequence of letters. Then the sets of transitions chosen by Automaton are so that the transitions form a forest, consisting only of optimal runs, where all reachable configurations (i.e.~reachable by some run from an initial state) are covered, as in the following picture:
+\mypic{44}
+When player Input gives a new letter, player Automaton responds with a set of transitions which connect the new configurations to the previous ones in a cost-minimising way.
+
+\paragraph*{Implication from 3 to 2.}
+Suppose that player Automaton wins the limitedness game with bound $\omega$. We will prove that player Automaton can also win the limitedness game with a finite bound.
+
+By the Büchi-Landweber theorem, if player Automaton can win the game with bound $\omega$, then he can also win the game with a finite memory strategy. We will show that this finite memory strategy is actually winning for a finite bound.
+
+Suppose that the input alphabet of the original distance automaton is $\Sigma$. A  finite memory strategy of player Automaton in the limitedness game  is a function
+\begin{align*}
+\sigma : \Sigma^* \to \text{sets of transitions} 	
+\end{align*}
+which is recognised by a finite automaton, i.e.~there is a deterministic finite automaton such that $\sigma(w)$ depends only on the state of the automaton after reading $w$. 
+% Here is a picture of how the strategy works:
+%\mypic{39}
+We claim that this same winning strategy produces runs where the cost is at most (number of states in the distance automaton) times (number of states in the automaton recognising the strategy), thus proving the implication from 3 to 2 in the lemma. To prove the claim, suppose that the strategy $\sigma$ loses in the game with the above described finite bound. Using a pumping argument we find a loop that can be exploited by player Input to force player Automaton into a path that has infinitely many costly edges, contradicting the assumption that $\sigma$ wins in the game with bound $\omega$,  as in the following picture:
+\mypic{40}
+\end{proof}
+
+
+
+
+
+
+
+
+

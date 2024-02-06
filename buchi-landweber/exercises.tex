@@ -1,0 +1,246 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:quasipol-reach}{
+We say that a game is \emph{finite} if it  has no infinite plays, i.e.~every play eventually reaches a dead end.
+Prove that every finite game is determined, i.e.~exactly one of the players has a winning strategy.
+}
+{
+
+}
+
+\exercise{zad:02-02}{
+Show that  reachability games played on  finite game graphs can be solved in time proportional to the number of edges.
+}
+{
+Assume that the objective of player $0$ is visiting an edge from a designated subset $X$.  The idea is to compute  the attractors as defined in  the proof of Theorem~\ref{thm:parity-memoryless}.
+
+At each step $i \in \set{1,2,\ldots}$ of the algorithm, we maintain a set of edges $X_i$ which is stored by a data structure which associates to each position  the following data:
+\begin{enumerate}
+	\item for each position the number of outgoing edges in $X_i$;
+	\item for each position, the list of all  incoming edges that are not  in $X_i$.
+\end{enumerate}
+  Initially, $X_1$ is set to be the edges from the winning condition, i.e.~the edges which player $0$ needs to visit in order to win.  In the $i$-th step, with $i \in \set{1,2,\ldots}$ the algorithm inspects each position $v$ which had an outgoing edge added in the previous step, i.e.~there 
+was an edge leaving $v$ that was in $X_i$ but not in $X_{i-1}$, with $X_0$ being assumed to be empty.   Depending on the owner of position $v$, do the following:
+\begin{itemize}
+	\item \emph{Player $0$ owns $v$.} If there is  at least one outgoing edge from $v$ that belongs to $X_i$ (which is necessarily the case, since an edge was added), then add all edges that enter $v$ to the set $X_{i+1}$.
+	 	\item \emph{Player $0$ owns $v$.} If some  edge leaving $v$ is still not in  $X_i$, then do nothing. Otherwise, if all edges leaving $v$ are in $X_i$, then add all edges that enter $v$ to the set $X_{i+1}$.
+\end{itemize}
+Using the data structures, we can make sure that a constant number of operations is executed when adding an edge to $X_i$. The algorithm stops when $X_i$ stops growing. It accepts if the initial position has (some / all) outgoing edges in the stable set $X_i$, depending on the owner of the initial position. Otherwise, the algorithm rejects.
+}
+
+
+
+\exercise{zad:02-07}{
+Show  one player parity games can be solved in PTIME.
+}
+{
+This amounts to checking whether there is a reachable cycle with the largest
+rank of the given parity.
+}
+
+
+
+\exercise{zad:02-08}{
+Show that solving parity games is in $\textup{NP} \cap \textup{coNP}$.
+}
+{
+We will use the fact that in parity games winning strategies can chosen to be positional.
+To show presence in \textup{NP} we do the following.
+For a vertex in which player $i$ wins we guess a positional strategy for player $i$ (an edge
+from every $i$-vertex, so a polynomial object). To check that it is indeed winning for $i$ we have to choose
+that in a graph which appeared after fixing a strategy for $i$ the player $i$ indeed wins. It is enough to check
+that there is no reachable loop in which the smallest rank has parity $1-i$, which can be easily done in polynomial
+time.
+
+In order to show presence in \textup{coNP} we have to show that the complement is in \textup{NP}.
+It is easy, as the complement is existence of winning strategy for player $1-i$ and since the game is almost symmetric
+this is also in \textup{NP}.
+}
+
+
+
+\exercise{zad:02-09}{
+Consider the following game on a finite game graph $V$ together with function $\rank: V \to \N$.
+At every moment of the play, the owner of the current vertex chooses a next vertex among current vertex successors.
+This continues until some vertex repeats on the play, i.e. till the first loop is closed. Then depending on the parity
+of the smallest rank on the loop the winning player is determined.
+Prove that player $i$ in the described game wins iff player $i$ wins in the parity game on the same arena.
+}
+{
+Assume that $i$ wins in the parity game. Then we has a winning strategy which is positional.
+Let $i$ play the same strategy in the loop-game. Consider the first closed loop. If the smallest
+rank on this loop would have parity $1-i$ it would mean that there exists a strategy of $1-i$
+in the parity game, which forces the play to go through that loop all the time and the result would be
+that player $i$ would lose. So the smallest rank on the loop has the parity $i$, so $i$ also has a winning strategy
+in the loop game.
+If $1-i$ wins in the parity game then in the same way we show that $1-i$ wins the loop-game. So indeed these
+two games are equivalent.
+}
+
+
+
+\exercise{zad:02-10}{
+Are Muller games  positionally determined?
+}
+{
+There are many ways to show that they are not positionally determined.
+One way is to set $\F = \{q_0, q_1\}$ and put a graph with transitions:
+$p \trans{} q_0$, $p \trans{} q_1$, $q_0 \trans{} p$ and $q_1 \trans{} p$, where the vertex $p$ is owned by the player,
+who wants to have $\inf(\rho) \in \F$. This player has to change his decision from time to time (go sometimes to $q_0$
+and sometimes to $q_1$) in order to win.
+
+}
+
+
+
+\exercise{zad:02-11}{
+Show that B\"{u}chi games are positionally determined without direct use of the same result for parity games.
+}
+{
+
+}
+
+
+
+
+\exercise{zad:02-12}{
+Show that the winning condition  Muller games is a  Borel set, and therefore Muller games are determined by  Martin's theorem. (Most of this problem is looking up what Borel sets and Martin's theorem are.) 
+}
+{
+
+}
+
+
+
+\exercise{zad:02-14}{
+Show that Muller games on finite arenas are not positionally determined.
+}
+{
+
+}
+
+
+
+
+\exercise{zad:02-13}{
+Construct an infinite game played on a finite game graph, in which  player 0 has a winning strategy, but not a winning  finite memory strategy.
+\emph{Remark:} Notice that by B\"{u}chi-Landweber theorem the winning condition in that
+game cannot be $\omega$-regular.
+}
+{
+The same game graph as in exercise~\ref{zad:02-14} works: $p \trans{} q_0$, $p \trans{} q_1$, $q_0 \trans{} p$
+and $q_1 \trans{} p$, where winning condition for the player, which owns node $p$ could be that indices of the sequence
+of $q_i$ states (so zeros and ones) form some not ultimately periodic word in $\{0, 1\}^\omega$.
+For example a binary representation of number $\Pi$. Then it is clear that player owning $p$ can win,
+but he needs an infinite memory.
+}
+
+
+\exercise{zad:02-03}{
+Consider the following riddle. There are infinitely many dwarfs (countably many). Every dwarf is given a hat, which is either red or green.
+Every dwarf sees the color of every hat beside his own one. Every dwarf is supposed to tell what is the color of his hat, such that only
+finitely many dwarfs make a mistake. They can fix a strategy in advance, before getting their hats, but they cannot communicate after getting their hats.
+Find a winning strategy for dwarfs.
+\emph{Remark:} Problems \ref{zad:02-03}, \ref{zad:02-04} and \ref{zad:02-05} serve as a preparation for the Problem \ref{zad:02-06}.
+}
+{
+Hint: consider the following relation on infinite 0-1 sequences $w \sim w'$ iff they differ on finitely many places.
+We can treat a hat configuration as an infinite 0-1 sequence. Relation $\sim$ is an equivalence relation.
+A strategy is to fix one element in every equivalence class. Every dwarf can easily recognize what is the equivalence
+class. Then every one says the corresponding number of this one distinguished element in the equivalence class.
+Only finitely many dwarfs will make a mistake.
+}
+
+
+
+\exercise{zad:02-04}{
+Show that there is  a function $\xor: \{0, 1\}^\omega \to \{0, 1\}$, such that changing one bit of an argument always changes the result. (The solution uses the axiom of choice.)
+}
+{
+In every equivalence class $C$ of $\sim$ choose one element $v_C$ and put $\xor(v_C) = 0$.
+For every $v \in C$ put $\xor(v) = \fxor(v \otimes v_C)$, where $\otimes$ is the standard bit xor
+and $\fxor$ outputs $0$ iff an argument has even number of $1$ (argument of $\fxor$ has to have
+a finite number of ones). It is easy to verify that $\xor$ is indeed an infinite xor.
+}
+
+
+
+\exercise{zad:02-05}{
+Consider the following two player game, called Chomp. There is a rectangular chocolate in a shape of $n\times k$ grid.
+The right upper corner piece is rotten. Players move in an alternating manner, the first one moves first. 
+Any player in his move picks square of the chocolate that is not yet eaten, and eats all pieces that are to
+the left and to the bottom from the picked piece.
+The player who eats the rotten piece loses. Determine who has a winning strategy.
+}
+{
+The aim of this exercise is to present strategy stealing argument on a simple example.
+We show that first player has a winning strategy for all $n, k$ (beside the trivial case $n = k = 1$)
+without finding this strategy. As the chocolate game is a  game with a finite game tree, so  we know that it is determined by Exercise~\ref{zad:quasipol-reach}.
+So for every position one of the players has a winning strategy. Fix $n, k \in \N$ such that $n > 1$ or $k > 1$.
+Assume towards contradiction that second player has a winning strategy from the initial position.
+The initial position is losing (as first player will move from it).
+Consider a move of first player, which eats just one piece, the leftmost and bottommost.
+The new position has to be winning. Then second player moves, eating some rectangle $n_1 \times k_1$
+at the leftmost and bottommost corner. Notice that this is the only move second player can perform from this position.
+This position has to be losing, as we assumed that second player used a winning strategy.
+However, this position can be  already reached from from the initial position by a single move of first player.
+This means that actually initial position was winning, as the owner can choose a move, which leads to a losing position.
+Contradiction. Thus indeed it has to be the first player who has a winning strategy from the initial position.
+}
+
+
+\exercise{zad:02-06}{
+Show a game that is  not determined.
+}
+{
+Hint 1: use an infinite xor.
+Hint 2: the game is as follows. There are two players, they construct an infinite 0-1 sequence.
+Player One wins if $\xor$ of constructed element is $1$, otherwise Zero wins.
+Zero and One construct this infinite sequence $w$ by delivering in an alternating manner a finite 0-1 sequences
+and appending it to the currently constructed prefix of $w$.
+Assume that Zero starts.
+
+Observe now that this game is not determined. We will show that no player has a winning strategy.
+Assume first that One has a winning strategy $\sigma$. We will show how Zero can sometimes win against this
+strategy. Consider two plays $P_1$ and $P_2$.
+Let Zero play $0$ in play $P_1$ and the response of One in $P_1$ be $v_0$.
+Then Zero plays $1 v_0$ in $P_2$ and response of One in $P_2$ is some $v_1$.
+Then Zero plays $v_1$ in $P_1$ and the response of One in $P_1$ is some $v_2$.
+Then Zero plays $v_2$ in $P_2$ and the response of One in $P_2$ is some $v_3$.
+In that way Zero copies responses of One to another play. Then in $P_1$ the constructed play
+will be of the form $0 v_1 v_2 v_3 \cdots \in \{0, 1\}^\omega$ and in $P_2$ it will be of the
+form $1 v_1 v_2 v_3 \cdots \in \{0, 1\}^\omega$. So the different player will win these plays, contradiction
+with the assumption that $\sigma$ is a winning strategy for One.
+
+Similarly we can get a contradiction with the assumption that Zero has a winning strategy.
+Zero starts with some $v$ both in $P_1$ and in $P_2$. Then One plays $0$ in $P_1$, the response of Zero is $v_1$
+and One plays $1 v_1$ in $P_2$. Then he copies Zero's responses as before and the results of these plays will be different
+in $P_1$ and $P_2$. This leads to the contradiction.
+
+So indeed this \xor-game is not determined.
+}
+
+
+
+\exercise{zad:02-15}{
+Consider the following \emph{bisimilarity game} played on a finite game graph with vertices $V$ equipped with a function $\rank: V \to \N$.
+Two players, \emph{Spoiler} and \emph{Duplicator} start from a position $(u, v) \in V \times V$.
+The play proceeds in rounds.
+If at the beginning of a round $\rank(u) \neq \rank(v)$ or $u$ and $v$ belong to different players then
+Spoiler immediately wins. Otherwise Spoiler makes a move to $(u', v)$ or $(u, v')$ such that
+$u \tran{} u'$ or $v \tran{} v'$, respectively. Then Duplicator makes a move to $(u', v')$ such that
+$v \tran{} v'$ or $u \tran{} u'$, respectively. Next round starts from $(u', v')$. If play continues infinitely long then Duplicator wins.
+Show that if Duplicator has a winning strategy from position $(u, v)$ then the same player has a winning strategy in the parity game
+starting from $u$ and in the parity game starting in $v$.
+}
+{
+Player $i$ will keep an invariant that vertices $u^k$ and $v^k$ (after $k$ rounds in both plays)
+are bisimilar. This clearly suffices. Assume $u^k$ and $v^k$ are bisimilar. If both are vertices of player $i$
+then player $i$ looks how he would move to $u^{k+1}$ and moves to $v^{k+1}$ such that it is the corresponding move.
+Otherwise, player $i$ looks how his opponent moves to $v^{k+1}$ and thinks that he also
+moves to $u^{k+1}$ by the corresponding move. Actually formally what we do we construct a strategy from $v$ winning for $i$
+having the strategy from $u$ and the fact that $u$ and $v$ are bisimilar.
+}
+
+
+

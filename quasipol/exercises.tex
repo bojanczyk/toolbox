@@ -1,0 +1,33 @@
+% !TEX root = ../main.tex
+
+
+\exercise{zad:quasipol-01}{
+Consider the following variant of the automaton from Lemma~\ref{lem:quasi-reduction}. Only odd numbers are kept in the registers, and the update function is the same as in Lemma~\ref{lem:quasi-reduction} when reading an odd number. When reading an even number $a$, the automaton erases all registers, which store values $<a$. Show that this automaton does not satisfy the properties required in Lemma~\ref{lem:quasi-reduction}.
+}
+{
+}
+
+\exercise{zad:quasipol-02}{Show that there is no safety automaton which:
+\begin{itemize}
+	\item accepts all ultimately periodic words that satisfy the parity condition;
+	\item rejects all ultimately periodic words that violate the parity condition.
+\end{itemize}
+}
+{
+}
+
+\exercise{zad:quasipol-03}{
+Show that there is no safety automaton with $<\lfloor n/2\rfloor$ states which satisfies the properties required in Lemma~\ref{lem:quasi-reduction}.
+}
+{
+}
+
+\exercise{zad:quasipol-04}{
+A probabilistic reachability automaton is defined like a finite automaton, except that each transition is assigned a probability -- a number in the unit interval --  such that for every state, the sum of probabilities for outgoing transitions is 1. The value assigned by such an automaton to an $\omega$-word is the probability that an accepting state is seen at least once.  Show that there is a probabilistic reachability automaton over the alphabet $\set{1,\ldots,n}^\omega$, with state space polynomial in $n$, that:
+\begin{itemize}
+	\item assigns value 1 to words that have only even loops; 
+	\item assigns value 0 to words that have only odd loops.
+\end{itemize}
+
+}{}
+

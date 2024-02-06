@@ -1,0 +1,243 @@
+\label{sec:twa}
+
+\newcommand{\dfs}{search\xspace}
+In this section we discuss automata on finite trees. We introduce two models: branching tree automata and tree-walking automata. The main result is that tree-walking automata do not determinise.
+
+\paragraph*{Trees.}
+In this chapter we consider trees that are finite and over a ranked alphabet. A ranked alphabet, see below, means that the label of a node determines the number of children; when this is not the case one speaks of \emph{unranked trees}. We also assume that the children of a node are ordered from left to right; when this is not the case one speaks of \emph{unordered trees}, unordered trees will appear in Chapter~\ref{sec:treewidth} under the name of graphs of treewidth one. Finally, one can consider infinite trees, this will be done in Chapter~\ref{sec:mso}.
+
+ Define a \emph{ranked alphabet} to be a finite set $\Sigma$ where every element $a \in \Sigma$ has an associated arity in $\set{0,1,\ldots}$. Here is a picture of a ranked alphabet:
+\mypicb{10}
+A  tree over a ranked alphabet $\Sigma$ is defined to be a finite (rooted) tree where every node has a label from $\Sigma$. Furthermore, for each node the number of children is the same as the rank of the label, and we assume that these children are ordered, i.e. one can speak of the first child, second child, etc. Here is a picture of a finite tree over the alphabet from the example above:
+\mypicb{9}
+The goal of this chapter is to discuss several automata models for trees as defined above.
+\paragraph*{Branching tree automata.} We begin with branching tree automata. Because this is the ``right'' model of tree automata, branching tree automata  also known as tree automata (without any further qualifications).
+\begin{definition}
+A \emph{nondeterministic (branchibng) tree automaton} consists of:
+\begin{itemize}
+	\item an input alphabet $\Sigma$, which is a ranked alphabet;
+	\item a finite set of states $Q$ with a distinguished subset of root states $R \subseteq Q$
+\item for every letter $a \in \Sigma$ of rank $n$, a transition relation $ \delta_a \subseteq Q^n \times Q$.
+\end{itemize}
+An automaton is called (bottom-up) deterministic if every transition relation is  a function $Q^n \to Q$.	 A tree is accepted by the automaton if there exists an accepting run, as explained in the following picture:
+\mypicb{11}
+\end{definition}
+
+
+\begin{lemma}\label{lem:tree-aut-bool-alg}
+  Languages recognised by nondeterministic tree automata are closed under union, intersection and complementation.
+\end{lemma}
+\begin{proof} For union, we can simply take the disjoint union of two nondeterministic tree automata. Intersection can be done using a cartesian product, or by using union and complementation.  For complementation, we use determinisation: the same proof as for automata on words -- the subset construction -- shows that for every nondeterministic tree automata there is an equivalent one that is (bottom-up) deterministic. Since (bottom-up) deterministic automata can be complemented by complementing the root states, we get the lemma.
+\end{proof}
+
+
+
+\begin{example}
+	In the above lemma, we used bottom-up deterministic automata, and argued that they are equivalent to nondeterministic ones. This type of determinism can be illustrated as follows \mypic{67}
+	Let us describe a different type of determinism, called \emph{top-down} determinism. In such an automaton the transition relation for letters of rank $n$ is a partial function of type $Q \to Q^n$, as in the following picture:
+	\mypic{68}
+	We also require that there is only one root state. The only way that to-down deterministic automaton can reject a tree is by encountering an undefined result in the partial transition function. Top-down deterministic automata are  strictly less expressive than nondeterministic ones (and therefore also bottom-up deterministic ones), see Exercise~\ref{zad:tree-aut-01}.
+\end{example}
+
+\section{Tree-walking automata.} Tree-walking automata are an alternative automaton model for trees, where the computation is sequential, i.e.~it does not split into parallel threads.  The idea is that at any given moment of the computation, the automaton is in a single node of the input tree. Based on the current state and the local view, 
+ the automaton chooses the new state and a neighbour to move to (or to accept/ reject). The local view is the label of the current node, as well as its child number (i.e.~which child is it, or ``root'' in case the node is the root), as in the following picture:
+\mypicb{12}
+
+\newcommand{\views}{\mathsf{views}}
+For a ranked alphabet $\Sigma$, define 
+
+
+\begin{definition}[Tree-walking automaton]x
+The syntax of a  \emph{(nondeterministic) tree-walking automaton} consists of: a finite ranked alphabet $\Sigma$ called the \emph{input alphabet}, a finite set of states $Q$ with a designated initial state $q$ and  accepting states $F \subseteq Q$, and a transition relation
+		\begin{align*}
+	\delta \subseteq \underbrace{Q \times \views \Sigma}_{\text{source state and view}} \times \underbrace{\set{\text{parent, child 1, ..., child $n$}}}_{\text{where to move, $n$ is maximal arity in $\Sigma$}} \times \underbrace{Q}_{\text{target state}}
+%			\delta_a \subseteq \underbrace{Q \times \set{\text{root},1,\ldots,\text{maximal rank in $\Sigma$}}}_{\text{what the automaton sees}}  \times \underbrace{(\set{\text{accept, reject}} \cup Q \times \set{\text{up},1,\ldots,n})}_{\text{what the automaton does}}
+		\end{align*}
+		We assume that for every transition $(q,\tau,d,p) \in \delta$,  the direction $d$ is consistent with the view $\tau$ in the sense that if $d$ is ``parent'' then $\tau$ is the view of a node with a parent, and if $\tau$ is ``child $i$'' then $\tau$ is the view of a node with at least $i$ children.
+The automaton is called \emph{deterministic} if the  transition relation is  a function from the first two arguments to the last two arguments.
+\end{definition}
+
+The semantics of a tree-walking automaton are defined like for two-way automata on words. Suppose that $t$ is a tree over the input alphabet. A \emph{configuration} of the automaton is a pair (state, node of the input tree).   A run of the automaton is a sequence of configurations, such that every two consecutive configurations are connected by the transition relation in the natural way, illustrated in the following picture: \mypicb{88}
+The automaton accepts a tree if there is a run which begins in the  initial state at the root of the tree, and which ends in a configuration that uses an accepting state.  Note that there are two ways of rejecting an input tree: (a) reaching a configuration that  has no applicable transition; (b) entering an infinite loop. Using a construction from~(Sipser, 1980), one can show that every deterministic tree-walking automaton can be modified so that rejection is done only via (a), see~(Muscholl, Samuelides, & Segoufin, 2006).
+The goal of this chapter is to prove that tree-waking automata cannot be determinised. 
+\begin{theorem}\label{thm:twa-det}(Bojanczyk & Colcombet, 2006)
+	There is a tree language that is recognised by a nondeterministic tree-walking automaton, but not by any deterministic tree-walking automaton.
+\end{theorem}
+In the exercises, we show that nondeterministic tree-walking automata can be converted into branching tree automata. The converse does not hold, i.e.~there is a language recognised by a branching tree automaton that is not recognised by any (nondeterministic) tree-walking automaton~(Bojanczyk & Colcombet, 2008). Summing up, here is the picture on the expressive power of various models of tree automata, with two regions for which we do not know if they are occupied.
+\mypicb{13}
+
+
+\section{The separating language}
+In this section we define the language which separates deterministic and nondeterministic tree-walking automata, and we show that the language can be recognised by a nondeterministic tree-walking automaton. In the next section we show the lower bound --  the separating language cannot be recognised by a deterministic automaton.
+
+The input alphabet has three letters:
+\mypicb{42}
+The language consists of trees with exactly three black leaves, such that  their distribution in the tree is like this: \mypicb{43}
+and not like this:
+\mypicb{89}
+\begin{lemma}\label{lem:ntwa}
+The separating language is recognised by a nondeterministic tree-walking automaton.
+\end{lemma}
+\begin{proof}
+The automaton first does a depth-first search to check if the tree contains exactly three black nodes. If not, it rejects. Otherwise, it uses nondeterminism to go to some node $v$ (the idea is that $v$ will be the closest common ancestor of the first two black nodes):
+\mypicb{39}
+Next, it behaves as if continuing a depth-first search when returning from $v$, i.e.~it will visit all leaves that are strictly after the rightmost descendant of $v$, like this:\mypicb{38}
+It accept if during this depth-first search, it sees exactly one black node. 
+\end{proof}
+
+
+\section{Deterministic  automata do not recognise the separating language}
+It remains to show that a deterministic tree-walking automaton cannot recognise the separating language. The idea is this: we will show that for certain very homogenous inputs, the a deterministic tree-walking automaton can only do a depth-first search, and this is not enough to recognise the separating language.
+
+\paragraph*{Patterns.} Define a pattern to be a tree where every node is labelled by a view over the alphabet for the separating language, in a consistent way as defined by the following picture:
+\mypicb{40}
+A pattern without any ports (i.e.~the root is not a port, and none of the leaves are ports) is the same thing as a tree.  Define the \emph{arity} of a pattern to be the number of leaf ports. Patterns can be composed as follows. Let $t$ be an $n$-ary pattern and let  $t_1,\ldots,t_n$ be patterns such that for every  $i \in \set{1,\ldots,n}$, the root of $t_i$  has the  same view as the $i$-th leaf port in $t$. Then $t[t_1,\ldots,t_n]$ is defined by fusing the leaf ports of $t$ with the corresponding root ports of $t_1,\ldots,t_n$  as in the following picture:
+\mypicb{16}
+
+\paragraph*{Equivalence.} Fix for the rest of this section a deterministic tree-walking automaton. We will prove that this automaton does not recognise the separating language. For this we will find two patterns that are equivalent with respect to the automaton, but which are not equivalent with respect to the language. Define a \emph{port-to-port} run  inside a pattern $t$ to be a sequence of configurations (state, node of the pattern) that are inside the pattern, are consistent with the transition function of the automaton, has the source configuration in a port, and which is cut off at the first visit to a port.  A port-to-port run either has its target configuration in  a port, or it accepts, rejects or enters an infinite loop without every visiting a port after the source configuration.
+ The \emph{type} of a port-to-port run  is defined to be the following information: (a) what is the source state and port in the source configuration (b) does the run accept/reject/loop without visiting any ports after its source; (c) if the run does  visit  a port after the source port, then which one and in what state. In items (a) and (c), we do not store the actual port node, only its number (i.e.~is it the root port, leaf port 1, leaf port 2, etc.). In particular, the number of types of runs is bounded by a function of the number of leaf ports. Two patterns are called \emph{equivalent} if: they have the same view in the root, they have the same number of leaf ports with the same respective views, and they have  the same types of port-to-port runs. It is not difficult to see that equivalence  is a congruence, i.e.~if $\sim$ denotes equivalence then:
+\begin{align*}
+	t \sim t', t_1 \sim t'_1,\ldots, t_n \sim t'_n \qquad \text{implies} \qquad t[t_1,\ldots,t_n] \sim t'[t'_1,\ldots,t'_n].
+\end{align*}
+
+
+We now move to the first important observation in the proof. The following lemma would also work for nondeterministic tree-walking automata, and even branching ones (under a suitable notion of equivalence).
+\begin{lemma}\label{lem:patterns}
+	There exist patterns $t_0,t_1,t_2$ with the following properties:
+	\begin{itemize}
+		\item For every $i \in \set{0,1,2}$, $t_i$ is a pattern of arity $i$ that  uses only white binary and white leaf nodes, and where the root and all leaf ports have view
+\mypicb{22}
+		\item Define a homogeneous pattern to be any pattern obtained by composing $t_0,t_1,t_2$. Then for every $i \in \set{0,1,2}$, all homogeneous patterns of arity $i$ are equivalent.
+	\end{itemize}
+\end{lemma}
+We draw the patterns from the lemma like this:
+\mypicb{17}
+For example, all of the following homogeneous binary patterns are equivalent, because they have arity 2 (we adopt the convention that ports are drawn as white, and ports connecting patterns are drawn in colours like yellow or red, although they represent nodes with a white binary label):
+\mypicb{18} In the rest of this section, we  lift Lemma~\ref{lem:patterns} to higher arities -- although we only need the case of 3 -- as stated below.
+\begin{lemma}\label{lem:twa-homogeneous}
+	Every two homogeneous patterns of same arity are equivalent.
+\end{lemma}
+
+Before proving the above lemma, we use it to complete the proof of the theorem. Consider the following two patterns $s$ and $s'$:
+ \mypicb{87}
+By Lemma~\ref{lem:twa-homogeneous}, the above patterns are equivalent, and therefore the automaton should accept both or reject both. But only one belongs to the language $L$, thus showing that no deterministic tree-walking automaton can recognise the language $L$.  It remains to prove Lemma~\ref{lem:twa-homogeneous}; this is the content of the rest of this chapter. From now on, all patterns considered will be homogeneous.
+
+%	In the proof, we use the terminology from the following picture:
+%\mypicb{30}
+%We say that a configuration in $s$ is \emph{equivalent} to a configuration  in $s'$ if both use the same state and the  nodes used by the configurations are ports (either root or leaf) and are equivalent in the sense described in the picture above. We will show the following.  
+%
+
+\section{Proof of the rotation lemma}
+\paragraph*{Closure of a state.} 
+For a state $q$, consider the run of the automaton which begins in state $q$ in the yellow node below:
+\mypicb{83}
+and ends at the first visit to a port node (white in the picture), or enters an infinite loop.
+Define the \emph{closure} of $q$, denoted by  $\bar q$, to be the state of the last visit in the yellow node; we might have $q = \bar q$ if the run does not visit the yellow node again.
+
+The definition of closure is based on the behaviour of the automaton on the interface between two copies of $t_1$. The following lemma shows that the same behaviour will be witnessed on the interface between any two homogeneous patterns of nonzero arity.
+\begin{lemma}\label{lem:twa-bar}
+  Let $s,t$ be homogeneous patterns of nonzero arity, and let $i$ be one of the leaf ports in $s$. If the automaton begins in state $q$ in the yellow node here: \mypicb{84}
+  then the last visit in the yellow node (before any  ports are reached) will be in state $\bar q$.
+\end{lemma}
+\begin{proof} 
+Consider the following pattern:
+\mypicb{86}
+In the above pattern,  consider the run of the automaton which begins in state $q$ in the yellow node, and which is stopped whenever it reaches a port (a white node) for the first time.  By definition of $\bar q$, because the parts above and bellow the yellow node are equivalent to $t_1$, the last visit to  the  yellow node is   in state $\bar q$. For the same reason, the loop in the yellow node that goes from state $q$ to state $\bar q$ never visits the red nodes; and once a red node is visited, then the yellow node  is not visited again. After passing through a red node, the run continues -- perhaps returning to the red node -- until it reaches one of the ports (i.e.~a white node) or one of the plugged ports (i.e.~a blue node). 
+\end{proof}
+
+
+
+
+
+\begin{lemma}\label{lem:closure-up} For every states $p,q$ we have the following implications (and their symmetric versions with leaf port 2 used instead of leaf port 1):
+  \mypicb{60}
+\end{lemma}
+\begin{proof}
+We only prove the first implication, the other ones are proved the same way.
+Consider the following port-to-port run:
+\mypicb{37}
+Item (1) in the picture is by the assumption of the implication. Item (2) is by definition of $\bar q$. Item (3) is again by assumption of the implication, and because  the above pattern is equivalent to $t_2$. The run from (2) to (3) witnesses the conclusion of the implication. \end{proof}
+
+\paragraph*{Search behaviour.} We now turn to the crucial definition in the proof of Lemma~\ref{lem:twa-homogeneous}. A natural operation that can be done by a deterministic tree-walking automaton is doing a depth-first search through a tree. We eventually show that this is one of the only things that the automaton can do.
+
+\begin{definition}
+We say that a state $q$ is a left-to-right \dfs if there exists some state $p$ such  that the automaton admits the following runs:
+	\mypicb{53}
+\end{definition}
+The following straightforward lemma shows that a left-to-right \dfs will visit leaf ports in left-to-right order.
+\begin{lemma}\label{lem:dfs-does}
+Assume that a state $q$ is a left-to-right \dfs. Then:
+\begin{itemize}
+	\item[(*)]if  the automaton enters a homogeneous $n$-ary pattern in state $q$ at  leaf port $i<n$, then it will exit through the next leaf port $i+1$.
+\end{itemize}
+\end{lemma}
+\begin{proof}
+Here is the run that witnesses (*).
+\mypicb{44}
+In the picture above, we use Lemma~\ref{lem:twa-bar} to prove that if a node is first visited in state $q$, then it is last visited in state $\bar q$, likewise for $p$. 
+\end{proof}
+We now state the most technical part of the proof, which says that the conclusion (*) above is also true for any state $r$ which goes from leaf port 1 to leaf port 2 in the pattern $t_2$.
+
+\begin{lemma}\label{lem:get-dfs}
+Suppose that a state $r$ satisfies:
+\mypicb{45}
+for some state $p$. 
+Then the conclusion (*) of Lemma~\ref{lem:dfs-does} is true (with $r$ used instead of $q$).
+\end{lemma}
+\begin{proof}
+The key to the proof is the following claim.
+\begin{claim}
+	There is a state $q$ which is a left-to-right \dfs and satisfies 
+\mypicb{63}
+\end{claim}
+Before proving the claim, we used it to prove the lemma. Let  $t$ be an $n$-ary homogeneous pattern and let $i < n$ be one of the root ports. The following picture shows the run that witnesses (*) in the conclusion of the lemma. \mypicb{74}
+Item (1) is by the claim and Lemma~\ref{lem:twa-bar}, and item (2) is from Lemma~\ref{lem:dfs-does}. 
+
+\begin{proof}[Proof of the claim]
+Let $p$ be as in the assumption of the lemma. Consider the following port-to-port  run $\rho$:
+\mypicb{79}
+By definition of state $p$, such a run must exist, because the pattern above is homogeneous of arity 2.  
+In particular,  the red node must be  visited by $\rho$, since it is on the way from leaf port 1 to leaf port 2.  Consider two cases, depending on which of the nodes -- red or yellow -- is first visited by $\rho$.
+
+\begin{itemize}
+	\item \emph{The yellow node is visited first.} We will show that this case cannot happen.   Consider the states $x,y$ defined in the following picture:
+\mypicb{59}
+The state of the last visit in the red node is $\bar y$. By Lemma~\ref{lem:closure-up}, after visiting the red node in state $y$, the automaton returns in state $\bar y$, and then it proceeds to the root of the pattern, contradicting the assumption that $\rho$ ends in leaf port 1.  
+	\item \emph{The red node is visited first}. Define $q$ to be the state of the first visit in the red node. Because the red node is visited first, we have \mypicb{64}
+	Applying Lemma~\ref{lem:closure-up} to the leftmost picture above, we get 
+	\mypicb{80}
+	Let us continue our analysis of the run $\rho$. The last time the red node is visited is in state $\bar q$. After this visit, the run goes to leaf port 2 in state $p$, thus proving 
+	\mypicb{81}
+\end{itemize}
+In the second case above, which is the only case, we almost finished the proof of the statement of the claim. The only missing ingredient is:
+\mypicb{82}
+Let $\rho$ be the port-to-port run described in the following picture:
+\mypicb{73}
+The yellow node is visited the first time in state $p$, it is visited the last time in state $\bar p$. Therefore, the run after the last visit in the yellow node witnesses the missing ingredient. This concludes the proof of the claim, and therefore also of the lemma. \end{proof}
+ \end{proof}
+ 
+ 
+ \begin{proof}[Proof of the Rotation Lemma] 
+
+To prove that rotation preserves equivalence, let  $\rho,\rho'$  port-to-port runs in the two patterns from the picture above, respectively, which have equivalent source configurations. To prove equivalence, we need to show that  target configurations are equivalent. Let $q$ be the state in the source configuration of the two runs. We consider two cases depending on the source port of these runs.
+	\begin{enumerate}
+		\item \emph{The runs begin in the $i$-th leaf port for $i \in \set{1,2,3}$.} The cases of leaf port 1 and 3 are symmetric, see we ignore the case of leaf port 3. Suppose that the automaton starts in leaf port 1 or 2. Let us see what happens in the pattern $t_2$ if we start in leaf port 1 in state $q$. There are three cases to consider:
+	\mypicb{76}
+	 In the first case, we use Lemma~\ref{lem:closure-up} to show that both $\rho$ and $\rho'$ end in the root port (and in the same state).
+	 In the second case, we use Lemma~\ref{lem:dfs-does} to show that both $\rho$ and $\rho'$ end in leaf port $i+1$ (and in the same state).
+ In the third case, we conclude that for every homogeneous pattern, if the automaton begins in state $q$ in a leaf port, then it will return to the same port (in some fixed state) or enter an infinite loop. Here is the picture:
+\mypicb{77}
+
+
+	\item \emph{The runs begin in the root port.}  	Consider three cases for what happens if the automaton starts in the roof of $t_2$  in state $q$:
+	\mypicb{35}
+	For the first  case, we use a symmetric version of Lemma~\ref{lem:closure-up}, with top and down reversed, to prove that both $\rho$ and $\rho'$ will end in leaf port 1. A symmetric reasoning is applied in the second case, with the target being leaf port 3. The third case is deal with the same way as in the previous item.
+		\end{enumerate}	
+
+\end{proof}
+
+
+Bojanczyk, M., & Colcombet, T. (2006). Tree-walking automata cannot be determinized. Theor. Comput. Sci., 350(2-3), 164–173. http://doi.org/10.1016/j.tcs.2005.10.031
+Bojanczyk, M., & Colcombet, T. (2008). Tree-Walking Automata Do Not Recognize All Regular Languages. SIAM J. Comput., 38(2), 658–701. http://doi.org/10.1137/050645427
+Muscholl, A., Samuelides, M., & Segoufin, L. (2006). Complementing deterministic tree-walking automata. Inf. Process. Lett., 99(1), 33–39. http://doi.org/10.1016/j.ipl.2005.09.017
+Sipser, M. (1980). Halting Space-Bounded Computations. Theor. Comput. Sci., 10(3), 335–338. http://doi.org/10.1016/0304-3975(80)90053-5

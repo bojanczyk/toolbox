@@ -1,0 +1,231 @@
+% !TEX root = ../main.tex
+
+\exercise{zad:05-01}{
+The translation from \mso to automata in Theorem~\ref{thm:thatcher-wright} does an exponential blowup whenever it determinises the automaton, and therefore an upper bound on the running time is $n$-fold iteration of exponential, where $n$ is the size of the formula. Here is a matching lower bound.
+Consider \mso on words, i.e.~there is a successor relation and unary predicates for the labels. Show that for every $n$, there is a formula of \mso (in fact, first-order logic is enough) which has size polynomial in $n$ and  is true in a unique word which has length
+\begin{align*}
+\underbrace{2^{2^{2^{2^{2^{\cdots ^{2^{2^{2^2}}}}}}}}}_{\text{$n$ times}}
+\end{align*}
+}
+{
+}
+
+
+\exercise{zad:05-02}{
+Show that the set $\Nat^*$ equipped with the prefix relation has decidable \mso theory.
+}
+{
+}
+
+\exercise{zad:05-03}{
+Show that emptiness is polynomial time and universality is {\sc ExpTime}-complete for nondeterministic tree automata on finite trees.
+\wojtek{Chcemy to? Ja mam watpliwosci.}
+}
+{
+}
+
+\exercise{zad:05-04}{
+Show that emptiness for nondeterministic parity tree automata reduces in polynomial time to solving parity games.
+}
+{
+}
+
+
+\exercise{zad:05-06}{
+Determine whether the following tree languages are regular:
+\begin{enumerate}
+  \item trees with an even number of nodes;
+  \item trees with an even number of $a$-labelled nodes;
+  \item trees over leaf alphabet $0, 1$ and internal alphabet $\vee, \wedge$ which evaluate to true
+  when treated as boolean expressions;
+  \item balanced trees (every leaf is at the same depth).
+\end{enumerate}
+}
+{
+In cases 1.-3. it is easy to show a nondeterministic automaton. Think that it goes bottom-up (it is usually a better perspective).
+In 1. it counts number of nodes modulo $2$. Actually in 1. a tree which we consider is never accepted, because it always
+have an odd number of nodes. In 2. it counts number of $a$-nodes modulo $2$. In 3. in remembers the boolean value
+of the subtree.
+In the case 4. language is not regular. It is easy to see. Consider the deterministic bottom-up automaton. Let $q_k$
+be a state assigned to a complete binary tree of depth $k$. Let our automaton have $n$ states. Then by pigeonhole
+principle some two among the trees $q_1, \ldots, q_{n+1}$ have the same state, say $q_i$ and $q_j$.
+Then tree $a(q_i, q_i)$ and tree $a(q_i, q_j)$ will behave the same with respect to this automaton, but they shouldn't:
+the first one is in the language, while the second one not.
+}
+
+
+\exercise{zad:05-05}{
+Determine which of the following four variants of tree automata: deterministic / nondeterministic, top-down / bottom-up tree
+automata are equivalent.
+}
+{
+It is convenient to thing about the run of automaton a bit differently than before (in finite word case). Before we were usually
+thinking that automaton is processing a word from left to right and assigns to every edge (between letters) a state.
+Now it is better to think more declarative. Think that we label all the edges simultaneously and this labeling is correct
+if it is consistent with transition relation. Then we easily see that nondeterministic top-down and bottom-up automata
+has the some expressivity, as they actually have the same declarative definition.
+
+We will now show that deterministic bottom-up variant is equivalently expressive, but deterministic top-down
+variant is weaker. For focus on deterministic bottom-up variant.
+
+We say that automaton is bottom-up deterministic if for every $p_1, p_2 \in Q$ and $a \in A$ there exists at most
+one $p \in Q$ such that $(p, a, p_1, p_2)$ is a transition. We will show that for every nondeterministic automaton there
+exists an equivalent bottom-up deterministic automaton. We just apply a subset construction bottom-up. A new state
+will be the set of old states. An edge will be in the new state $S \subseteq Q$ if it can be in all old states $q \in S$
+(there exists a labeling). One can easily see that this information can be updated bottom-up deterministically. A set of states
+is final iff it contains at least one old final state.
+
+Now let us show that deterministic top-down variant is weaker. We will show that it cannot recognize the language:
+there exists an a-labeled node in the tree. This language can be easily recognize by a nondeterministic variant.
+Assume that there is some deterministic top-down automaton $\A$ recognizing this language with initial state $q_0 \in Q$.
+There is some transition $(q_0, b, q_L, q_R)$. If there is an $a$ in the left tree, but no $a$ in the right tree $\A$ should
+reach final states everywhere, so there is an accepting run from $q_R$ on the right subtree even if there is no $a$ there.
+Similarly there is an accepting run from $q_L$ on the left subtree even if there is no $a$ there. So $\A$ can accept also
+trees such that there is no $a$ anywhere in the tree.
+}
+
+
+
+
+
+\exercise{zad:05-07}{
+Define the \emph{yield} of a tree to be the word composed from labels of its leaves written in infix order.
+Show that for every $L \subseteq \Sigma^*$ the following are equivalent
+\begin{enumerate}
+  \item $L$ is context-free;
+  \item $L$ is the set of yields of some regular tree language.
+\end{enumerate}
+
+}
+{
+First implication from 1. to 2. Just consider a grammar in Chomsky normal form for $L$ and the regular language
+of all its derivation trees. We can easily see that yield of a derivation is the derived word. So indeed the set of yields
+of the regular language of derivations is $L$.
+
+Implication from 2. to 1. is also not much harder. Just build a context-free grammar in Chomsky normal form from our regular
+tree language. For every transition $(p, a, q, r)$ make a rule $X_p \tran{} X_q X_r$ in the grammar
+and for every $(p, a, q, r)$, where $q$ and $r$ are accepting make a rule $X_p \tran{} a$ in the grammar.
+Then the language of the grammar is exactly the set of yields of our regular tree language.
+}
+
+
+
+
+\exercise{zad:05-08}{
+Show that deterministic top-down tree automata cannot recognize the language ''some node has label $a$''.
+}
+{
+
+}
+
+
+
+
+\exercise{zad:05-09}{
+Show that the  language of words of even length is definable in \mso.
+}
+{
+We will use sets $S$ and $T$ to mark odd and even positions, respectively.
+We will also use macros $\first(x)$ defined as $\forall_{y \in X} x \leq y$,
+$\last(x)$ defined as $\forall_{y \in X} x \geq y$ and $\nextpos(x, y)$ defines as
+$(x \leq y) \wedge (\forall_{z \in X} \neg (x < z \wedge z < y))$.
+The whole formula looks as follows
+\[
+\exists_{S, T \subseteq X} (\forall_{x \in X} x \in S \vee x \in T) \, \wedge 
+\]
+\[
+(\forall_{x \in X} \neg (x \in S) \vee \neg (x \in T)) \, \wedge
+\]
+\[
+(\forall_{x \in X} (\first(x) \Rightarrow x \in S) \wedge (\last(x) \Rightarrow x \in T)) \, \wedge
+\]
+\[
+(\forall_{x, y \in X} (\nextpos(x, y) \Rightarrow (x \in S \iff y \in T))).
+\]
+x
+}
+
+
+
+
+
+
+
+
+\exercise{zad:05-12}{
+Show that the following languages of infinite trees are regular (accepted by some nondeterministic automaton):
+\begin{enumerate}
+  \item on every path, the sequence of labels belongs to a given $\omega$-regular language $L$;
+  \item some node has label $a$;
+  \item in every subtree some node has label $a$.
+\end{enumerate}
+}
+{
+We construct automata as follows.
+\begin{enumerate}
+  \item We take a deterministic parity automaton for $L$ and on every path
+  we use this automaton. Note that it is important that this automaton is deterministic, as it should behave
+  the same on the prefix of two paths, which agree on some (finite) prefix.
+  \item This one is simple, we just nondeterministically guess where is the letter $a$.
+  State $q$ has to send into one child state $q$ (still searching for $a$) and into one child state $q'$ (accepting forever).
+  \item This one is harder. Let assume wlog. that $\Sigma = \{a, b\}$. The automaton is as follows.
+  It has two states: accepting $q_a$ and not accepting $q_r$. We have transitions $(q, a, q_a, q_a)$ for $q \in \{q_a, q_r\}$
+  and transitions $(q, b, q_a, q_r)$, $(q, b, q_r, q_a)$ for $q \in \{q_a, q_r\}$. In other words if we see letter $a$ we send
+  accepting states into both child and otherwise only to one child. Clearly if there is a subtree in which there is no letter $a$
+  then for every run (so labeling) in this subtree there is an infinite path without accepting state.
+  Indeed, we just always go down into the child, where the state $q_r$ was sent. Now we show that for every tree
+  such that in every subtree there is a letter $a$ there exists an accepting run. We construct it. For every node let us choose
+  some its descendant, which is labelled by $a$. Say for example that it is a shallowest descendant which is leftmost among
+  the shallowest. Then if for a node $u$ descendant $v$ is chosen that for a node $u'$, a child of $u$, which is an ancestor of $v$
+  also descendant $v$ is chosen. Then we construct a run: for every node the edge going down in the direction of chosen
+  descendant is labelled by $q_r$ and the other one is labelled by $q_a$. This is really an accepting run. On every path either
+  we follow the path to chosen descendant and after a finite time we hit letter $a$ and thus $q_a$ or we deviate from the path
+  to chosen descendant and then we immediately have state $q_a$. Thus on every path we always have a finite time till
+  the state $q_a$, so all the paths are accepted. Clearly acceptance and nonacceptance of
+  states $q_a$ and $q_r$ can be implemented on ranks.
+\end{enumerate}
+}
+
+
+
+\exercise{zad:05-13}{
+In Existential Second Order Logic ($\eso$) one can write $\exists_{R_1, \ldots, R_n} \phi$, where
+$R_i$ are any relations (possibly of arity greater than 1) and $\phi$ is a first order sentence (which of course may use $R_i$).
+Show that the language of words of composite (non-prime) length is expressible in $\eso$.
+}
+{
+We guess the relation $+k$ such that length of the word is $kn$.
+We also guess the set of positions $0, k, 2k, (n-1)k$.
+It is easy to verify, that our relation $R$ is of the form $+k$ for some $k$, we just
+have to check that $+1(+k(x)) = +k(+1(x))$ for every $x$ ($+1$ is easy to implement using order).
+Then we check that the set is indeed of the postulated form, the first position is in the set
+and the last position in the set $-1$ and $+k$ is the last position in the word.
+
+There are definitely another ways of solving this exercise.
+
+This exercise is the special case of the more general fact (Fagin's theorem), which we will (maybe) show later.
+}
+
+
+
+
+
+\exercise{zad:05-18}{
+Consider the following game. There are two players \emph{Insider} and \emph{Outsider}. They choose in an alternating manner
+bits: $0$ or $1$ and create in that way an $\omega$-word $w$. If $w$ belongs to a given regular language
+$W \subseteq \{0, 1\}^\omega$ then Insider wins a play, otherwise Outsider wins. Show that it is decidable to check which player
+has a winning strategy in that game.
+\emph{Remark:} use MSO logic.
+}
+{
+We can express in MSO on trees that player Insider wins.
+Let $W$ be represented by a formula $\psi$. We say that there exists a set $S$ of nodes in the tree (being
+a set of infinite paths) such that
+\begin{itemize}
+  \item it contains the root
+  \item it is really the set of infinite paths, no finite path there
+  \item in every node $v$ belonging to Outsider (so on the even depth) in $S$ all the children of $v$ belong to $S$
+  \item for every set $T \subseteq S$ which is an infinite path set $T$ satisfies $\psi$.
+\end{itemize}
+Therefore it is decidable.
+}

@@ -1,0 +1,57 @@
+This chapter is about vector addition systems. The definition of this device could hardly be simpler:
+\begin{definition}[Vector Addition System]
+The syntax of a \emph{vector addition system} consists of a dimension $d \in \set{1,2,\ldots}$ and a  finite set $\delta \subseteq \Int^d$. A run of the system is a finite sequence of vectors in $\Nat^d$ (called \emph{configurations}) such that every consecutive configurations in the run form a \emph{transition} as explained in the following picture for dimension $d=2$:
+\mypicc{2}
+\end{definition}
+The most famous problem for vector addition systems is \emph{reachability}, i.e.~given two configurations, decide if they can be connected by a run. Reachability is decidable, which was first shown by  Mayr in~\cite{Mayr:1984jg}, although the computational complexity of the problem remains unknown, see~\cite{Schmitz:2016kp}. The reachability algorithm is complicated and beyond the scope of this book. It is crucial that configurations are vectors of natural numbers; for configurations that are  integer vectors the reachability problem and related problems become much simpler, see Exercise~\ref{zad:wqo-zvass}.
+
+ In this chapter, we present a simple algorithm for a different problem, called  coverability.
+\begin{theorem}\label{thm:coverability}
+	The following problem, called coverability, is decidable:
+	\begin{itemize}
+		\item {\bf Input.} A vector addition system with distinguished configurations $x,y$.
+		\item {\bf Question.} Is there a run from $x$ to some configuration $\ge y$?
+	\end{itemize}
+\end{theorem}
+
+In the above theorem, $\ge$ refers to the coordinate-wise ordering on vectors of natural numbers.
+Not only is the algorithm for the coverability problem conceptually simple, but it represents a technique that can be used to solve many other problems. The technique is known as \emph{well-structured transition systems}, and \emph{well quasi-orders} play a prominent role. See the exercises for more examples, and~\cite{Schmitz:2013ev} for more on the topic.
+
+Fix an input to the coverability problem, i.e.~a vector addition system with distinguished configurations $x$ and $y$. Let $d$ be the dimension. Define a \emph{semi-algorithm} for a decision problem to be an algorithm that terminates with success for ``yes'' instances, and which does not terminate for ``no'' instances. A decision problem is decidable if and only if both the problem and its complement have semi-algorithms. Clearly the coverability problem has a semi-algorithm --  enumerate all runs that begin in $x$ and terminate with success after finding a run that reaches a configuration $\ge y$. The following lemma completes the proof of Theorem~\ref{thm:coverability}, by giving a semi-algorithm for the complement of the coverability problem.
+
+\begin{lemma}\label{lem:}
+There is a semi-algorithm deciding non-coverability, i.e.~an algorithm that inputs a vector addition system with configurations $x,y$ and terminates with success if and only if there is no run from $x$ to any configuration $\ge y$.
+\end{lemma}
+\begin{proof} 
+Define a \emph{separator} for configurations $x$ and $y$ to be a set of  configurations that satisfies properties (1) - (4) depicted below
+\mypicc{3}	
+We claim that the following conditions are equivalent:
+\begin{enumerate}
+	\item there is no run from $x$ to a configuration $\ge y$;
+	\item there is a separator for $x$ and $y$.
+\end{enumerate}
+For the top-down  implication, one takes the separator to be the set of those configurations which can reach at least one configuration $\ge y$. This set is upward closed because the target set $\ge y$ is upward closed, and  transitions can be moved up, i.e.~if $a \to b$ is a transition, then also $a+c \to b+c$ is a transition, for every $c \in \Nat^d$.  (The remaining conditions in the definition of a separator are easily seen to be satisfied.)  For the bottom-up implication,  we observe that the separator contains all configurations that can reach at least one  configuration $\ge y$, and possibly other configurations as well.
+
+To prove the lemma, it  remains to show a semi-algorithm that checks if there exists a separator. We claim that a separator, actually any upward closed set, can be represented in a finite way using its minimal elements. First, every element in the separator is above some minimal element, because the order $\le$ on $\Nat^d$ is well-founded. Second, every set has finitely many minimal elements, because  minimal elements form an antichain (i.e.~are pairwise incomparable with respect to $\le$) and antichains are finite according to the following claim.
+
+\begin{claim}[Dickson's Lemma]
+	Antichains in $\Nat^d$ are finite.
+\end{claim}
+\begin{proof} We prove a slightly stronger statement: for every sequence 
+\begin{align*}
+  x_1,x_2,\ldots \in \Nat^d
+\end{align*}
+there is an infinite (not necessarily strictly) increasing  subsequence, i.e.~consecutive elements in the subsequence are related by $\le$. The stronger statement is proved by induction on $d$. 
+\begin{itemize}
+	\item \emph{Induction base $d=1$.} Take the first element $x$ of the sequence such that all following elements are $\ge x$.  Such an element must exist because $\le$ on  $\Nat$ is a well-founded total order. Put $x$ into the subsequence, and then repeat the process for the tail of the sequence after $x$.
+	\item  \emph{Induction  step.} Using the induction assumption,  extract a subsequence that is increasing on the first coordinate, and from that subsequence extract another one that is increasing on the remaining coordinates.
+\end{itemize}
+An alternative proof would use the infinite Ramsey theorem, see Problem~\ref{zad:09-02}.
+\end{proof}
+
+By Dickson's Lemma, every upward closed set can be represented in a finite way as the upward closure of some finite set. The semi-algorithm from the statement of the lemma enumerates through all finite subsets $S \subseteq \Nat^d$, and for each one checks if its upward closure satisfies conditions (1)-(4) in the definition of a separator. The only interesting condition is (4), i.e.~backward closure under transitions. Consider a potential counterexample for (4), i.e.~a transition  $a \to b$ such that the target is in the upward closure of $S$, but the source is not. If the counterexample $a \to b$ is chosen minimal coordinate-wise, then 
+\begin{itemize}
+\item[(*)] there is some $c \in S$ such that for every coordinate $i \in \set{1,\ldots,d}$, either the source  has $0$ on coordinate $i$, or the target agrees with $c$ on coordinate $i$.
+\end{itemize}
+There are finitely many transitions which satisfy (*), namely at most $2^d|S|$, and we can go through all of them to check if (4) is satisfied.
+\end{proof}
