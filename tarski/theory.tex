@@ -17,7 +17,11 @@ There is some freedom in the choice of vocabulary. For example we could add divi
 \end{align*}
 Conversely, we could remove subtraction, because it is definable in terms of addition, or we could remove the ordering, because it is defined by
 \begin{align*}
-  x < y \qquad \eqdef \qquad \exists z \ x + z \times z = y.
+  x \leq y \qquad \eqdef \qquad \exists z \ x + z \times z = y,
+\end{align*}
+thus
+\begin{align*}
+  x < y \qquad \eqdef \qquad x \ne y \land \exists z \ x + z \times z = y.
 \end{align*}
 Also, we could remove the constants for $0$ and $1$, because $0$ is the unit for addition and $1$ is the unit for multiplication. Summing up, as long as we care about first-order logic, the vocabulary could be reduced to have only $+$ and $\times$. Nevertheless, we will care about quantifier-free formulas, and some of the above definitions are not quantifier-free.
 
