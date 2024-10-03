@@ -545,6 +545,14 @@
 \newcommand{\Zz}{\mathcal{Z}}
 
 
+\newcommand{\mypicf}[1]{
+  \smallskip
+	\begin{center}
+		\includegraphics[page=#1,scale=0.25]{toolbox-figma}
+	\end{center}
+}
+
+
 \newcommand{\mypic}[1]{
 	\begin{center}
 		\includegraphics[page=#1,scale=0.4]{pics}
@@ -583,6 +591,16 @@ $$
 \newtheorem{sublemma}{Lemma}[theorem]
 \newtheorem{definition}[theorem]{Definition}
 
+
+\newcommand{\setbuild}[2]{\set{#1 \ | 
+\begin{tabular}{l}
+	#2
+\end{tabular}}}
+
+\newcommand{\myunderbrace}[2]{\underbrace{#1}_{\mathclap{\text{\scriptsize 
+\begin{tabular}{c}
+	#2
+\end{tabular} }}}}
 
 \newcounter{ourexamplecounter}
 \newenvironment{example}{

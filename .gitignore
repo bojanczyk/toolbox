@@ -9,6 +9,8 @@
 *.synctex.gz
 *.fdb_latexmk
 *.fls
+settings.json
+*(busy)
 #  do not ignore pics pdf files
 !pics.pdf
 !picsb.pdf

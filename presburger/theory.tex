@@ -1,0 +1,195 @@
+\label{sec:presburger}
+
+In this chapter, we show that there is an algorithm that tells us which formulas are true the structure $(\Nat, +)$ of natural numbers with equality. This structure is called \emph{Presburger arithmetic}, because the original algorithm, which is a quantifier elimination procedure,  was proposed by Mojżesz Presburger in 1928.  Another name for the theory is \emph{linear integer arithmetic}, which is popular in the verification community, where it used as part of automatic theorem provers. 
+
+
+We are interested in the first-order theory of the natural numbers with addition, i.e.~in the formulas that are true in this structure, and are constructed using variables (ranging over natural numbers), addition, quantification (over natural numbers), and the Boolean connectives $\land$, $\lor$, $\neg$. Here, we treat addition as a function that takes two arguments, and not as a relation that takes three arguments, although the two views are equivalent.
+
+\begin{example}[Zero]
+	The formula 
+	\begin{align*}
+	\exists z \forall x \quad x + z = x
+	\end{align*}
+	says that addition has a neutral element (zero). Having thus shown how to define zero, we can now start using it in formulas, since each formula that uses zero can be rewritten into an equivalent formula that does not use zero, by replacing each occurrence of zero with its definition. In a similar way, we can use constants for other natural numbers, such as 1 or 2. For example, 1 is the only element such that by adding something to it, we can obtain every nonzero number. 
+\end{example}
+
+\begin{example}[Linear inequalities] Although we do not have access to multiplication, we can use multiplication by a fixed constant. For example, instead of $3x$ we can write $x + x + x$.
+	We can express any linear inequalities, possibly using negative coefficients, such as 
+	\begin{align*}
+	3x - 2y + 4z - 7 \ge 0
+	\end{align*}
+	This is done by putting all the negative terms on the other side of the expression, and then expressing the order in terms of addition.
+\end{example}
+
+\begin{example}[Divisibility]
+We can also talk about divisibility by a fixed constant. For example, the formula
+\begin{align*}
+	\exists y  \quad  x  = y + y + y
+\end{align*}
+says that $x$ is divisible by 3. 
+\end{example}
+
+\paragraph*{Decidability.} The main result of this chapter is to  that Presburger arithmetic has a decidable theory, i.e.~there is an algorithm that inputs a first-order formula, and tells us if it is true in the structure. (The formulas have no free variables, since otherwise they would not have a meaningful truth value without specifying which numbers are used for the free variables.)
+
+\begin{theorem}\label{thm:presburger-decidable}
+The first-order theory of Presburger arithmetic is decidable.
+\end{theorem}
+
+We follow the ideas of the original proof, which shows that one can transform every formula into an equivalent one that does not use any quantifiers. If we want to avoid quantifiers, we will need a slightly larger vocabulary. For this purpose, we add some new relations, which can be expressed in terms of addition, but not without using quantifiers. 
+
+\begin{definition}
+	Define the \emph{extended vocabulary} of Presburger arithmetic to be the following infinite family of relations: 
+	\begin{itemize}
+		\item We can write any divisibility constraint, such as 
+		\begin{align*}
+		x \equiv 5 \mod 36
+		\end{align*}
+		where the remainder of division is computed. There is one such constraint for every remainder and modulus. Note that the numbers $5$ and $36$ are constants which are hard-coded into the vocabulary, and they cannot be quantified.
+	
+		\item We can write any linear inequality such as 
+		\begin{align*}
+		3x - 2y + 4z - 7 \ge 0.
+		\end{align*}
+		Again, the constants in the inequality are hard-coded and cannot be quantified, since otherwise we would have multiplication.
+	\end{itemize}
+	\end{definition}
+
+In the above definition, the divisibility constraints are relations with one argument, while the linear inequalities can take any number of arguments.
+Thanks to the extended vocabulary, there are more quantifier-free formulas. 
+As it turns out, there are enough quantifier-free formulas to describe all other formulas.
+
+
+\begin{theorem}[Quantifier Elimination]\label{thm:presburger-quantifier-elimination}
+	For every formula of Presburger arithmetic, possibly with free variables, one can compute an equivalent formula that is quantifier-free over the extended vocabulary.
+\end{theorem}
+
+Once we have proved quantifier elimination, decidability of the first-order theory follows immediately. Indeed, if we want to decide if a formula without free variables is true, we simply apply the quantifier elimination procedure to it. Since there are no free variables, the resulting quantifier-free formula can only use trivial linear inequalities like $5 \ge 3$ (which is true) or $3 \ge 5$ (which is false), and its truth can easily be decided. It remains to prove quantifier elimination.
+
+\begin{proof}
+	 In the proof, we consider the extended vocabulary without addition as a function symbol, i.e.~the vocabulary contains only relations. We use the name \emph{atomic formula} for a relation from the vocabulary applied to some variables. Atomic formulas are either divisibility constraints or linear inequalities.
+
+	 We prove the theorem by induction on the structure of formulas. In the induction basis, we have atomic formulas, which are already quantifier-free.  
+	Since quantifier-free formulas are closed under the Boolean operations, and $\forall$ is complementary to $\exists$, it enough to show that a single existential quantifier can be eliminated, i.e.~if
+	\begin{align*}
+	\varphi(\myunderbrace{x_1,\ldots,x_k}{call this $\bar x$},y)
+	\end{align*}
+	is a quantifier-free formula, then the formula $\exists x \ \varphi(\bar x,y)$ 
+	can be expressed using a quantifier-free formula that does not mention the existentially quantified variable $y$. Like any quantifier-free formula, we can rewrite $\varphi$ into an equivalent formula in disjunctive normal form, i.e.~
+	\begin{align*}
+	\bigvee_{i \in I} \bigwedge_{j \in J_i} \varphi_{ij}(\bar x,y)
+	\end{align*}
+	where each $\varphi_{ij}$ is an atomic formula or its negation. We also do not need the negations of atomic formulas, since the negation of a linear inequality is also a linear inequality, while the negation of a divisibility condition is a finite disjunction of other divisibility conditions. Furthermore, since disjunction distributes over the existential quantifier, i.e.
+	\begin{align*}
+		\exists y \bigvee_{i \in I} \bigwedge_{j \in J_i} \varphi_{ij}(\bar x,y) 
+		\qquad \iff \qquad 
+		\bigvee_{i \in I} \exists y \bigwedge_{j \in J_i} \varphi_{ij}(\bar x,y),
+	\end{align*}
+	it is enough to show that an existential quantifier can be removed from a formula that uses only a conjunction of atomic formulas. This is the content of the following lemma, which completes the proof of the theorem.
+
+	\begin{lemma}
+		Let $\varphi(\bar x, y)$ be a conjunction of atomic formulas. Then $\exists y\ \varphi(\bar x,y)$ is equivalent to a quantifier-free formula that uses only the variables $\bar x$.
+	\end{lemma}
+	\begin{proof} Some of the atomic formulas in $\varphi$ are linear inequalities, some are divisibility constraints.  Let us first look at the divisibility constraints. Some of these constraints concern the free variables $\bar x$. Since they do not depend on the choice of $y$, we can move them out of the formula, and assume without loss of generality that there are no divisibility constraints in the formula that talk about the free variables $\bar x$. Let us now look at the divisibility constraints for the  quantified variable $y$. There might be several such constraints, e.g.~we could have 
+		\begin{align*}
+		(y \equiv 3 \mod 6) \land (y \equiv 2 \mod 15).
+		\end{align*}
+	Using the Chinese remainder theorem, we can replace these constraints with a single constraint 
+	\begin{align*}
+	y \equiv r \mod a
+	\end{align*}
+	which is equivalent to the conjunction of the original constraints. Also, by replacing the quantified variable $y$ with $y+r$ in all linear inequalities, we can assume without loss of generality that $r$ is zero, i.e.~the divisibility constraint is that $y$ is divisible by $a$.  Summing up, we can assume without loss of generality that in the conjunction $\varphi(\bar x, y)$ from the assumption of the  lemma, there is only one divisibility constraint, and it says that the quantified variable $y$ is divisible by some fixed $a$.
+
+Let us now consider the atomic formulas that are linear inequalities.
+	 In each such linear inequality, we put the variable $y$ on one side of the inequality, and all other variables and the constant on the other side, leading to an inequality which has the same solutions, but has one of the following two forms:
+		\begin{align*}
+		\underbrace{by \ge b_0 + b_1 x_1 + \cdots + b_n x_n}_{\text{lower bound on $by$}} \quad \text{or} \quad \underbrace{by \leq b_0 + b_1 x_1 + \cdots + b_n x_n}_{\text{upper bound on $by$}}.
+		\end{align*}
+		We have the two kinds of inequalities because we insist on the coefficient $b$  being positive, hence we can multiply the inequality by $-1$ if necessary. Furthermore, we want all inequalities to have the same coefficient $b$ next to $y$, which can be achieved again by multiplying both sides with suitable scaling factors. 
+		
+		Summing up, we can assume that the formula $\varphi(\bar x, y)$ is a conjunction of lower and upper bounds on $by$, for some fixed $a$ that is used in all bounds, and the requirement that the quantified $y$ to be divisible by $b$. In this case $\exists y \varphi(\bar x, y)$ is equivalent to:
+		\begin{itemize}
+			\item[(*)]  some number divisible by $ab$ lies between the upper and lower bounds.
+		\end{itemize}
+		To complete the proof of the lemma, we will express (*) using a quantifier-free formula. To answer the question in (*), it is enough to know how the lower and upper bounds are ordered, and if there is enough space between them to fit a number divisible by $a$.   Here is a picture of the situation, where $ab=4$:
+		\mypicf{1}
+		To answer question (*), it is enough to know the remainders of the upper and lower bounds modulo $ab$, and the differences between the upper and lower bounds up to a threshold $ab-1$. (This particular threshold is used because $ab-1$ is the biggest difference between the lower and upper bounds that is possible without necessarily containing a number divisible by $ab$.) Each such constraint can be expressed in a quantifier-free way, thus completing the proof of the lemma. 
+	\end{proof}
+	
+\end{proof}
+
+\subsection{Semilinear sets}
+We now show an alternative, more geometrical,  characterization of the sets that can be defined in Presburger arithmetic. This characterization uses the notion of linear and semilinear sets, which are a variant of periodic sets.
+
+The idea behind a linear set is that it is obtained by taking some fixed base vector in $\Nat^d$, and adding any number of copies of certain period vectors. For example, consider dimension $d=2$, and a base vector of (2,1). To this base vector we add any number of copies of the periods (1,2) and (3,1), resulting in the red points of  the following picture:
+\mypicf{2}
+
+These ideas are formalized in the following definition.
+
+\begin{definition}[Semilinear sets]\label{def:semilinear}
+	A \emph{linear} subset of $\Nat^d$ is any set of the form
+\begin{align*}
+\setbuild{ \bar a + \beta_1 \bar b + \cdots + \beta_k \bar b}{
+	$\beta_1,\ldots, \beta_k \in \Nat^d $
+},
+\end{align*}
+for some choice of  base vector $\bar a \in \Nat^d$ and  period vectors $\bar b_1, \ldots, \bar b_k \in \Nat^d$. A \emph{semilinear} set is any finite  union of linear sets (in the same dimension).
+\end{definition}
+
+
+The following theorem tells us that the semilinear sets are exactly the sets that can be defined using first-order formulas in Presburger arithmetic. When defining a subset of $\Nat^d$, we use a formula that has $d$ free variables.
+
+\begin{theorem}\label{thm:presburger-semilinear}
+	A subset of $\Nat^d$ is semilinear iff it is definable in Presburger arithmetic.
+\end{theorem}
+\begin{proof}
+	Clearly every semilinear set is definable in Presburger arithmetic, by simply formalizing the defining condition in logic. The interesting part is that all sets definable in Presburger arithmetic are semilinear. To prove this, we will use the quantifier elimination result from Theorem~\ref{thm:presburger-quantifier-elimination}, and the following lemma about  solutions of systems of linear equations.
+
+
+
+	\begin{lemma}\label{lem:linear-solutions-semilinear}
+		Let $A$ be a $d \times n$ matrix with integer entries. Then for every $\bar b \in \Nat^n$, the following set  is semilinear
+		\begin{align*}
+		\setbuild{ \bar x \in \Nat^d}{
+			$A \bar x = \bar b$
+		}
+		\end{align*}
+	\end{lemma}
+\begin{proof}
+	Let us begin with the special case when the system is \emph{homogeneous}, which means that $\bar b$ is the zero vector, i.e.~it has the form
+	\begin{align}\label{eq:homogeneous-system}
+		A \bar x = \bar 0.
+		\end{align}
+	Consider the set of minimal solutions to such an system, i.e.~the set  of solutions $\bar x$  
+	which are minimal coordinatewise. By Dickson's Lemma, see Claim~\ref{clm:dickson},  the set minimal solutions, call it $S$, is finite.  We now claim that every other solution can be obtained by coordinatewise addition of minimal solutions, and therefore the set of solutions forms a linear set, where the period vectors are the minimal solutions. This is an immediate consequence of the definition of minimality: a non-miniomal solution can be obtained by taking some minimal solution, and adding some vector to it. The added vector is also a solution to the homogeneous system, and therefore an inductive argument can be used to decompose it into a sum of minimal solutions.
+
+	Consider now the general case of the lemma, where $\bar b$ is not necessarily the zero vector. Again, consider the set of minimal solutions, which is finite. Every other solution is obtained by taking a minimal solution, and adding to it some solution of the homogeneous version of the system as in~\eqref{eq:homogeneous-system}. Since the homogeneous solutions form a linear set, we get the result. 
+\end{proof}
+
+We now complete the proof of the theorem. Take any formula of Presburger arithmetic. By the quantifier elimination result from Theorem~\ref{thm:presburger-quantifier-elimination}, we can assume that this formula is quantifier-free. We can also assume that the formula is in disjunctive normal form, i.e.~a disjunction of conjunctions of atomic formulas. Since semilinear sets are closed under union by definition, it is enough to consider the case of a quantifier-free formula $\varphi(x_1,\ldots,x_n)$ that is a conjunction of atomic formulas. We will reduce this formula to a system of linear inequalities, as in the above lemma, possibly by introducing new variables. 
+
+We first want to get rid of the divisibility constraints, such as 
+\begin{align*}
+x \equiv 5 \mod 36.
+\end{align*}
+To eliminate this constraint, we  introduce a new variable $y$, and  a linear equality 
+\begin{align*}
+x = 36y + 5.
+\end{align*}
+Similarly, we can replace inequalities using equalities. For example, a linear inequality 
+\begin{align*}
+3x_1 - 2x_2 + 4x_3 - 7 \ge 0
+\end{align*}
+can be eliminated by adding a new variable $y$, and writing the linear equality
+\begin{align*}
+3x_1 - 2x_2 + 4x_3 - 7 = u.
+\end{align*}
+This works, because all variables range over natural numbers. After this elimination, we have created a new formula 
+\begin{align*}
+\psi(x_1,\ldots,x_n,y_1,\ldots,y_m)
+\end{align*}
+which is a conjunction of linear equalities (and is therefore subject to Lemma~\ref{lem:linear-solutions-semilinear}), such that the original formula is equivalent to 
+\begin{align*}
+\exists y_1 \cdots \exists y_m \quad \psi(x_1,\ldots,x_n,y_1,\ldots,y_m).
+\end{align*}
+By Lemma~\ref{lem:linear-solutions-semilinear}, the formula $\psi$ defines a semilinear set, in dimension $d=n+m$. We now want to project this set onto the first $n$ coordinates. This is very straightforward to do, since semilinear sets are easily seen to be closed under projection -- simply eliminate the unused coordinates from all vectors. 
+\end{proof} 

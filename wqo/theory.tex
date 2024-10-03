@@ -34,7 +34,7 @@ For the top-down  implication, one takes the separator to be the set of those co
 
 To prove the lemma, it  remains to show a semi-algorithm that checks if there exists a separator. We claim that a separator, actually any upward closed set, can be represented in a finite way using its minimal elements. First, every element in the separator is above some minimal element, because the order $\le$ on $\Nat^d$ is well-founded. Second, every set has finitely many minimal elements, because  minimal elements form an antichain (i.e.~are pairwise incomparable with respect to $\le$) and antichains are finite according to the following claim.
 
-\begin{claim}[Dickson's Lemma]
+\begin{claim}[Dickson's Lemma]\label{clm:dickson}
 	Antichains in $\Nat^d$ are finite.
 \end{claim}
 \begin{proof} We prove a slightly stronger statement: for every sequence 

@@ -1,0 +1,72 @@
+\exercise{zad:exponential}{
+  Show that there is a formula $\varphi_n(x)$ of Presburger arithmetic, using addition only, which has size polynomial in $n$, but is true for only one $x$, namely $2^n$. 
+}{
+  We can use simple inductive construction:
+  \begin{align*}
+  \varphi_n(x)  = \exists y \ \varphi_{n-1}(y) \land x = y + y
+  \end{align*}
+  This formula has linear size.
+}
+
+\exercise{zad:parikh-image-regular}{
+  Consider a regular language $L$ over an alphabet with $k$ letters. Define its \emph{Parikh image} to be the set
+  \begin{align*}
+  \setbuild { (n_1, \ldots, n_k) \in \Nat^k } { there exists a word $w \in L$ such that $n_i$ is the \\ number of occurrences of the $i$-th letter in $w$}.
+  \end{align*}
+  Show that for every regular language, its Parikh image is semilinear.
+}{It is enough to show that semilinear sets are closed under all operations corresponding to regular expressions, i.e.~union, concatenation and Kleene star. On Parikh images these operations correspond to union, Minkowski sum, and iterated Minkowski sum.}
+
+
+\exercise{zad:periodic}{Show that every formula of Presburger arithmetic $\varphi(x)$ defines an \emph{ultimately periodic set}, i.e.~there exists $p > 0$  such that 
+\begin{align*}
+\varphi(x) \quad \iff \quad \varphi(x+p) \qquad \text{for all sufficiently large $x$}.
+\end{align*}
+}
+{
+  Ultimately periodic sets are closed under Boolean combinations, and contain the divisibility constraints as well as linear inequalities with one variable.
+}
+
+\exercise{zad:multiplication}{Show there is no formula of Presburger arithmetic $\varphi(x,y,z)$ that defines multiplication, i.e.~it is equivalent to $x \cdot y = z$.}{
+If we could define multiplication, then we could define the set of squares, which is not ultimately periodic.
+}
+
+\exercise{zad:divisibility}{Show there is no formula of Presburger arithmetic $\varphi(x,y)$ that defines divisibility, i.e.~it is equivalent to $x| y$.}{
+Otherwise we could define the set of primes, which is not ultimately periodic.
+}
+% \exercise{zad:exonential-qf}{
+%   Do the same as in the previous exercise, but with a quantifier-free formula. Here, the size of a quantifier-free formula is defined to be the size of its syntax tree, with each of the infinitely  many relations having unit cost. 
+% }{
+%   Consider the smallest $k$ such that the product of the first $k$ primes is at least $2^n$. This number is smaller than $n$. The formula specifies the remainders of $2^n$ modulo the first $k$ primes. In fact, the primes that appear here are at not so big, because the $k$-th prime is of size approximately most $k \log k$ by the prime number theorem.
+% }
+
+
+
+\exercise{zad:presburger-binary-divisibility}{(*) Show that if we extend Presburger arithmetic with a binary relation $x|y$ for divisibility, then we can define multiplication. }
+{
+This is done in~\cite[Theorem 1.2]{Robinson_1949}.
+}
+
+\exercise{zad:arithmetic}{Show that there is no an algorithm deciding the theory of $(\Nat,+,\times)$. (This theory is simply called \emph{arithmetic}). Hint: show that if arithmetic would be decidable, then one could decide the theory of strings with concatenation $(\set{0,1}^*, \cdot)$, and the latter theory is undecidable. }{
+  We can encode strings as numbers, by representing a string with two numbers: 
+  \begin{enumerate}
+    \item $\text{bin}(w)$ is the number represented by $w$ in binary, e.g.~$\text{bin}(0101) = 5$.
+    \item $\text{exp}(w)$ is the length of $w$ in exponential form, e.g.~$\text{exp}(0101) = 2^4$.
+  \end{enumerate}
+  Under this representation, concatenation of strings can be represented using addition and multiplication:
+\begin{align*}
+\text{bin}(w_1 w_2)  &= \text{bin}(w_1) \cdot \text{exp}(w_2) + \text{bin}(w_2)\\
+\text{exp}(w_1 w_2)  &= \text{exp}(w_1) \cdot \text{exp}(w_2).
+\end{align*}
+Therefore, the theory of strings with concatenation is reducible to the theory of arithmetic. 
+
+Let us now argue why the theory of strings of concatenation is undecidable. For a Turing machine, we can represent a configuration as a string, and a computation as another string, which concatenates the configurations using some special separator symbol. The larger alphabet can be easily encoded in a binary alphabet. To express that a computation is correct, we need to express that every two consecutive configurations in it are consistent with the transitions of the Turing machine. To say this, we simply need to say that the two strings $w_1$ and $w_2$ that represent the computations can be decomposed as 
+\begin{align*}
+w_1 = x v_1 y \qquad w_2 = x v_2 y
+\end{align*}
+for some common prefix and suffix $x$ and $y$, such that the strings $v_1$ and $v_2$ are strings of length at most four that contain the head of the Turing machine and the adjacent cells, and are consistent with the transition function. 
+}
+
+
+
+
+
