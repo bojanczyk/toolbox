@@ -1,0 +1,142 @@
+\label{sec:zero-one-laws}
+
+
+Suppose that we want to randomly select a graph with $n$ vertices. One way to do this is as follows: independently for every pair of vertices, flip a coin to decide if there is an edge or not.
+For example, the probability that the graph is a clique is 
+\begin{align*}
+\frac 1 {2^{n \choose 2}}
+\end{align*}
+because there are $n \choose 2$ edges to choose randomly, and  all of them need to be selected. We will be interested in the probability that a graph has some property, under this particular distribution.\footnote{There are other distributions, for example the probability of having an edge could be $1/n$. For example, we could have $p = 1/n$. Such distributions on graphs, with various edge probabilities like $1/2$, $1/n$ or $1/n^2$, are known as Erd\"os-R\'enyi random graphs~\cite{erdds1959random}. In this chapter, we use $p=1/2$. } 
+
+\begin{example}[Connectivity] \label{ex:random-connectivity} Let us show that the probability that a graph is connected tends to one, as $n$ tends to infinity.  Indeed, for each pair of vertices $v$ and $w$, the probability that they are connected using some fixed third vertex $u$ is equal to $1/4$, since we need both of the edges $vu$ and $wu$. However, if we want to avoid such a connection for all possible choices of $u$, this will happen with probability at most $(3/4)^n$, which is exponentially small in $n$.  Therefore, the probability of two vertices being disconnected is exponentially small, and since a pair can be chosen in quadratically many ways, there is also an exponentially small probability that the graph is not connected.
+\end{example}
+
+\begin{example}[Parity] \label{ex:random-parity}
+The probability that there is an even number of edges is exactly $1/2$, independently of $n$. This is because the absence of presence of the  last edge (in some predetermined order of edges) determines the parity. 
+\end{example}
+
+As the two examples show, the probability of a graph having some property can have some limit, such as zero or one half. There are also properties that do not have a limit, e.g.~the property ``the number of vertices is even'' (which does not depend on the choice of edges), oscillates between zero and one without any convergence. The goal of this chapter is to show that for properties that can be defined in first-order logic, there will be a limit, and this limit will be zero or one.
+
+Let us begin by explaining first-order logic on graphs. The idea is to use a formula that is built using the quantifiers $\forall$ and $\exists$,  the logical connectives $\land$, $\lor$, $\neg$, and a binary relation for the edges. Here are some examples of first-order formulas, and the corresponding limiting probabilities.
+
+\begin{example}[Apex]
+	The formula 
+	\begin{align*}
+	\exists x \ \forall y \qquad x \neq y \ \Rightarrow \ \text{edge}(x,y)
+	\end{align*}
+	says that the graph has an apex vertex, i.e.~some vertex that is connected to all other vertices. For any given vertex, the probability that it is an apex is equal to $1/2^{n-1}$. Even if we sum this probability across all $n$ possible choices of the apex, we will still get a probability that tends to zero with $n$. Therefore, the limiting probability of having an apex vertex is zero. 
+\end{example}
+
+\begin{example}[Triangle]
+	The formula 
+	\begin{align*}
+	\exists x \ \exists y \ \exists z \qquad 
+	\text{edge}(x,y) \land \text{edge}(y,z) \land \text{edge}(z,x)
+	\end{align*}
+	says that the graph contains a triangle as an induced sub graph. If we fix a particular triple of vertices, then the probability that this triple is a triangle will be $1/8$. However, if we look at $n/3$ disjoint triples, then the probability that none of them is a triangle will exponentially small. Therefore, the limiting probability of having triangle is one. 
+\end{example}
+
+As in the above examples, we define the \emph{limiting probability} of a graph property to be  the limit, with $n \to \infty$, of the probability that a graph with $n$ vertices satisfies the property. The main result of this chapter is the following theorem, which shows that the limiting probability is necessarily zero or one for properties that can be defined in first-order logic.
+
+\begin{theorem}\label{thm:zero-one-law}
+	Let $\varphi$ be a first-order formula that defines a property of graphs, then its limiting probability is defined and equal to zero or one.  
+\end{theorem}
+
+\begin{proof}
+	The proof will be based on a certain property of graphs, which we call the \emph{extension property}. This property formalizes the idea that the graph contains many different induced subgraphs. 
+
+\begin{definition}[Extension property] Let $k \in \set{0,1,\ldots}$. 
+	A graph $G$ has the \emph{$k$-extension property} if for every induced subgraph $H \subseteq G$ with at most $k$ vertices, and every partition of the vertices of $H$ into two parts $V_1$ and $V_2$, there is some vertex in $G$ that is adjacent to all vertices in $V_2$ and not adjacent to any of the vertices in $V_2$.
+\end{definition}
+Here is a picture of the 5-extension property:
+\mypicf{3}
+
+The first observation is that for every $k$, sufficiently large random graphs have the $k$-extension property with high probability.
+\begin{lemma} \label{lem:k-extension-must-hold}
+	For every fixed $k$, the probability that a graph with $n$ vertices has the $k$-extension property tends to one as $n$ tends to infinity.	
+\end{lemma}
+\begin{proof}
+Let $n \in \Nat$. Consider the probability that some particular $k$-tuple vertices in the graph with $n$ vertices  is a violation of the $k$-extension property. This probability is  exponentially small in $n$, for the same reasons as in Example~\ref{ex:random-connectivity}. Since the number of $k$-tuples is polynomial in $n$, once $k$ has been fixed, it follows that the property that some $k$-tuple is a violation must tend to zero.
+\end{proof}
+
+We will now show that for every formula of first-order logic, there is some $k$ such that all graphs with the $k$-extension property agree on this formula. 
+
+
+\begin{lemma} \label{lem:k-extension-distinguish} Let $\varphi$ be a formula of first-order logic. Then there is some $k$ such that either all graphs with the $k$-extension property satisfy $\varphi$, or all graphs with the $k$-extension property do not satisfy $\varphi$. 
+\end{lemma}
+\begin{proof}
+	The formula in the statement of the lemma does not have free variables, since otherwise it would not be meaningful to say that a graph satisfies or does not satisfy it without specifying the values of the free variables. However, in the proof we will discuss  a slightly stronger statement that involves free variables. To evaluate a formula with $\ell$ free variables, we need a graph together with a list of $\ell$ distinguished vertices.  We use the name \emph{$\ell$-pointed graph} for such an object. The lemma follows immediately from the following claim in the case of $\ell =0$. 
+	\begin{itemize}
+		\item[(*)] Let $\varphi$ be a formula that has $\ell$ free variables. There is some $k$ with the following property: if two $\ell$-pointed  satisfy the same quantifier-free formulas, and the underlying graphs both  have the $k$-extension property, then $\varphi$ is true in both or none of them.  
+	\end{itemize}
+	The claim is proved by induction on the structure of the formula. The only interesting case is the induction step for an existential quantifier (or dually, a universal quantifier), where we use the extension property to find a corresponding vertex in the other graph.
+\end{proof}
+
+Combining the above two lemmas, we get the  theorem. Indeed, we take some formula, and apply Lemma~\ref{lem:k-extension-distinguish} to find some $k$. Either the formula holds in all graphs with the $k$-extension property, or it fails in all of these graphs. By Lemma~\ref{lem:k-extension-must-hold}, the probability that a random graph has the $k$-extension property tends to one, so the limit in the theorem exists and is either zero or one.
+\end{proof}
+
+
+\section{The infinite random graph}
+In this section, we discuss a variant of random graphs, in which the set of vertices is the infinite set
+\begin{align*}
+\omega = \set{1,2,\ldots}.
+\end{align*}
+We use the same distribution as previously, i.e.~for each (unordered) pair of vertices, we flip a coin to decide if there is an edge or not. The main result of this section is that, rather remarkably, we get the same graph with probability one. 
+
+\begin{theorem}\label{thm:infinite-random-graph}	
+	There is some countably infinite graph $G$, such that if we randomly select a graph with vertices $\omega$, then with probability one, the selected graph is isomorphic to $G$.	
+\end{theorem}
+
+Thanks to the above theorem, it makes sense to talk about \emph{the infinite random graphs}, since it is unique up to probability one. 
+
+\begin{proof}[Proof of Theorem~\ref{thm:infinite-random-graph}]
+	The proof is also based on the extension property. 
+	\begin{lemma}\label{lem:infinite-random-graph-extension}
+		For every $k$, with probability one a randomly selected graph on vertices $\omega$ has the $k$-extension property.
+	\end{lemma}
+	\begin{proof}
+		Same proof as previously: the probability is zero that any particular subgraph on $k$ vertices is a violation of the $k$-extension property. Since there are countably many such subgraphs, the probability is still zero that at least one  of them is a violation.
+	\end{proof}
+
+Since an intersection of countably many events with probability one must also have probability one, it follows that with probability one, a randomly selected graph on vertices $\omega$ will have the $k$-extension property for every $k$. To complete the proof of the theorem, we will show that any two such graphs will necessarily be isomorphic.
+\begin{lemma}\label{lem:infinite-random-graph-isomorphism}
+	If two graphs on  vertices $\omega$ have the $k$-extension property for every $k$, then they are isomorphic.
+\end{lemma}
+\begin{proof}
+	We define an isomorphism piece by piece. Define a \emph{partial isomorphism} between two graphs to be an isomorphism between two induced subgraphs. To construct the complete isomorphism from the lemma, we will use the following observation on partial isomorphisms.
+	\begin{claim}
+		Consider two graphs $G_1$ and $G_2$ as in the assumption of the lemma.
+		We will show that for every partial isomorphism between them, and every vertex $v_1$ in $G_1$, there is some vertex $v_2$ in $G_2$ such that the partial isomorphism can be extended with the pair $(v_1,v_2)$. 
+	\end{claim}\label{claim:partial-isomorphism}
+	\begin{proof}
+		We apply the $k$-extension property for $G_2$, where $k$ is the number of vertices that participate in the partial isomorphism (on either one of the two sides). This allows us to find some vertex $v_2$ that has the same connections as $v_1$ with the vertices that are already in the partial isomorphism. This completes the proof of the claim.
+	\end{proof}
+
+	Using the claim, and a symmetric version where the graphs $G_1$ and $G_2$ are swapped, we can iteratively construct a sequence of partial isomorphisms, which is growing with respect to extension, and which eventually covers every vertex in $G_1$ and $G_2$. To construct this sequence, in even-numbered steps we add a vertex from $G_1$, and in odd-numbered steps we add a vertex from $G_2$. The limit of this sequence is a complete isomorphism, which completes the proof of the lemma. 
+\end{proof}
+Lemmas~\ref{lem:infinite-random-graph-extension} and~\ref{lem:infinite-random-graph-isomorphism} give us the theorem, since the first one says that almost all graphs have the property that guarantees isomorphism in the second lemma.	
+\end{proof}
+
+We finish this chapter with the observation that the random graph has quantifier elimination.
+
+\begin{theorem}\label{thm:quantifier-elimination}
+	For every first-order formula, possibly with free variables, there is a quantifier-free formula that is equivalent to it in the random graph, i.e.~it is equivalent for all possible assignments of the free variables.
+\end{theorem}
+\begin{proof}
+	We will prove the following lemma.
+	
+	\begin{lemma}
+		For every two tuples $(x_1,\ldots,x_k)$ and $(y_1,\ldots,y_k)$ of vertices in the random graph, the following conditions are equivalent:
+		\begin{enumerate}
+			\item \label{it:same-quantifier-free} the two tuples satisfy the same quantifier-free formulas;
+			\item \label{it:same-quantifier-full} the two tuples satisfy the same first-order formulas;
+			\item \label{it:extends-to-isomorphism} $\bar x \mapsto \bar y$ can be extended to an isomorphism of the random graph with itself.
+		\end{enumerate}
+	\end{lemma}
+	\begin{proof}
+		Clearly we have \ref{it:same-quantifier-full}$\Rightarrow$ \ref{it:same-quantifier-free}, since quantifier-free formulas are a special case of first-order formulas. Also, we have \ref{it:extends-to-isomorphism} $\Rightarrow$ \ref{it:same-quantifier-full}, since isomorphism does not affect the values of first-order formulas. Finally, \ref{it:same-quantifier-free} is the same as saying that $\bar x \to \bar y$ is a partial isomorphism, and this we know by Claim~\ref{claim:partial-isomorphism} can be extended to a full isomorphism.
+	\end{proof}
+	The theorem is an immediate consequence of the above lemma, and the fact that there are finitely many quantifier-free non-equivalent formulas, once the number of free variables has been fixed. 
+\end{proof}
+
+
