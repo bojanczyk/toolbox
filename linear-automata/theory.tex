@@ -45,7 +45,7 @@ Consider the following weighted automaton with three states.
 \mypicc{7}
  The weight of a run that stays in $\whiteball$  is  $1$, and the weight of a run that goes from $\whiteball$ to $\blackball$  is $2^n$, where $n$ is the number of times the run loops around $\blackball$. Other runs have cost zero. If the input word has length $n$, then the weight of the word is
 \begin{align*}
-	\underbrace{2^{n-1} + \cdots +2^{0}+1}_{\text{runs from $\whiteball$ to $\blackball$}} + \underbrace{1}_{\text{loop in $\whiteball$}} = 2^n
+	\underbrace{2^{n-1} + \cdots +2^{0}}_{\text{runs from $\whiteball$ to $\blackball$}} + \underbrace{1}_{\text{loop in $\whiteball$}} = 2^n
 \end{align*}
 To recognise the same function $a^n \mapsto 2^n$ we could also use this automaton
 \mypicc{10}
