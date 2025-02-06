@@ -166,7 +166,11 @@ We begin by proving Lemma~\ref{lem:reduction-to-trees}, which says that a sequen
 
 
 
-\paragraph*{Profiles.} For a path $\pi$ in a  width $n$ dag, define its \emph{profile} to be the word of same length over the alphabet "\red{accepting}" and "non-accepting" which is obtained by replacing each edge with its appropriate type. We  order profiles lexicographically, with "\red{accepting}"  smaller than "non-accepting". 
+\paragraph*{Profiles.} For a path $\pi$ in a  width $n$ dag, define its \emph{profile} to be the word of same length over the two-letter alphabet 
+\begin{align*}
+	\set{\text{\red{accepting}}, \text{non-accepting}}
+\end{align*}
+which is obtained by replacing each edge with its appropriate type. We  order profiles lexicographically, with "\red{accepting}"  smaller than "non-accepting". 
 \mypic{24}
 A finite path $\pi$ in a width $n$ dag is called \emph{profile optimal} if it begins in the initial vertex, and its profile is lexicographically least among profiles of  paths in $w$ that begin in the initial vertex and have the same target as $\pi$.
 
@@ -190,24 +194,15 @@ The above information can be kept in the finite state space of the sequential tr
 Let $f$ be the sequential transducer from Lemma~\ref{lem:optimise-dag}. If the input to $f$ contains a path with infinitely many accepting edges, then so does the output.
 \end{lemma}
 \begin{proof}
-Assume that the input $w$ to $f$ contains a path with infinitely many accepting edges. Define a sequence $\pi_0,\pi_1,\ldots$ of finite paths in $f(w)$ as follows by induction. In the definition, we  preserve the invariant that each  path in the sequence $\pi_0,\pi_1,\ldots$ can be extended to  an accepting path in the graph $w$. We begin with $\pi_0$ being the edgeless path that begins and ends in the root of the tree $f(w)$.  This path $\pi_0$ satisfies the invariant, by the assumption that the input $w$ contains a path with infinitely many accepting edges. Suppose that $\pi_n$ has been defined. By the invariant, we can extend $\pi_n$ to an infinite accepting path in the graph $w$, and therefore we can extend $\pi_n$ to a finite path (call it $\sigma_n$) in $w$ that contains at least one more accepting edge.  Define $\pi_{n+1}$ to be the unique path in the tree $f(w)$ which begins in the root of the tree $f(w)$ and has the same  target as the new path that extends $\pi_n$ with  at least one accepting edge.
-\mypic{26}
-The path $\pi_{n+1}$ satisfies the invariant, because its target is the same as the target of $\sigma_n$, and $\sigma_n$ is a finite prefix of some accepting path.
-Define $P_n$ to be the profile of the path $\pi_n$. By definition, the paths $\pi_1,\pi_2,\ldots$, and therefore also the corresponding profiles, get longer and longer. Furthermore, if  profiles $P_n$ and $P_{n+1}$ have both length at least $i$, then the first $i$ positions of $P_n$ give a word that is lexicographically smaller than the first $i$ positions of $P_{n+1}$, this is because the path $\pi_{n+1}$ was taken from the tree $f(w)$ which had profile optimal paths.
- We claim that the sequence of profiles $P_0,P_1,P_2,\ldots$ has a well defined limit
+	Assume that the dag  $w$, which is an input for the transducer $f$, contains a path with infinitely many accepting edges. We use the name \emph{accepting path} for such a path. Our goal is to show that the tree $f(w)$ also contains an accepting path.
+	
+	For $i \in \set{0,1,\ldots}$, define $P_i$ to be the length $i$ prefixes of profiles of accepting paths in the dag $w$. We know that this set is nonempty, since there is an accepting path. Let $p_i$ be the lexicographically minimal element of $P_i$. As defined, the profile $p_i$ is the profile of some finite path in the original run dag, before pruning it to a tree. However, because the pruned tree $f(w)$ stores paths with optimal profiles, it follows that for   every $i$, the tree $f(w)$ has  some path with profile $p_i$.
+	
+	
 
-$$\lim_{n \to \infty} P_n  = P \in \set{\text{accepting, non-accepting}}^\omega.$$
-More precisely, we claim that for every position $i$, the $i$-th letter of the profiles $P_1,P_2,\ldots$ eventually stabilises. The limit $P$ is defined to  be the sequence of these stable values. The limit exists because for every $i$, if we look at the prefixes of $P_0,P_1,\ldots$ of length $i$, then they get lexicographically smaller and smaller; and therefore they must eventually stabilise, as in the following picture:
-\mypic{27}
-
-\begin{claim}\label{claim:accepting-infinitely-often}
-	The limit $P$ contains the letter "\red{accepting}" infinitely often.
-\end{claim}
-\begin{proof}
-Toward a contradiction, suppose that $P$ has the letter "\red{accepting}" finitely often, i.e. there is some $i$ such that after $i$, only the letter  "non-accepting" appears in $P$. Choose $n$ so that $\pi_n,\pi_{n+1},\ldots$ have profile consistent with $P$ on the first $i$ letters. By construction, the profile $P_{n+1}$ has an accepting letter on some position after $i$, and this property remains true for all subsequent profiles $P_{n+2},P_{n+3}\ldots$ and therefore is also true in the limit, contradicting our assumption that $P$ has only "non-accepting" letters after position $i$.
-\end{proof}
-
-Consider the set of finite paths  in the tree $f(w)$ which have profile that is a prefix of $P$. This set of paths forms a tree (because it is prefix-closed). This tree has bounded degree (assuming the parent of a path is obtained by removing the last edge) and it contain paths of arbitrary finite length (suitable prefixes of the paths $\pi_1,\pi_2,\ldots$). The  König lemma says that every finitely branching tree with arbitrarily long paths contains an infinite path. Applying the König lemma to the paths in $f(w)$ with profile $P$, we get an infinite path with profile $P$. By Claim~\ref{claim:accepting-infinitely-often} this path has  infinitely many accepting edges. 
+	Using the definition of the lexicographic ordering, one can see that  $p_i$ is a prefix of $p_j$ when $i < j$. Therefore, the profiles $p_i$ have some infinite limit, call it $p$. We will now show that the pruned tree $f(w)$ contains an infinite path with the limit profile $p$. We will do this using the König lemma, which says that every finitely branching tree with arbitrarily long paths contains an infinite path. Indeed, as we have argued in the previous paragraph, the pruned tree $f(w)$ contains paths with every profile $p_i$. Therefore, if we prune it even more, so that it only contains paths consistent with the profile $p$, we will get a finitely branching tree, which has arbitrarily long paths. Therefore, by the König lemma, it contains some infinite path.
+	
+	It remains to prove that the limit profile $p$ has infinitely many accepting edges, and therefore the infinite path from the previous paragraph is accepting. We will show that for every $i$, the limit profile contains an accepting edge which is later than $i$. Indeed, consider the profile $p_i$. By definition, we know that this profile can be extended to the profile of some accepting path  in the original run dag $w$. This accepting path must use some accepting edge after position $i$. Therefore, there is  some $j > i$ such that  $P_j$ contains a profile that extends $p_i$, and has one more accepting edge. This means that the minimal profile $p_j$, which extends $p_i$, also has at least one more accepting edge than $p_i$. 
 \end{proof}
 
 
