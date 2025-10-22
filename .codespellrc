@@ -1,0 +1,9 @@
+[codespell]
+# Configuration for codespell spell checker
+skip = .git,*.pdf
+# Ignore known false positives:
+# - bib.bib: Foreign language titles (French: "variante", "fonctions", "arithmetics")
+# - FO: First-Order logic (technical term)
+# - VAS: Vector Addition System (technical term)
+# - sie: Polish text in comments (uzywa sie = "is used")
+ignore-words-list = variante,fonctions,arithmetics,fo,vas,sie
