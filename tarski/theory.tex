@@ -9,7 +9,7 @@ The goal of this section is to prove a Theorem of Alfred Tarski, which says that
 \begin{align*}
 \forall x  \exists y \ y \times y + x = 0
 \end{align*}
-and says if the sentence is true in the real numbers. Remarkably this theorem represents a nontrivial algorithm dealing with first-order logic that was found in the late 1920s, before the notions of ``first-order logic'' and ``algorithm'' were well defined in the modern sense. Although proved earlier, the result was published only after the war~\cite{Tarski:1951vl}.
+and says if the sentence is true in the real numbers. Remarkably this theorem represents a nontrivial algorithm dealing with first-order logic that was found in the late 1920s, before the notions of ``first-order logic'' and ``algorithm'' were well defined in the modern sense. Although apparently proved earlier, the result was published only after the war~\cite{Tarski:1951vl}.
 
 There is some freedom in the choice of vocabulary. For example we could add division because it is definable in first order logic by
 \begin{align*}
@@ -48,7 +48,7 @@ The  first-order theory of the integers with addition, subtraction and multiplic
 \begin{align*}
 (\Int, +, -, \times, 0, 1, <)
 \end{align*}
-is undecidable. It follows that there is no first-order formula $\varphi(x)$  which defines the integers inside the real numbers. In contrast, every single integer can be defined.	
+is undecidable. It follows that there is no first-order formula $\varphi(x)$  which defines the integers inside the real numbers. (We will see another reason why the integers cannot be defined later on.) In contrast, every single integer can be defined.	
 
 A celebrated theorem of Julia Robinson says that there is a first-order formula that defines the integers inside the rational numbers, and therefore also the rational numbers cannot be defined inside the real numbers.
 \end{example}
@@ -62,9 +62,9 @@ A celebrated theorem of Julia Robinson says that there is a first-order formula 
 \end{example}
 
 The rest of this chapter is devoted to proving Theorem~\ref{thm:tarski}. 
-The second part of the theorem (deciding which  sentences are true) is an immediate consequence of the first part (effective quantifier elimination). Indeed, if we want to know if a sentence is true in the real numbers, we first eliminate all quantifiers using the first part of the theorem, arriving at a Boolean combination of sentences that are similar to this example:
+The second part of the theorem (deciding which  sentences are true) is an immediate consequence of the first part (effective quantifier elimination). Indeed, if we want to know if a sentence is true in the real numbers, we first eliminate all quantifiers using the first part of the theorem, arriving at a formula which is a Boolean combination of inequalities that involve values which are obtained form the constants $0$ and $1$ by applying the operations $+,\times,-$. Here is an example  of such a formula:
 \begin{align*}
-  (1  +  1) \times (1 + 1 + 0) - 0 \times (1 + 0) >  0.
+  ((1  +  1) \times (1 + 1 + 0) - 0 \times (1 + 0) >  0) \lor (1 = 0).
 \end{align*}
 A straightforward evaluation leads to the desired true/false answer.  It is therefore enough to prove the effective quantifier elimination. Here, it is enough to show that a single existential quantifier can be eliminated, since multiple quantifiers can then be eliminated one by one, starting with the innermost quantifiers (and using closure of quantifier-free formulas under Boolean operations). 
 
@@ -73,7 +73,21 @@ formula
 \begin{align*}
   \exists x \underbrace{\varphi(x,y_1,\ldots,y_n) }_{\text{quantifier-free formula using $+,\times,-,0,1,<$}}
 \end{align*}
-there exists, and can be computed, an equivalent one that is quantifier-free over the same vocabulary. We first observe that the formula $\varphi$ can be without loss of generality assumed to be a Boolean combination of formulas of the form
+there exists, and can be computed, an equivalent one that is quantifier-free over the same vocabulary, and which talks only about the free variables $y_1,\ldots,y_n$.
+
+\begin{example}
+Consider the formula 
+\begin{align*}
+\exists x \ y_1 x^2 + y_2 x + y_3 = 0.
+\end{align*}
+This formula says that the quadratic polynomial with coefficients $y_1,y_2,y_3$ has a real root. As we all remember from high school this is the same as saying that the discriminant $\Delta$ is non-negative, i.e.
+\begin{align*}
+y_2^2 - 4 y_1 y_3 \geq 0.
+\end{align*}
+The new condition is quantifier-free, as required. When proving the general result, we will also obtain similar quantifier-free formulas for polynomials of higher degree. The reader might feel uneasy about this, because we know that there is no general formula for roots of polynomials of degree five or higher. However, note that we do not need to express the roots themselves, but only the existence of roots, which is a much easier task, and can be done in a quantifier-free way.
+\end{example}
+
+We first observe that the formula $\varphi$ can be without loss of generality assumed to be a Boolean combination of formulas of the form
 \begin{align*}
   p(x,y_1,\ldots,y_n) > 0
 \end{align*}
@@ -89,16 +103,26 @@ Instead of working directly with quantifier-free formulas, we introduce an inter
 
 \section{Computation on the reals}
 \label{sec:bss}
-Consider the following variant of a Turing machine, which we call a \emph{\bss machine}, standing for Blum Shub and Smale, who introduced the model. The purpose of a  \bss machine is to compute a  partial function  of type $\Real^* \to \Real^*$, i.e.~a partial function that inputs and output tuples of real numbers. The machine has a single tape, infinite in both directions (i.e.~indexed by integers), whose  cells store real numbers  plus a finite set $R$ of registers that also store real numbers. Cells of the tape and registers can be undefined.  At any given moment, the machine  is in a state  from a finite set of control states, and has a single head which points to one of the cells on the tape. In the initial configuration,  the tape stores the input of the function (i.e.~the $i$-th cell stores the $i$-th number of the input if the input has length $\ge i$, otherwise the cell is undefined), the registers are all undefined, the state is a  designated initial sate and the head points to the cell $0$ of the tape. Based on the answers to the following questions (the second question is actually several question, one for eachc of the finitely many registers):
+Consider the following variant of a Turing machine, which we call a \emph{\bss machine}, standing for Blum Shub and Smale, who introduced the model. The purpose of a  \bss machine is to compute a  partial function  of type $\Real^* \to \Real^*$, i.e.~a partial function that inputs and output lists of real numbers. The general idea is that the machine operates on reals using the arithmetic operations 
+\begin{align*}
+x+y \quad x -y \quad x \times y \quad x / y,
+\end{align*}
+and it is allowed to compare numbers to zero (are they zero, or positive, or negative?). Observe that we allow division, even though our intended application for the machines is to prove quantifier elimination without division.
+
+The machine has a single tape, infinite in both directions (i.e.~indexed by integers), whose  cells store real numbers  plus a fixed number  of registers that also store real numbers. Cells of the tape and registers can be undefined. Here is a picture of a configuration of the machine: 
+
+\mypicf{7}
+
+At any given moment, the machine  is in a state  from a finite set of control states, and has a single head which points to one of the cells on the tape. In the initial configuration,  the tape stores the input of the function (if the input has $n$ letters, then cells $\set{1,\ldots,n}$ store these letters, and the remaining cells are undefined), the registers are all undefined, the state is a  designated initial sate and the head points to the first cell of the tape. Based on the answers to the following questions (the second question is actually several questions, one for each of the finitely many registers):
 \begin{itemize}
 	\item what  the current state?
 	\item what are the signs of the registers (negative, zero, positive, undefined)?
 \end{itemize}
 the transition function of the machine indicates deterministically a new state and  an operation from the following set:
 \begin{align*}
-\text{accept} \qquad \text{move the head by } i \in \set{-1,1} \qquad   r := 1 \qquad  r := s\  \mathtt{op}\  t 
+\text{accept} \qquad \text{move the head by } i \in \set{-1,1} \qquad   r := 1 \qquad  r := \myunderbrace{s\  \mathtt{op}\  t}{{\tt op} is one of the four\\ arithmetic operations}
 \end{align*}
-where {\tt op} ranges over the arithmetic operations (addition, subtraction, multiplication, dvision) and $r,s,t$ range over registers or the contents of the cell under the head. For example, the effect of a transition can be that the contents of registers $r,s$ are multiplied and the result is stored in the cell under the head. If a division by zero is performed, then the computation is not aborted, but the cell/register $r$ storing the result becomes undefined. If the computation never performs the accept operation  then  the output of the computed  function is undefined. Otherwise, the output of the computed function is defined to be the contents of the defined cells, read from left to right. If the output is shorter than the input, then division by zero is used to make cells on the tape  undefined. The running time of a computation is defined to be the number of transitions that it uses.
+where  $r,s,t$ range over registers or the contents of the cell under the head. For example, the effect of a transition can be that the contents of registers $r,s$ are multiplied and the result is stored in the cell under the head. If the computation never performs the accept operation  then  the output of the computed  function is undefined. Otherwise, the output of the computed function is defined to be the contents of the defined cells, read from left to right. If a division by zero is performed, then the computation is  not aborted, but the cell/register $r$ storing the result becomes undefined.  We use this feature to erase cells, which is necessary for functions where the  output is shorter than the input. The running time of a computation is defined to be the number of transitions that it uses.
 
 
 
@@ -106,7 +130,7 @@ As defined above, a \bss machine computes a partial function. We can also view \
 \begin{lemma}\label{lem:bss-qf}
 If $S \subseteq  \Real^n$ is computed by a \bss machine which uses  at most $k$ computation steps in every accepting run, then $S$ is  definable by a quantifier-free formula using $+,-,\times,0,1,<$. Furthermore, this formula can be computed given the machine and $k$.
 \end{lemma}
-\begin{proof}
+\begin{proof} Observe that the machine in the assumption of the lemma can use division, while the quantifier-free formula in the conclusion does not use division.
 By 	induction on the length of the computation, we can show that the control state, head position,  and signs of the registers can be determined by asking  quantifier-free queries to the input. In the induction step, we observe that, assuming that the history (sequence of transitions) of the computation is known, then the contents of each register/cell can be described by a term that uses the $n$ input numbers, integer constants, and arithmetic operations (addition, subtraction, multiplication and addition). Furthermore, if $t$ is such a term, then a straightforward induction on the size of $t$ shows that  the truth sign (negative, zero, positive)  of  $t$ can be expressed using a quantifier-free formula as in the statement of the lemma. (Note that the term $t$ is allowed to use division, but the quantifier-free formula is not.) For example, 
 \begin{align*}
  \frac {x * y } {x - y + 1} > 0
