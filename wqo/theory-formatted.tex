@@ -87,7 +87,7 @@ It accept if during this depth-first search, it sees exactly one black node.
 
 
 \section{Deterministic  automata do not recognise the separating language}
-It remains to show that a deterministic tree-walking automaton cannot recognise the separating language. The idea is this: we will show that for certain very homogenous inputs, the a deterministic tree-walking automaton can only do a depth-first search, and this is not enough to recognise the separating language.
+It remains to show that a deterministic tree-walking automaton cannot recognise the separating language. The idea is this: we will show that for certain very homogeneous inputs, the a deterministic tree-walking automaton can only do a depth-first search, and this is not enough to recognise the separating language.
 
 \paragraph*{Patterns.} Define a pattern to be a tree where every node is labelled by a view over the alphabet for the separating language, in a consistent way as defined by the following picture:
 \mypicb{40}
@@ -142,7 +142,7 @@ The definition of closure is based on the behaviour of the automaton on the inte
 \begin{proof} 
 Consider the following pattern:
 \mypicb{86}
-In the above pattern,  consider the run of the automaton which begins in state $q$ in the yellow node, and which is stopped whenever it reaches a port (a white node) for the first time.  By definition of $\bar q$, because the parts above and bellow the yellow node are equivalent to $t_1$, the last visit to  the  yellow node is   in state $\bar q$. For the same reason, the loop in the yellow node that goes from state $q$ to state $\bar q$ never visits the red nodes; and once a red node is visited, then the yellow node  is not visited again. After passing through a red node, the run continues -- perhaps returning to the red node -- until it reaches one of the ports (i.e.~a white node) or one of the plugged ports (i.e.~a blue node). 
+In the above pattern,  consider the run of the automaton which begins in state $q$ in the yellow node, and which is stopped whenever it reaches a port (a white node) for the first time.  By definition of $\bar q$, because the parts above and below the yellow node are equivalent to $t_1$, the last visit to  the  yellow node is   in state $\bar q$. For the same reason, the loop in the yellow node that goes from state $q$ to state $\bar q$ never visits the red nodes; and once a red node is visited, then the yellow node  is not visited again. After passing through a red node, the run continues -- perhaps returning to the red node -- until it reaches one of the ports (i.e.~a white node) or one of the plugged ports (i.e.~a blue node). 
 \end{proof}
 
 
