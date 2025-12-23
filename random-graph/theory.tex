@@ -12,7 +12,7 @@ because there are $n \choose 2$ edges to choose randomly, and  all of them need 
 \end{example}
 
 \begin{example}[Parity] \label{ex:random-parity}
-The probability that there is an even number of edges is exactly $1/2$, independently of $n$. This is because the absence of presence of the  last edge (in some predetermined order of edges) determines the parity. 
+The probability that there is an even number of edges is exactly $1/2$, independently of $n$. This is because the absence or presence of the last edge (in some predetermined order of edges) determines the parity. 
 \end{example}
 
 As the two examples show, the probability of a graph having some property can have some limit, such as zero or one half. There are also properties that do not have a limit, e.g.~the property ``the number of vertices is even'' (which does not depend on the choice of edges), oscillates between zero and one without any convergence. The goal of this chapter is to show that for properties that can be defined in first-order logic, there will be a limit, and this limit will be zero or one.
@@ -33,7 +33,7 @@ Let us begin by explaining first-order logic on graphs. The idea is to use a for
 	\exists x \ \exists y \ \exists z \qquad 
 	\text{edge}(x,y) \land \text{edge}(y,z) \land \text{edge}(z,x)
 	\end{align*}
-	says that the graph contains a triangle as an induced sub graph. If we fix a particular triple of vertices, then the probability that this triple is a triangle will be $1/8$. However, if we look at $n/3$ disjoint triples, then the probability that none of them is a triangle will exponentially small. Therefore, the limiting probability of having triangle is one. 
+	says that the graph contains a triangle as an induced subgraph. If we fix a particular triple of vertices, then the probability that this triple is a triangle will be $1/8$. However, if we look at $n/3$ disjoint triples, then the probability that none of them is a triangle will be exponentially small. Therefore, the limiting probability of having a triangle is one. 
 \end{example}
 
 As in the above examples, we define the \emph{limiting probability} of a graph property to be  the limit, with $n \to \infty$, of the probability that a graph with $n$ vertices satisfies the property. The main result of this chapter is the following theorem, which shows that the limiting probability is necessarily zero or one for properties that can be defined in first-order logic.

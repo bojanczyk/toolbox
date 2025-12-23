@@ -110,7 +110,7 @@ We use a more detailed   statement of the algorithm, as described below.
 	\item {\bf Input} $k$ and a graph with   $\le 3k$ distinguished vertices;
 \item {\bf Output.}  A certificate that the graph has treewidth $\ge k$, or a tree decomposition of the graph which has width  $<4k$ and where the root bag consists exactly of the distinguished vertices.
 \end{itemize}
-Suppose that $G$ is the graph. If there are  $< 3k$ distinguished vertices, we add some arbitrary vertices to make the set have size exactly $3k$. Apply Lemma~\ref{lem:rob-split}, computing $S,X$ and $Y$. If the input graph has treewidth $<k$ then the algorithm from the lemma must succeed. Find all connected components of the graph $G-S$, of which there are at least two. Each connected component has   $ \le 2k$ distinguished vertices. Here is a picture: \mypic{77}
+Suppose that $G$ is the graph. If there are $< 3k$ distinguished vertices, we add some arbitrary vertices to make the set have size exactly $3k$. Apply Lemma~\ref{lem:rob-split}, computing $S,X$ and $Y$. If the input graph has treewidth $<k$ then the algorithm from the lemma must succeed. Find all connected components of the graph $G-S$, of which there are at least two. Each connected component has $\le 2k$ distinguished vertices. Here is a picture: \mypic{77}
 For each connected component $U$ of the graph $G-S$, define $G_U$ to be the graph induced by $U \cup S$. This graph is smaller than $G$, because $G-S$ has at least two connected components. Here are are the graphs $G_U$ for our picture above:
 \mypic{79}
 For each of the graphs $G_U$, 

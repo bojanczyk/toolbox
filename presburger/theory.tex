@@ -1,6 +1,6 @@
 \label{sec:presburger}
 
-In this chapter, we show that there is an algorithm that tells us which formulas are true the structure $(\Nat, +)$ of natural numbers with equality. This structure is called \emph{Presburger arithmetic}, because the original algorithm, which is a quantifier elimination procedure,  was proposed by Mojżesz Presburger in 1928.  Another name for the theory is \emph{linear integer arithmetic}, which is popular in the verification community, where it used as part of automatic theorem provers. 
+In this chapter, we show  an algorithm that tells us which formulas are true the structure $(\Nat, +)$ of natural numbers with equality. This structure is called \emph{Presburger arithmetic}, because the original algorithm, which is a quantifier elimination procedure,  was proposed by Mojżesz Presburger in 1928.  Another name for the theory is \emph{linear integer arithmetic}, which is popular in the verification community, where it used as part of automatic theorem provers. 
 
 
 We are interested in the first-order theory of the natural numbers with addition, i.e.~in the formulas that are true in this structure, and are constructed using variables (ranging over natural numbers), addition, quantification (over natural numbers), and the Boolean connectives $\land$, $\lor$, $\neg$. Here, we treat addition as a function that takes two arguments, and not as a relation that takes three arguments, although the two views are equivalent.
@@ -29,7 +29,7 @@ We can also talk about divisibility by a fixed constant. For example, the formul
 says that $x$ is divisible by 3. 
 \end{example}
 
-\paragraph*{Decidability.} The main result of this chapter is to  that Presburger arithmetic has a decidable theory, i.e.~there is an algorithm that inputs a first-order formula, and tells us if it is true in the structure. (The formulas have no free variables, since otherwise they would not have a meaningful truth value without specifying which numbers are used for the free variables.)
+\paragraph*{Decidability.} The main result of this chapter is to show that Presburger arithmetic has a decidable theory, i.e.~there is an algorithm that inputs a first-order formula, and tells us if it is true in the structure. (The formulas have no free variables, since otherwise they would not have a meaningful truth value without specifying which numbers are used for the free variables.)
 
 \begin{theorem}\label{thm:presburger-decidable}
 The first-order theory of Presburger arithmetic is decidable.
@@ -160,7 +160,7 @@ The following theorem tells us that the semilinear sets are exactly the sets tha
 		A \bar x = \bar 0.
 		\end{align}
 	Consider the set of minimal solutions to such an system, i.e.~the set  of solutions $\bar x$  
-	which are minimal coordinatewise. By Dickson's Lemma, see Claim~\ref{clm:dickson},  the set minimal solutions, call it $S$, is finite.  We now claim that every other solution can be obtained by coordinatewise addition of minimal solutions, and therefore the set of solutions forms a linear set, where the period vectors are the minimal solutions. This is an immediate consequence of the definition of minimality: a non-miniomal solution can be obtained by taking some minimal solution, and adding some vector to it. The added vector is also a solution to the homogeneous system, and therefore an inductive argument can be used to decompose it into a sum of minimal solutions.
+	which are minimal coordinatewise. By Dickson's Lemma, see Claim~\ref{clm:dickson},  the set minimal solutions, call it $S$, is finite.  We now claim that every other solution can be obtained by coordinatewise addition of minimal solutions, and therefore the set of solutions forms a linear set, where the period vectors are the minimal solutions. This is an immediate consequence of the definition of minimality: a non-minimal solution can be obtained by taking some minimal solution, and adding some vector to it. The added vector is also a solution to the homogeneous system, and therefore an inductive argument can be used to decompose it into a sum of minimal solutions.
 
 	Consider now the general case of the lemma, where $\bar b$ is not necessarily the zero vector. Again, consider the set of minimal solutions, which is finite. Every other solution is obtained by taking a minimal solution, and adding to it some solution of the homogeneous version of the system as in~\eqref{eq:homogeneous-system}. Since the homogeneous solutions form a linear set, we get the result. 
 \end{proof}

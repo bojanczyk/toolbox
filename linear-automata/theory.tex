@@ -197,7 +197,7 @@ Let $f$ be a function as in the statement of the theorem.
 Define the {minimal automaton} of $f$ as follows. The state space, which is a subspace of the infinite dimensional space $\Sigma^* \to \field$, is all finite linear combinations of  functions of the form $fw$ for $w \in \Sigma^*$. The initial state is $f$.  The transition function is defined using the right action $q \mapsto qa$ defined above. The output function takes a state $q$ to its value on the empty word. The automaton clearly recognises the function $f$. We will justify below why the state space has finite dimension, and therefore the automaton is indeed a vector space automaton as per Definition~\ref{def:vector-space-automaton}.
 
 We now show that every reachable vector space automaton recognising $f$ admits a surjective homomorphism onto the minimal automaton defined above. Let 
- $\Aa$ be be  a vector space automaton recognising $f$. For a state $q$ of $\Aa$, define $[q] : \Sigma^* \to  \field$ to be the function  recognised by the vector space automaton obtained from $\Aa$ by changing its initial state to $q$.   
+ $\Aa$ be a vector space automaton recognising $f$. For a state $q$ of $\Aa$, define $[q] : \Sigma^* \to  \field$ to be the function  recognised by the vector space automaton obtained from $\Aa$ by changing its initial state to $q$.   
 
 \begin{claim}
 	The function $[\_]$ is a surjective  homomorphism  from $\Aa$ onto  the minimal automaton. 

@@ -1,0 +1,369 @@
+
+% !TeX root = individual-template.tex
+
+\newcommand{\infixsim}{\stackrel{\text{infix}}{\sim}}
+\newcommand{\infixleq}{\stackrel{\text{infix}}{\leq}}
+\newcommand{\infixsmaller}{\stackrel{\text{infix}}{<}}
+\newcommand{\prefixsim}{\stackrel{\text{prefix}}{\sim}}
+\newcommand{\prefixleq}{\stackrel{\text{prefix}}{\leq}}
+\newcommand{\suffixsim}{\stackrel{\text{suffix}}{\sim}}
+\newcommand{\suffixleq}{\stackrel{\text{suffix}}{\leq}}
+
+
+In this chapter, we describe an alternative approach to regular languages, which uses monoids instead of automata. This approach will be illustrated by a characterisation of the languages that can be recognised by monoid which do not contain groups.
+
+
+Let us begin with the definition of a monoid. This is like a group, except that we do not require inverses.
+
+\begin{definition}[Monoid]
+	A monoid is a set $M$ equipped with a binary multiplication operation, which we denote multiplicatively by $m \cdot n$, subject to: 
+	\begin{itemize}
+		\item associativity: $(m \cdot n) \cdot k = m \cdot (n \cdot k)$ for all $m,n,k \in M$; and
+		\item identity element: there is some $1 \in M$ such that $1 \cdot m = m \cdot 1 = m$ for all $m \in M$.
+	\end{itemize}
+\end{definition}
+
+We often abuse notation, and use the same letter $M$ to denote both the monoid and its underlying set. For example, we will write $m \in M$ for a monoid to mean that $m$ is an element of the underlying set of the monoid.
+
+\begin{example}[Example monoids]\label{ex:example-monoids}
+\ 
+\begin{enumerate}
+	\item For every alphabet $\Sigma$, the set of all words $\Sigma^*$ is a monoid under concatenation, with the empty word as the neutral element. This monoid is called the \emph{free monoid} over alphabet $\Sigma$.
+	\item For every set $Q$, the set of functions  $ f : Q \to Q$ is a monoid. The monoid operation is function composition, and the identity element is the identity function.
+	\item For every set $Q$, the set of binary relations $R \subseteq Q \times Q$ is a monoid. The monoid operation is  relation composition
+	\begin{align*}
+	R \circ S = \setbuild{(p,q)}{$(p,t) \in R$ and $(t,q) \in S$ for some $t \in Q$}.
+	\end{align*}
+	The neutral element is  identity relation, which is happens to be a function.
+\end{enumerate}
+Observe that the monoid from item 2 is contained in the monoid from item 3.
+\end{example}
+
+When describing a monoid, it is not necessary to describe the identity element. This is because if the identity element exists, then it is unique. Indeed, by multiplying two candidates for the  identity element, we would get the ``real'' identity.  Therefore, from now on we will no longer mention the identity element when describing monoids.
+
+The appropriate notion of function between monoids is that of a monoid homomorphism, as defined below.
+\begin{definition}[Homomorphism]
+	A monoid homomorphism $h : M \to N$ between two monoids is a function between their underlying sets which preserves the monoid operation
+	\begin{align*}
+	h(m \cdot n) = h(m) \cdot h(n)
+	\end{align*}
+	and which maps the monoid identity in $M$ to the monoid identity in $N$.
+\end{definition}
+
+\begin{example}[Parity]
+Consider the monoid $\Int_2$ where the underlying set is  $\set{0,1}$, and the monoid operation is  addition modulo two. An example of a monoid homomorphism is the function 
+\begin{align*}
+h : \Sigma^* \to \Int_2
+\end{align*}
+which tells us the parity of occurrences of some chosen letter $a \in \Sigma$.
+\end{example}
+\begin{example}[Free monoid homomorphisms]
+	Consider an alphabet $\Sigma$ and a monoid homomorphism
+	\begin{align*}
+	 h : \Sigma^* \to M.
+	\end{align*}
+	This monoid homomorphism is uniquely defined by its values on the letters, since the letters generate the input monoid. Furthermore, there are no constraints on the values of the letters, i.e.~any function of type $\Sigma \to M$ will extend to a monoid homomorphism. This is the reason why the monoid $\Sigma^*$ is called the free monoid.
+\end{example}
+
+
+
+\begin{example}[Monoid for a \textsc{dfa}]\label{ex:dfa-monoid}
+Consider a deterministic finite automaton with input alphabet $\Sigma$ and states $Q$. Define a function 
+\begin{align*}
+ h : \Sigma^* \to (Q \to Q),
+\end{align*}
+which maps a word $w$ to its corresponding state transformation, i.e.~the function that maps each state $q$ to the state reached from $q$ after reading $w$. This function is easily seen to be a monoid homomorphism, if we view the inputs as the free monoid, and the outputs as the monoid of functions from $Q$ to $Q$ (see Example~\ref{ex:example-monoids}).
+\end{example}
+
+As far as this chapter is concerned, the purpose of monoids is to recognise languages, similarly to automata.
+
+\begin{definition}[Recognising by a monoid]
+	We say that a language $L \subseteq \Sigma^*$ is \emph{recognised} by a monoid $M$ if there is a monoid homomorphism 
+	\begin{align*}
+	h : \Sigma^* \to M
+	\end{align*}
+	such that membership $w \in L$ depends only on the value $h(w) \in M$. In other words, there is some accepting subset $F \subseteq M$ such that
+	\begin{align*}
+	w \in L \iff h(w) \in F \qquad \text{for all $w \in \Sigma^*$.}
+	\end{align*}
+\end{definition}
+
+\begin{example}[Recognising $b^*$]
+	Take the finite monoid $M$ where the underlying set is $\set{0,1}$, the monoid operation is minimum, and the identity element is $1$.
+	Consider the monoid homomorphism 
+	\begin{align*}
+		h : \set{a,b}^* \to M,
+	\end{align*}
+	which maps $a$ to $0$ and $b$ to $1$. If we take the accepting set to be $\set 1$, then the recognised language is $b^*$.
+\end{example}
+
+The following theorem shows that finite monoids can be used instead of finite automata to define regular languages. 
+
+\begin{theorem}\label{thm:monoid-regular}
+	A language is regular if and only if it is recognised by a finite monoid.
+\end{theorem}
+\begin{proof}
+	In Example~\ref{ex:dfa-monoid}, we have shown how a deterministic finite automaton yields  a homomorphism into a finite monoid, thus proving implication $\Rightarrow$ in the theorem. For the converse implication $\Leftarrow$, if we take a monoid homomorphism
+	\begin{align*}
+	h : \Sigma^* \to M,
+	\end{align*}
+	then we can construct a deterministic finite automaton whose states are the elements of $M$, the initial state is the monoid identity, the transition function is defined by $(m,a) \mapsto m \cdot h(a)$.\end{proof}
+
+% Similarly to deterministic automata, there is also a minimal monoid for each language, which can be obtained using a Myhill-Nerode style construction, as explained in the following example.
+% \begin{example}
+% Consider some language $L \subseteq \Sigma^*$. We say that two words are \emph{two-sided congruent}, written as $w \sim v$, if they cannot be distinguished by adding words to the left and right:
+% \begin{align*}
+% xwv \in L \iff xwv \in L  \qquad \text{for all $x,y \in \Sigma^*$}.
+% \end{align*}
+% Using the same proof as in the Myhill-Nerode Theorem, one can show that this relation is  a congruence, which means that 
+% \begin{align*}
+% w_1 \sim w'_1 \land w_2 \sim w'_2 \quad \implies \quad w_1 w_2 \sim w'_1 w'_2.
+% \end{align*}
+% Thanks to the congruence property, one can show that: (a) the equivalence classes of $\sim$ can be equipped with a monoid structure; (b)  the function that assigns a word to its equivalence class is a monoid homomorphism from $\Sigma^*$ to this monoid; and (c)  this monoid homomorphism recognises the language. This monoid is called the \emph{syntactic monoid} of the language. It is the smallest  monoid that recognises the language, because if we take any other recognising monoid homomorphism $h$, then words with the same value under $h$  be equivalent under $\sim$. All of this is the same as in the Myhill-Nerode Theorem, except that we use two-sided congruence instead of the usual right congruence.
+% \end{example}
+
+\section{Green's relations}
+\label{sec:greens-relations}
+One of the advantages of using monoids instead of automata is that monoids have a better structure theory than automata. This structure is based on Green's relations, which generalise the natural notions of prefix, suffix, and infix to monoids, as described in the following definition.
+
+\begin{definition}
+	[Green's relations] Consider two elements $m,n$ in a monoid $M$.
+	\begin{itemize}
+		\item We say that $m$ is a \emph{prefix} of $n$ if $mx=n$ for some $x \in M$.
+		\item We say that $m$ is a \emph{suffix} of $n$ if $ym=n$ for some $y \in M$.
+		\item We say that $m$ is an \emph{infix} of $n$ if $xmy=n$ for some $x,y \in M$.
+	\end{itemize}
+\end{definition}
+
+All three relations defined above define pre-orders, i.e.~they are reflexive and transitive, which is easy to see. In a free monoid $\Sigma^*$, these relations are anti-symmetric, i.e.~one cannot have non-trivial comparisons in both directions. However, in general monoids these relations need not be  anti-symmetric. For example, in a group, all elements are prefixes of each other, and likewise for infixes and suffixes
+
+A prefix is a special case of an infix. Therefore, every prefix class is contained in some infix class. One could image that it is possible to grow in the prefix ordering while staying in the same infix class. As the following lemma shows, this is not possible in a finite monoid, and therefore all prefix classes contained in the same infix class must be incomparable in the prefix ordering.
+\begin{lemma}\label{lem:infix-prefix}
+	Consider a finite monoid $M$, and let $m,n \in M$ be such that $m$ and $n$ are infix equivalent, and $m$ is a prefix of $n$. The $m$ and $n$ are prefix equivalent. 
+\end{lemma}
+\begin{proof}
+	By the assumption that $m$ is a prefix of $n$, one can obtain $n$ from $m$ by multiplying to the right by some $x \in M$. By the assumption that $n$ is an infix of $m$, one can obtain $m$ from $n$ by multiplying to the left by some $y \in M$ and multiplying to the right by some $z \in M$. By iterating this process in a loop, we see that 
+	\begin{align*}
+	  z^im(xy)^i  = m \quad \text{and} \quad  z^im(xy)^i x = n \qquad \text{for all $i \in \set{0,1,\ldots}$}.
+	\end{align*}
+	Since the monoid is finite, there must be some $i < j$ such that $(xy)^i = (xy)^j$. Therefore, 
+	\begin{align*}
+	n = z^im(xy)^i x = z^jm(xy)^i \quad  \text{ is a prefix of } \quad  z^jm(xy)^j  = m.
+	\end{align*}
+	This proves that $n$ is a prefix of $m$, and therefore they are prefix equivalent.
+	\end{proof}
+
+There are other results about Green's relations, which identify a very well-behaved structure inside each infix class. A description of some of this structure can be found in~\cite[Section 1]{bojanczyk_recobook}. For the purposes of this chapter, the above lemma will be sufficient.
+\section{Star-free languages and aperiodic monoids}
+\label{sec:star-free}
+To illustrate the power of monoid, we will use them to describe star-free languages. These are defined by using regular expressions which cannot use the Kleene star operation, but which are allowed to use complementation.
+
+\begin{definition}[Star-free language]
+	 A language $L \subseteq \Sigma^*$ is called \emph{star-free} if it can be generated from finite languages (i.e.~languages containing finitely many words) using concatenation $L \cdot K$, as well as the Boolean operations of union, intersection, and complement.
+\end{definition}
+
+\begin{example}
+	The full language $\Sigma^*$ is star-free, since it is the complement of the empty language, which is finite. Also, if we take some letter $a \in \Sigma$, then the language $a^*$ is star-free, since it can be obtained as the complement of the language 
+$
+	\Sigma^* \cdot a \cdot \Sigma^*.
+$
+\end{example}
+
+\begin{example}\label{ex:aa-not-star-free}
+	As we will see later in this chapter, the language $(aa)^*$ is not star-free. The intuitive reason is that this language requires counting modulo two, which goes beyond the capabilities of star-free expressions.
+\end{example}
+
+The main result of this chapter is the following theorem, which characterises star-free languages in terms of a monoid property called aperiodicity.
+
+\begin{theorem}
+% [{\cite{Schutzenberger65}}]
+\label{thm:schutz-star-free}
+A language  $L \subseteq \Sigma^*$  is star-free if and only if it is recognised by a finite monoid $M$ which has the  following \emph{aperiodicity} property: 
+	\begin{align*}
+	\exists \omega \in \set{1,2,\ldots} \ \forall m \in M \quad m^\omega = m^{\omega +1}.
+	\end{align*}
+\end{theorem}
+
+Before proving the theorem, let us discuss some of its consequences. 
+
+The first consequence is an alternative description of aperiodicity, which is expressed in terms of groups. We say that a monoid $M$ \emph{contains a group $G$} if the group is a subset of the monoid and the group operation is inherited from the monoid operation. Importantly, the  group identity does not need to be inherited from the monoid operation. For example, if we take a group $G$, and we adjoin a new neutral element to it (different from the group identity in $G$), then the new monoid will contain $G$. 
+\begin{fact}
+	A finite monoid is aperiodic if and only if it does not contain any non-trivial group (i.e.~a group with more than one element).
+\end{fact}
+\begin{proof}
+	For the implication $\Rightarrow$,  take some hypothetical group $G$ contained in the monoid $M$. We know that 
+	\begin{align*}
+	g^\omega = g^{\omega+1},
+	\end{align*}
+	which by using group cancellation implies that $g$ is the identity of the group. Therefore, the group is trivial. Consider now the opposite implication $\Leftarrow$. Take some monoid element $m \in M$, and consider its powers 
+	\begin{align*}
+	m^1, m^2, m^3, \ldots.
+	\end{align*}
+	Since the monoid is finite, these powers start to cyclically repeat, which means that  some tail of the sequence of powers defines a cyclic group. This group must be trivial, and therefore the powers stabilise. Therefore, for every $m$ there is some $\omega_m$ such that 
+	\begin{align*}
+	m^{\omega} = m^{\omega_m + 1}.
+	\end{align*}
+	By taking $\omega$ to be the maximum of all $\omega_m$, we obtain the aperiodicity.
+\end{proof}
+
+Thanks to the above fact, an alternative statement of Theorem~\ref{thm:schutz-star-free} is that a language is star-free if and only if it is recognised by a finite monoid that does not contain any non-trivial group. This is particularly pleasing, since it relates a language property (star-freeness) to a purely algebraic property (absence of non-trivial groups). Things get even better, since star-freeness is also equivalent to other conditions, such as definability in first-order logic or the temporal logic LTL, as explained in~\cite[Chapter 2.2]{bojanczyk_recobook}, but we do not dicuss these other characterisations here.
+
+Let us state another consequence of Theorem~\ref{thm:schutz-star-free}, which is  that star-freeness is a decidable property of regular languages. On its own, Theorem~\ref{thm:schutz-star-free} does not give such a decision procedure, since it might seem that we need to check all possible recognising monoids for a given language, and some of these monoids might not be aperiodic. However, as the following corollary shows, it is sufficient to check one monoid only, which leads to decidability.
+
+\begin{corollary}\label{cor:decide-star-free}
+	Given a regular language, one can decide if it is star-free.
+\end{corollary}
+\begin{proof}[Proof of Corollary~\ref{cor:decide-star-free}]
+	Suppose that we are given a regular language, given by a monoid homomorphism 
+	\begin{align*}
+	h : \Sigma^* \to M
+	\end{align*}
+	and an accepting set $F \subseteq M$. Let us begin by minimising this homomorphism. Define an equivalence relation $\sim$ on the monoid  $M$ by  identifying two monoid elements $m, m' \in M$ if 
+	\begin{align*}
+	xmy \in F \iff xm'y \in F \quad \text{for all $x,y \in M$.}
+	\end{align*}
+	This equivalence relation can be computed. 
+	If this is a non-trivial equivalence relation, then we can reduce the size of the monoid, by fusing equivalent monoid elements, as in the Myhill-Nerode Theorem. Therefore, we can assume that the monoid $M$ is minimal, i.e.~no two distinct monoid elements are equivalent under $\sim$. Also, as in the proof of the Myhill-Nerode Theorem, the minimal monoid is unique up to isomorphism, and it can be obtained from any other recognising monoids by a fusion process as described above. Since aperiodicity is preserved under minimisation, it follows that 
+	\begin{align*}
+	\text{some recognising monoid is  aperiodic} 
+	 \implies 
+	\text{minimal one is aperiodic}.
+	\end{align*}
+	This leads to an algorithm: minimise the monoid, and then check if it is aperiodic. This algorithm runs in polynomial time, assuming that we use monoids as the representation of regular languages.
+\end{proof}
+
+For example, if we take the language $(aa)^*$, then its minimal monoid is $\set{0,1}$ with addition modulo 2, which is not aperiodic. Therefore, the language is not star-free, as we have asserted in Example~\ref{ex:aa-not-star-free}. 
+
+
+
+
+\begin{proof}[Proof of Theorem~\ref{thm:schutz-star-free}]
+	We begin with the implication 
+	\begin{align*}
+	\text{star-free} \quad \implies \quad \text{aperiodic monoid}.
+	\end{align*}
+	The proof is by induction on the structure of the star-free expression. It is not hard to see that finite languages are recognised by aperiodic monoids, and that the class of languages recognised by aperiodic monoids is closed under union, intersection, and complement. For the complement, we simply change the accepting set, which does not affect the monoid, and for union and intersection we take the product of two monoids, which is an operation that preserves aperiodicity. The only interesting part is concatenation.
+	
+	\begin{lemma}
+		The class of languages recognised by aperiodic monoids is closed under concatenation.
+	\end{lemma}
+	\begin{proof} We will prove this by using a certain monoid construction, which corresponds to concatenation of languages, and which preserves aperiodicity.
+	Consider  two languages $L_1,L_2 \subseteq \Sigma^*$, which are recognised by two homomorphisms 
+	\begin{align*}
+	h_i: \Sigma^* \to M_i, \quad i=1,2,
+	\end{align*}
+	into two finite aperiodic monoids $M_1$ and $M_2$. To recognise the concatenation, we will use a new monoid, which stores the following information: (a) the values in the original two monoids; and (b) the set of possible pairs of values, ranging over factorisations into two parts. More precisely, consider the function  
+	\begin{align*}
+	h : \Sigma^* \to \myunderbrace{M_1 \times M_2 \times \powerset{M_1 \times M_2}}{call this set $M$}
+	\end{align*}
+	which maps an input word to its values under $M_1$ and $M_2$ as well as the set of pairs $(h_1(w_1),h_2(w_2))$, ranging over factorisations $w_1 w_2$ of the input.  It is not hard to see that the set $M$ can be equipped with a monoid structure such that $h$ is a homomorphism. The monoid operation is 
+	\begin{align*}
+	(m_1,m_2,S) \cdot (n_1,n_2,T) = (m_1 n_1, m_2 n_2, Sn_2 \cup m_1T),
+	\end{align*}
+	where $Sn_2$ appends $n_2$ to the second component of each pair in $S$, and similarly for $m_1T$. The homomorphism $h$ recognises the concatenation $L_1 L_2$, with the accepting set consisting of monoid elements where the set component contains some pair which is accepting in both $M_1$ and $M_2$.
+
+	The construction described above works for the concatenation of any two regular languages, without any assumptions on aperiodicity. We will now show that if the original two monoids were aperiodic, then the new monoid is also aperiodic. Consider then some element $m = (m_1,m_2,S) \in M$. We want to show that the powers 
+	\begin{align*}
+	m^1, m^2, m^3, \ldots
+	\end{align*}
+	stabilise at some value. Clearly these powers stabilise on the first two components, by assumption on aperiodicity of $M_1$ and $M_2$. Consider now the last component, which is equal to 
+	\begin{align*}
+	\setbuild{(m_1^{i_1} x, y m_2^{i_2})}{$(x,y) \in S$ and  $i_1 + i_2 + 1 = i$}.
+	\end{align*}
+	By aperiodicity of $M_1$ and $M_2$, there is a number $\omega \in \set{1,2,\ldots}$  that witnesses aperiodicity in both monoids. If we take $i$ to be sufficiently large, then the decomposition in $i_1 + i_2 +1$ can have at most one number that is smaller than $\omega$, and the other number will be equal to $\omega$. Therefore, the third component will also stabilise for sufficiently large $i$. 
+	%  Therefore, the above set is equal to 
+	% 	\begin{align*}
+	% \setbuild{(m_1^{i_1} x, y m_2^{\omega})}{$(x,y) \in S$ and $i_1 < \omega$} \cup \\ 
+	% \setbuild{(m_1^{\omega} x, y m_2^{i_2})}{$(x,y) \in S$ and $i_2 < \omega$} \cup \\ 
+	% \setbuild{(m_1^{\omega} x, y m_2^{\omega})}{$(x,y) \in S$},
+	% \end{align*}
+	% which is independent of $i$. 
+\end{proof}
+
+
+
+We now turn to the implication
+\begin{align*}
+\text{aperiodic monoid} \quad \implies \quad \text{star-free},
+\end{align*}
+which is the heart of the proof.
+Consider a  homomorphism into an aperiodic monoid
+\begin{align*}
+h: \Sigma^* \to M.
+\end{align*}
+We will show that every language recognised by this homomorphism is star-free. The interseting case is when the accepting set is a single monoid element $m \in M$, in which case the  recognised language is
+\begin{align*}
+L_m = \setbuild{w \in \Sigma^*}{$h(w)=m$}.
+\end{align*}
+In the following lemma, we will show that this language
+is star-free. This will extend to all other languages recognised by the homomorphism, thus completing the proof of Theorem~\ref{thm:schutz-star-free},  since all languages recognised by the homomorphism are finite unions of languages of the form $L_m$.
+
+\begin{lemma}\label{lem:star-free-induction}
+	For every $m \in M$, there language $L_m$ is a star-free.
+\end{lemma}
+
+
+\begin{proof}
+The lemma is proved by induction on the position of $m$ in the infix ordering. Suppose that we want to prove the lemma for some $m \in M$, and we have already proved it for all monoid elements that are proper prefixes of  $m$. 
+Define $K_m$ to be the set of words which: 
+	\begin{enumerate}
+		\item have a prefix whose value in the monoid is in the prefix class of $m$; and
+		\item have a suffix whose value in the monoid is in the suffix class of $m$.	
+	\end{enumerate}
+We begin by showing that this property is star-free.
+\begin{claim}
+	The language $K_m$ is star-free.
+\end{claim}
+\begin{proof}
+	Consider first the special case when $m$ is in the prefix class of the monoid identity.  In this case, $K_m$ is the set of all words, since the corresponding prefixes and suffixes in the definition of $K_m$ can be taken to be the empty word. 
+
+	We are left with the case when $m$ is not equivalent to the monoid identity, which means that the monoid identity is a proper prefix of $m$. For a word $w \in K_m$, consider the shortest prefix of $m$ whose value in the monoid is in the prefix class of $m$. Since we  have assumed that $m$ is not prefix equivalent to the identity, this shortest prefix is non-empty,  and therefore it is of the form $ua$, where $a$ is a letter and $u$ has a value in the monoid that is strictly smaller than $m$ in the prefix ordering. Thanks to Lemma~\ref{lem:infix-prefix}, the value of $u$ is smaller not only in the prefix ordering, but also in the infix ordering. Therefore, we can use the induction assumption. Summing up, the property ``some prefix is in the prefix class of $m$'' can be expressed using the star-free expression 
+		\begin{align*}
+		\bigcup_{n,a} L_n \cdot a \cdot \Sigma^*,
+		\end{align*}
+		where $n$ ranges over monoid elements that are strictly smaller than $m$ in the infix ordering, and $a$ ranges over letters such that $n \cdot h(a)$ is in the prefix class of $m$. A similar construction works for suffixes. Intersecting the two, we get the desired star-free expression $K_m$.
+\end{proof}
+
+In the following claim, we show that the language $K_m$ is closely related to the language $L_m$ that we want to describe in the present lemma.
+\begin{claim}\label{cl:km-inclusions}
+	The language $K_m$ satisfies the following inclusions
+	\begin{align*}
+	L_m
+	\quad \subseteq \quad  K_m \quad  \subseteq \quad  L_m \cup L_{>m},
+	\end{align*}
+	where $L_{>m}$ consists of words whose value is strictly bigger than $m$ in the infix ordering.
+\end{claim}
+\begin{proof}
+	Clearly the first inclusion holds, since every word with value $m$ has a prefix (e.g.~the entire word) whose  value is in the prefix class of $m$, and similarly for suffixes.
+
+	Consider now the second inclusion. Take some  $ w \in K_m$. Since $w$ has a prefix whose value in the monoid is in the prefix class of $m$, the value of $w$ is either equal to $m$, or strictly bigger than $m$ in the prefix ordering. By Lemma~\ref{lem:infix-prefix}, if the value is strictly bigger than $m$ in the prefix ordering, then it is also strictly bigger in the infix ordering. Using this observation and a similar one for suffixes, we know that the value of $w \in K_m$ is either: (a) equivalent to $m$ in both the prefix and suffix orderings; or (b) strictly bigger than $m$ in the infix ordering. In case (b), we have membership in $L_{>m}$. It remains to prove that in  case (a), the value is actually equal to $m$, and not some other element of its prefix class and suffix class. This is because there are no other such elements, as we now show:
+	\begin{itemize}
+		\item[(*)] is $n \in M$ is both prefix and suffix equivalent to $m$, then $n = m$.
+	\end{itemize}
+	To prove (*), we use aperiodicity of the monoid. (The statement fails for general monoids, e.g.~in a group all elements are prefix and suffix equivalent to each other.) If $n$ is prefix equivalent to $m$, then there exist $x,y \in M$ such that
+	\begin{align*}
+	    mx = n \quad \text{and} \quad  yn = m.
+	\end{align*}
+	This means that if we start with $m$, and then we multiply in alternation by $x$ to the right and by $y$ to the left, we will alternate in values between $m$ and $n$: 
+	\begin{align*}
+	y^i m x^i = m \quad \text{and} \quad  y^i m x^{i+1} = n.
+	\end{align*}
+	By aperiodicity of the monoid, at some point there will be no difference between $x^i$ and $x^{i+1}$, and hence $m=n$.
+\end{proof}
+
+Thanks to the above lemma, in the language $K_m$ we have all the words with value $m$, and some extra words with value strictly bigger than $m$ in the infix ordering.  The following claim shows what these extra words look like. 
+
+\begin{claim} \label{claim:difference-between-lm-and-km} The following inclusion holds:
+\begin{align*}
+K_m \setminus L_m \quad \subseteq \quad \bigcup_{n, a} K_n \cdot a \cdot \Sigma^*,
+\end{align*}	
+where  $n \in M$ in the union ranges over monoid  elements that are prefixes of $m$, and $a  \in \Sigma $ ranges over letters such that $n \cdot h(a)$ is not a prefix of $m$. 
+\end{claim}
+\begin{proof}
+	Consider a word in the left-hand side of the inequality. By Claim~\ref{cl:km-inclusions}, this word is in $L_{>m}$, and therefore it has some prefix (for example, the entire word) whose value is strictly bigger than $m$ in the infix ordering. If we take the shortest such prefix, then it will be in $L_n \cdot a$ for some $n$ and $a$ that satisfy the conditions described in the claim. Since $L_n \subseteq K_n$, we are done.
+\end{proof}
+
+
+We are now ready to complete the proof of the lemma, by defining $L_m$ using a star-free expression. Consider the expression on the right-hand side of the inequality from the above claim. This is a star-free expression, since we have proved that each $K_n$ is a star-free expression. Formally speaking, we have proved it only for $K_m$, but in the same step we can prove it for all $K_n$ with $n$ being a prefix -- and even infix -- of $m$,  since these monoid elements occupy the same or lower position in the induction order. Therefore, by removing the right-hand side of Claim~\ref{claim:difference-between-lm-and-km} from $K_m$, we get a star-free expression for $L_m$, as required in the statement of the lemma.
+\end{proof}
+\end{proof}

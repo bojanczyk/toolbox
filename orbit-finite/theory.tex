@@ -1,0 +1,380 @@
+
+% !TeX root = individual-template.tex
+
+% \newcommand{\atoms}{\mathbb A}
+
+
+In this chapter, we study regular languages over infinite alphabets. 
+
+The simplest possible idea for a regular language over an infinite alphabet is that it is recognised by a finite automaton with finitely many states. This is not an interesting idea, since this kind of model cannot have non-trivial access to the infinity of the alphabet. More formally, we consider two input letters $a$ and $b$ equivalent if 
+\begin{align*}
+q \stackrel a \to   p \text{ is a transition}  
+\qquad \Leftrightarrow \qquad
+ q \stackrel b \to p \text{ is a transition}
+\end{align*}
+holds for every all  states $p$ and $q$. There are finitely many possible equivalence classes of letters, and equivalent letters are indistinguishable by the automaton. Therefore, up to all intents and purposes, the input alphabet is also finite.
+
+
+In this chapter, we study a more interesting of notion of regularity for infinite alphabets. It is based on the idea that the automata have access to equality on the alphabet, but nothing else\footnote{This idea dates  back to the work of Kaminski and
+Francez~\cite{kaminskiFiniteMemoryAutomata1994}, and has been developed in many
+subsequent papers, see e.g.~the
+lecture notes~\cite{bojanczyk_slightly}.}.  We fix for the rest of this chapter some infinite alphabet, which we denote by $\atoms$. We think of the letters in the alphabet as being names\footnote{Although we use names of people as examples, a more relevant application for computer science is variable names in programs. Based on this analogy, the sets discussed in this chapter are called \emph{nominal sets} in the literaure on semantics of programming languages~\cite{PittsAM:nomsns}.}, such as
+\begin{align*}
+\atoms = \set{\text{John}, \text{Eve}, \text{Tom}, \ldots}.
+\end{align*}
+Examples of languages that  we care about include
+\begin{align}
+\setbuild{ w \in \atoms^*}{the first letter is equal to the last letter}.
+\label{eq:first-last}
+\\
+\setbuild{ w \in \atoms^*}{some letter appears at least twice}.
+\label{eq:some-twice}
+\end{align}
+To recognise such languages, we use automata that have some  kind of finite memory, and which can  store letters
+from $\atoms$. For example, the language~\eqref{eq:first-last} is recognised by
+an automaton which loads the first letter into state, and then toggles
+acceptance depending on comparison of the state with the current input
+letter. The language~\eqref{eq:some-twice} is recognised by an automaton which
+nondeterministically guesses a position, stores its letter, and
+then waits for this letter to appear again.  These automata will be described in more detail in Examples~\ref{ex:first-last-automaton} and~\ref{ex:some-letter-twice-automaton}.
+
+\paragraph*{Equivariance.} Before giving a definition of the automata involved, we begin by a formal definition of what it means for a language to ``depend only on equality''. The general idea is that if a language contains a word such as the following three-letter word
+\begin{align*}
+\text{John} \cdot \text{Eve} \cdot \text{John},
+\end{align*} 
+then it must also contain any other word which has the same equality patterns, such as the following one: 
+\begin{align*}
+\text{Tom} \cdot \text{John} \cdot \text{Tom}.
+\end{align*}
+This idea is formalised by applying permutations of the alphabet, since choosing different names amounts to applying a permutation on the alphabet. 
+\begin{definition}[Equivariant language] \label{def:equivariant-language}
+  
+  A language $L \subseteq \atoms^*$ is called \emph{equivariant} if 
+  \begin{align*}
+  w \in L \quad \iff \quad \pi(w) \in L
+  \end{align*}
+  holds for every permutation $\pi$ of the alphabet $\atoms$.
+\end{definition}
+
+The goal of this chapter is to define certain automata models that recognise equivariant languages. Let us now describe more detail two automata for the languages that were mentioned before.
+
+\begin{example}\label{ex:first-last-automaton}
+	Consider the language from~\eqref{eq:first-last}, i.e.~the set of words where the first letter is equal to the last letter. We describe a deterministic automaton that recognises this language. The state space of this automaton will be 
+	\begin{align*}
+	\myunderbrace{\atoms \quad  + \quad  \atoms}{two disjoint copies}
+	\quad + \quad 
+	\myunderbrace{\set \varepsilon}{initial \\ state}.
+	\end{align*}
+	In the above, and also elsewhere in this chapter, we use $+$ to represent disjoint union. Elements of the first disjoint copy of $\atoms$ will be denoted by $1(a)$ with $a \in \atoms$, while elements of the second disjoint copy will be denoted by $2(a)$. The transitions of the automaton are as follows. When reading a letter $a \in \atoms$ in the initial state $\varepsilon$, the automaton stores this letter in its state, using the first copy, as explained in the following  set of transitions:
+	\begin{align*}
+	\varepsilon \stackrel a \to 1(a)  \qquad \text{for every $ a \in \atoms$}.
+	\end{align*}
+	From now on, this atom will be kept in the state forever. However, the automaton will toggle between $1(a)$ and $2(a)$,  depending on whether the current input letter is equal to the stored atom or not:
+	\begin{align*}
+	i(a) \stackrel b \to \begin{cases}
+	1(a) & \text{if $a = b$} \\
+	2(a) & \text{if $a \neq b$}
+	\end{cases}
+	\qquad \text{for every $i \in \set{1,2}$ and  $ a,b \in \atoms$}.
+	\end{align*}
+	 Therefore, the accepting states are all states of the form $1(a)$, for $a \in \atoms$.
+\end{example}
+
+\begin{example}\label{ex:some-letter-twice-automaton}
+	Let us now consider the language from~\eqref{eq:some-twice}, i.e.~the set of words where some letter appears at least twice. We describe a nondeterministic automaton that recognises this language. The state space of this automaton will be
+	\begin{align*}
+	\myunderbrace{\atoms}{candidate \\ for repetition}
+		\quad + \quad
+		\myunderbrace{\set{\varepsilon, \top}}{initial and final  \\ states}.
+	\end{align*}
+	When the automaton is in the initial state, it can choose to ignore the input letter, which means that it expects the repeated letter to appear later. This is represented by transitions of the form 
+	\begin{align*}
+	\varepsilon \stackrel a \to \varepsilon \qquad \text{for every $a \in \atoms$.}
+	\end{align*}
+	Eventually, the automaton guesses nondeterministically that the current input letter $a$ is the one that will appear twice, and stores it in its state:
+	\begin{align*}
+	\varepsilon \stackrel a \to a  \qquad \text{for every $ a \in \atoms$}.
+	\end{align*}
+	Once this choice has been made, the behaviour of the automaton is deterministic: 
+	\begin{align*}
+	a \stackrel b \to \begin{cases}
+	\top & \text{if $a = b$} \\
+	a & \text{if $a \neq b$}
+	\end{cases}
+	\qquad \text{for every $ a,b \in \atoms$}.
+	\end{align*}
+	The only accepting state is $\top$.
+\end{example}
+
+
+
+
+\section{Orbit-finite sets}
+\label{sec:orbit-finite}
+
+The automata in  Examples~\ref{eq:first-last} and~\ref{ex:some-letter-twice-automaton} use their state space to store some finite information (e.g.~one of the two copies in Example~\ref{ex:first-last-automaton}) and a constant number of letters (in the above examples, the state stores at most one letter, but two or more  letters could also be stored). This idea could be formalised using an automaton model that has a state of the form (element of a finite set, tuple of letters from $\atoms$); this is the approach used in~\cite{kaminskiFiniteMemoryAutomata1994}.
+In this chapter, we choose a slightly more abstract approach, following~\cite{bojanczyk_slightly}. Instead of defining a new notion of automaton, we define a new notion of ``finite set'', and then the automata are defined to be  those that use this new notion. 
+
+
+
+%   instead of the fully general notion of orbit-finite sets, we use a special case, which is called \emph{polynomial orbit-finite sets}. This special case has a more concrete defnition, and is sufficient for our purposes. 
+\begin{definition}[Orbit-finite sets] \label{def:orbit-finite-sets}
+  An \emph{orbit-finite set}\footnote{ The notion of orbit-finiteness used in~\cite{bojanczyk_slightly} is slightly stronger than the one used here. However, the weaker notion used here (which is called \emph{polynomial orbit-finite sets} in~\cite{bojanczyk_slightly}) is simpler while retaining many interesting applications, so we stick to it in this chapter.
+} is any set of the form 
+    \begin{align*}
+    \atoms^{d_1} + \cdots + \atoms^{d_n},
+    \end{align*}
+    for some natural numbers $d_1,\ldots,d_n \in \set{0,1,\ldots}$. 
+\end{definition}
+
+For example, the state space in Example~\ref{ex:first-last-automaton} can be seen as an orbit-finite set of the form
+\begin{align*}
+\atoms^1 + \atoms^1 + \atoms^0,
+\end{align*}
+since the set $\set{\varepsilon}$ can be seen as a singleton set, just like $\atoms^0$.  
+
+Let us explain the name ``orbit-finite''. The name is chosen because, from  a mathematical point of view, an orbit-finite set is equipped with an action of the group of atom permutations, and it will have finitely many orbits under this action. Let us explain this in more detail, and using elementary terminology.  For  an orbit-finite set as in Definition~\ref{def:orbit-finite-sets}, an element can be written as 
+\begin{align*}
+i (a_1,\ldots,a_{d_i}),
+\end{align*}
+where $i \in \set{1,\ldots,n}$ identifies the summand $\atoms^{d_i}$, and $a_1,\ldots,a_{d_i}$ are the atoms used in the corresponding tuple of atoms. To such an element we can apply a permutation of the atoms: the summand $i$ will remain unchanged, but the atoms will be changed according to the permutation.
+We say that two elements of an orbit-finite set are in \emph{the same orbit} if one can be obtained from the other by applying a permutation of the atoms. Being in the same orbit is an equivalence relation, and therefore each orbit-finite set is partitioned into orbits. As we will see in a moment, this partition has finitely many parts. First, let us look at some examples of orbits.
+
+\begin{example}
+	Let us have a look at some examples of orbits. Consider first an orbit-finite set without any atoms, which is achieved by using the copies of $\atoms^0$, as in the following example:
+	\begin{align*}
+	\atoms^{0} + \atoms^0 + \atoms^0.
+	\end{align*}
+	This set contains three elements $1(), 2(), 3()$, and each of these elements is in its own orbit, since there are no atoms to permute, and summands are not changed when applying atom permutations. Therefore, this set has three orbits, each one with a single element. This way, we can view finite sets as a special case of orbit-finite sets.
+\end{example}
+	
+\begin{example}\label{ex:orbits-in-atoms-d}
+	Let us now consider the orbits in a set of the form $\atoms^d$ with $d > 0$.
+	\begin{enumerate}
+	\item In the set $\atoms^1$, all elements are in the same orbit, since any letter can be mapped to any other letter by an appropriate permutation of the atoms.
+	\item In the set $\atoms^2$, there are two orbits, which are represented by 
+	\begin{align*}
+	\myunderbrace{(\text{John}, \text{John})}{equal pairs} 
+	\quad 
+	\myunderbrace{(\text{John}, \text{Eve})}{non-equal pairs}.
+	\end{align*}
+	\item In the set $\atoms^3$, there are five orbits, which are represented by
+	\begin{align*}
+	\myunderbrace{(\text{John}, \text{John}, \text{John})}{all equal} 
+	\quad
+	\myunderbrace{(\text{John}, \text{Eve}, \text{Mary})}{all different} \\
+	\quad
+	\myunderbrace{
+		(\text{John}, \text{John}, \text{Eve}) \quad 
+		(\text{John}, \text{Eve}, \text{John}) \quad
+		(\text{Eve}, \text{John}, \text{John}).
+	}{two equal one different}
+	\end{align*}
+\end{enumerate}
+\end{example}
+
+
+
+
+\begin{lemma}
+	\label{lem:orbits-finite} An orbit-finite set has only finitely many orbits.
+\end{lemma}
+\begin{proof}
+	In a general orbit-finite set 
+	\begin{align*}
+	\atoms^{d_1} + \cdots + \atoms^{d_n},
+	\end{align*}
+	the number of orbits is the sum of the number of orbits in each summand $\atoms^{d_i}$, because applying an atom permutation does not change the summand. Therefore, it remains to show that each summand has finitely many orbits. As explained in Example~\ref{ex:orbits-in-atoms-d}, the number of orbits in $\atoms^d$ is equal to the number of possible equality patterns on $d$ elements, which is given by the $d$-th Bell number. In particular, this number is finite.
+\end{proof}
+
+\paragraph*{Equivariance.} We will use orbit-finite sets instead of finite sets when defining automata. In order to make the definition meaningful, the way that these sets are manipulated by the automata must also be compatible with the idea that only equality is relevant. This is captured by the following definition. 
+
+\begin{definition}
+	\label{def:equivariant-subset-function} 
+	A subset $Y$ of an orbit-finite set  $X$  is called \emph{equivariant} if 
+	\begin{align*}
+x \in Y\quad  \iff \quad \pi(x) \in Y \qquad \text{for every $x \in X$ and atom permutation $\pi$}.
+	\end{align*}
+\end{definition}
+
+An equivariant set is the same as some union of orbits, since if it contains one element of an orbit, then it must contain all elements of this orbit. It follows that an orbit-finite set can have only finitely many equivariant subsets. For example, the set $\atoms^3$ has $32 = 2^5$ equivariant subsets, since it has five orbits, and each of these orbits can be independently either be included in the subset, or not.
+
+We can generalise the notion of equivariance to relations 
+\begin{align*}
+(x_1,\ldots,x_n) \in R \quad \iff \quad  (\pi(x_1),\ldots,\pi(x_n)) \in R.
+\end{align*}
+In fact, this is essentially a special case of the original notion, since a relation can be seen as a subset of the product $X_1 \times \cdots \times X_n$, and orbit-finite sets are closed under finite products. We can also generalise equivariance
+to functions
+\begin{align*}
+f(x) = y \quad \iff \quad f(\pi(x)) = \pi(y).
+\end{align*}
+This again is not a new notion, since a function can be seen as a special kind of relation, in which every input has a unique output.
+ 
+
+\begin{example}
+	There is only one equivariant function of type $\atoms \to \atoms$, which is the identity function. Indeed, consider some function that is not the identity, i.e.~there exist $a \neq b$ such that $f(a) =b$. By equivariance, the output $b$ could be replaced by any other atom that is not equal to $a$, which would contradict functionality. Using the same kind of argument, one can show that if $f : X \to Y$ is an equivariant function between two orbit-finite sets, then every atom which appears in the output $f(x)$ must also appear in the input $x$.
+\end{example}
+
+
+\section{Orbit-finite automata}
+\label{sec:orbit-finite-automata}
+As mentioned in the previous section, our automata  will use orbit-finite sets instead of finite ones, with all structure being equivariant, as in the following definition.
+
+\begin{definition}
+    [Orbit-finite automata]
+    \label{def:orbit-finite-automata}
+    
+    A \emph{nondeterministic orbit-finite automaton} is defined in the same way as a 
+    nondeterministic finite automaton, except that all sets are orbit-finite, 
+    and all subsets and functions are {equivariant}:
+\begin{align*}
+    \myoverbrace{
+        \myunderbrace{Q}{states} \quad 
+        \myunderbrace{\Sigma}{input \\ alphabet}
+    }
+    {orbit-finite}
+    \qquad
+    \myoverbrace{
+        \myunderbrace{I \subseteq Q}{initial \\ states} \quad 
+        \myunderbrace{F \subseteq Q}{final \\ states} \quad 
+        \myunderbrace{\Delta \subseteq Q \times \Sigma \times Q}{transitions}
+    }{equivariant}.
+\end{align*}
+A \emph{deterministic orbit-finite automaton}
+is the special case which has exactly one initial state, and where the transition relation is a function.
+\end{definition}
+
+The automata in Examples~\ref{ex:first-last-automaton} and~\ref{ex:some-letter-twice-automaton} were examples of deterministic and nondeterministic orbit-finite automata, respectively. 
+As one can imagine, this approach can be applied to other notions, e.g.~one can have orbit-finite graphs, orbit-finite Turing machines, orbit-finite systems of equations, etc. Such ideas are discussed at length in~\cite{bojanczyk_slightly}.
+
+
+% Let us give another deterministic orbit-finite automaton, which stores more than one atom in its state.
+
+% \begin{example}
+% 	Consider the language 
+% 	\begin{align*}
+% 	\setbuild{ w \in \atoms^*}{every two consecutive letters are different}.
+% 	\end{align*}
+% 	This language is recognised by a deterministic orbit-finite automaton, which uses its state space store the last two letters. The state space is 
+% 	\begin{align*}
+% 	 \myunderbrace{\atoms^0}{initial \\ state} 
+% 	 \quad + \quad 
+% 	 \myunderbrace{\atoms^1}{one letter \\ stored}
+% 	 \quad + \quad
+% 	 \myunderbrace{\atoms^2}{two letters \\ stored}
+% 	 \quad + \quad 
+% 	 \myunderbrace{\atoms^0}{error \\ state}.
+% 	\end{align*}
+% 	If we write $\varepsilon$ and $\top$ for the unique elements of the two copies of $\atoms^0$, then the transitions of the automaton are as follows. 
+% 	\begin{align*}
+% 	\varepsilon & \stackrel a \to a \\
+% 	a & \stackrel b \to 
+% 	\begin{cases}
+% 		(a,b) & \text{if $a \neq b$}\\
+% 		\bot & \text{otherwise}
+% 	\end{cases} \\
+% 	(a,b) & \stackrel c \to 
+% 	\begin{cases}
+% 		(b,c) & \text{if $b \neq c$}\\
+% 		\bot & \text{otherwise}
+% 	\end{cases} \\
+% 	\bot & \stackrel a \to \bot.
+% 	\end{align*}
+% 	The set of transitions above is clearly equivariant, since applying a permutation of the atoms to a transition produces another transition of the same form.
+% 	All states are accepting, except for the error state $\bot$.
+% \end{example}
+
+As we have mentioned before, orbit-finite sets generalise finite sets. A set with $n$ letters can be seen as the orbit-finite set
+\begin{align*}
+\myunderbrace{\atoms^0 + \cdots + \atoms^0}{$n$ times}.
+\end{align*}
+Since sets of this form do not contain any atoms, the equivariance condition is trivial, and any relation or function between such sets is equivariant. Therefore, orbit-finite automata that use such input alphabets and state spaces are equivalent to ordinary finite automata.
+
+
+
+\section{Determinisation}
+\label{sec:determinisation}
+In some ways, orbit-finite automata are similar to ordinary finite automata. Some constructions transfer without difficulty to the orbit-finite setting, such as the product construction $\Aa \times \Bb$ which is used to show that languages recognised by automata are closed under intersections and unions. This is because the product of two orbit-finite sets is again orbit-finite.
+
+However, some constructions do not transfer. An important example is complementation for nondeterministic automata. This is usually proved by determinisation, which itself is proved using a powerset construction. The powerset construction fails for orbit-finite automata, and in fact no construction works, as stated in the following theorem.
+\begin{theorem}
+	\label{thm:non-determinisation} \ 
+	\begin{enumerate}
+		\item Languages recognised by nondeterministic orbit-finite automata are not closed under complementation. 
+		\item Deterministic orbit-finite automata are strictly less expressive than nondeterministic orbit-finite automata.
+	\end{enumerate}
+\end{theorem}
+\begin{proof}
+	The first item implies the second one, since deterministic orbit-finite automata are closed under complementation. It remains to prove the first item. The witnessing language is 
+	\begin{align*}
+	\setbuild{ w \in \atoms^*}{some letter appears twice}.
+	\end{align*}
+	As we have seen in  Example~\ref{ex:some-letter-twice-automaton}, this language is recognised by a nondeterministic orbit-finite automaton. Let us show that its complement is not. 
+	
+	Suppose toward a contradiction that there is a nondeterministic orbit-finite automaton $\Aa$ that recognises the complement language, i.e.~the words where each letter appears at most once. Let $d \in \set{0,1,\ldots}$ be the maximal number of atoms that can be stored in a state of this automaton.  
+	Consider an input word with
+    $2d+2$ pairwise different letters, and let $w_1$ and $w_2$ be its first and second halves, respecitvely. The automaton $\Aa$ must accept $w_1 w_2$. In the witnessing run, consider the first and last states, as well as the state that is used between the two halves: 
+	\begin{align*}
+	p \stackrel {w_1} \to q \stackrel {w_2} \to r.
+	\end{align*}
+	The middle state $q$ can store at most $d$ atoms, and therefore we can find atoms $a_1,a_2 \in \atoms$ such that (1) $a_1$ appears in $w_1$ but not in $q$, and (2) $a_2$ appears in $w_2$ but not in $q$.  Let $\pi$ be an atom permutation that swaps $a_1$ with $a_2$. Since neither $a_1$ nor $a_2$ appear in the middle state, this permutation does not affect $q$. Since the automaton is invariant under atom permutations, we can apply the permutation $\pi$ to the second part of the run, but not the first one, and we will still get a valid run, because the middle state is the same:
+	\begin{align*}
+	p \stackrel {w_1} \to q = \pi(q)\stackrel {\pi(w_2)} \to \pi(r).
+	\end{align*}	
+	Therefore, the automaton also has an accepting run on the input word $w_1 \pi(w_2)$. This input contais a repetition, since $a_1$ appears both in $w_1$ and in $\pi(w_2)$. The desired contradiction follows.
+\end{proof}
+
+
+\section{Emptiness}
+\label{sec:emptiness}
+In this section, we show that the emptiness problem is decidable for orbit-finite automata. This theoem is meant to illustrate the idea that orbit-finite sets can be manipulated algorithmically, despite being infinite.
+
+\newcommand{\generated}[1]{\langle #1 \rangle}
+\begin{theorem}
+	\label{thm:emptiness-decidable}
+	The emptiness problem for orbit-finite automata is decidable.
+\end{theorem}
+\begin{proof}
+	To make the problem well-defined, we have to explain how an orbit-finite automaton is represented as input, which requires a representation of orbit-finite sets and their equivariant subsets. 
+	
+\paragraph*{Representation of orbit-finite sets and equivariant subsets.}
+	For orbit-finite sets, Definition~\ref{def:orbit-finite-sets} already comes with a representation: we need to give a list of powers $[d_1,\ldots,d_n]$. For equivariant subsets, there are several possibilitiles, but in this chapter we use a finite list of example elements, with one example for each orbit. More formally, for an orbit-finite set $X$ and a finite subset $Y \subseteq X$, define 
+	\begin{align*}
+	\generated{Y} = \setbuild{ \pi(y)}{$y \in Y$ and $\pi$ is an atom permutation}.
+	\end{align*}
+	In other words, this is the least equivariant subset of $X$ that contains $Y$. Every equivariant subset of an orbit-finite set is generated by a finite subset in this way, and thus we can use expressions of the form $\generated Y$ as representations of equivariant subets. (This assumes that one can write down individual elements of orbit-finite sets, which in turn assumes that we can write down atoms. This is indeed the case, since we can think of atoms as being natural numbers, or  strings over some finite alphabet.) As we have already mentioned, relations and functions can be represented as special kinds of subsets, so these can also be represented. For example, the function of type $\atoms^2 \to \atoms$ that projects onto the first coordinate is represented as 
+	\begin{align*}
+	\generated{\quad (\text{Eve},\text{John}) \mapsto \text{Eve}, \quad 
+	(\text{Eve},\text{Eve}) \mapsto \text{Eve}\quad }.
+	\end{align*}
+	
+	\paragraph*{Basic operations on equivariant subsets.}
+	Using this representation, we can easily implement a membership test
+	\begin{align*}
+	x \in \generated Y,
+	\end{align*}
+	since this amounts to checking if $x$ is equivalent, up to atom permutations, to one of the finitely many elements in $Y$. Using the membership test, we can implement an inclusion test 
+	\begin{align*}
+	\generated{Z} \subseteq \generated{Y},
+	\end{align*}
+	since this amounts to checking membership for each of the finitely many representatives in $Z$. Using inclusions, we can also implement equality on subsets, since this is the same as mutual inclusion.
+
+	\paragraph*{Emptiness algorithm.}
+	Having explained the representation and the basic operations on it, we can now explain the algorithm for emptiness. The idea is similar to the standard algorithm for emptiness of ordinary finite automata, which computes the set of reachable states. Let us write $Q_n$ for the set of states that can be reached by reading some input word of length at most $n$.  Observe that this set  is equivariant: if we take a run that witnesses membership $q \in Q_n$, then applying an atom permutation $\pi$ to this entire run will also witness membership $\pi(q) \in Q_n$. Therefore, each set $Q_n$ can be represented using the representation of equivariant subsets that we have explained above. The algorithm computes these sets as described in the following procedure. 
+\begin{itemize}
+	\item \textbf{Initial step.} The set $Q_0$ is the set of initial states, which is given in the representation of the automaton.
+	\item \textbf{Inductive step.} Suppose that we have computed $Q_n$. We compute $Q_{n+1}$ as follows. First, we add all states from $Q_n$ to $Q_{n+1}$. Next, we look at the representatives of the  transitions, which are given in the representation of the automaton. For each such transition
+	\begin{align*}
+	p \stackrel a \to q,
+	\end{align*}
+	we check if the source state $p$ is in $Q_n$, using the membership test (this amounts to checking if $p$ is in the same orbit as one of the finitely many representatives that we have stored for $Q_n$). If this is the case, then we add the target state $q$ to $Q_{n+1}$. It is not hard to see that this  will give us a list of representatives for all states in $Q_{n+1}$, since every transition will be considered up to atom permutations.
+	 
+	\item \textbf{Stopping condition.} The chain is guaranteed to eventually stabilise with  $Q_{n+1} = Q_n$. This is because the set of states has finitely many orbits, and therefore there are only finitely many possible equivariant subsets. 
+\end{itemize}
+
+Once the chain stabilises, we check if $Q_n$ contains some final state. Since the set of accepting states is equivariant, this boils down to checking if one of the finitely many representatives of $Q_n$ belongs to the final set, which can be done using the membership test. The result of this test gives the answer to the emptiness problem.
+\end{proof}
+
+The above procedure even runs in polynomial time, assuming the representation used in the proof. This is because the running time is bounded by the number of orbits in the state space and the transition relation, and these numbers are polynomial in the size of the representation. However, the complexity of the algorithm depends on the choice of representations, and the one that we have used is particularly verbose (which makes the running time look quick). For more succint representations the complexity can go up, e.g.~the problem is  PSPACE-complete for a representation using  registers~\cite{kaminskiFiniteMemoryAutomata1994}. 
+
+Not all problems for orbit-finite automata are decidable. For example, universality is undecidable~\cite[Section 2.2]{bojanczyk_slightly}.

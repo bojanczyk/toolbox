@@ -1,0 +1,181 @@
+
+% !TeX root = individual-template.tex
+
+
+In this chapter, we prove the Factorisation Forest Theorem of Imre Simon~\cite{simonFactorizationForestsFinite1990}, which is a powerful tool for describing how a word can be evaluated in a finite monoid.
+
+\paragraph*{An algorithmic motivation.} The theorem can be viewed as describing a certain data structure, which is similar to a binary interval tree. Before presenting this data structure, we motivate it from an algorithmic perspective. Consider the following problem. We fix a regular language $L \subseteq \Sigma^*$. Given an input word, we want to build a data structure which allows us to answer efficiently the following query: given an interval of positions in the input word, does the corresponding infix belong to the language $L$? Here is a picture of such a query
+\mypicf{12}
+
+\begin{example}
+Suppose that  the regular language is $\Sigma^* a \Sigma^*$. The  corresponding queries ask if the interval contains the letter $a$. This can be solved by the following data structure: for each position in the input word, we store the number of occurrences of the letter $a$ up to this position. Then, to answer a query for an interval, we just need to check if the numbers at the endpoints of the interval differ. The data structure can be built in linear time, and each query can be answered in constant time. The same data structure  works for the language ``even number of appearances of $a$''. 
+\end{example}
+
+Let us begin with a straightforward divide-and-conquer solution to this problem, which works in the general case of any regular language. In this solution, as elsewhere in this chapter, we will use monoids instead of automata. Suppose that the language is recognised by a monoid homomorphism 
+\begin{align*}
+h : \Sigma^* \to M
+\end{align*}
+into a finite monoid, as explained in Chapter~\ref{sec:star-free}.  Let us build an interval tree over the input word, as explained in the following picture (the picture  uses the monoid homomorphism  that counts occurrences of $a$ modulo 2): 
+\mypicf{11}
+ As usual for such pictures, it is convenient to assume that the length of the input word is a power of two, but this is not necessary. Formally speaking, an interval tree is defined as follows.
+
+\begin{definition}[Interval tree]
+	An \emph{interval tree} for a word $w$ is  a family of intervals with the following properties:  
+		\begin{enumerate}
+			\item all singleton intervals are in the family; and
+			\item the full interval is in the family;  and
+			\item every two intervals are either disjoint or one contains the other.
+		\end{enumerate}
+\end{definition}
+
+The intervals in an interval tree can be seen as nodes in a tree, and we will adopt tree terminology when talking about them: child, sibling, parent, leaf, root etc. 
+For the moment, we are interested in an interval tree that is binary, i.e.~each node  has either zero or two children. Such a tree can be built in linear time, with logarithmic height. For each node in the tree, we store the value of the homomorphism $h$ on the infix corresponding to this node. This data structure can be built in linear time.  Once we have the data structure, we can answer the queries in time $\Oo(\log n)$, by multiplying the semigroup elements from nodes of the tree that correspond to the given interval, as explained in the following picture: 
+\mypicf{13}
+
+
+
+\section{Simon trees}
+\label{sec:simon-trees} As we have seen above, using a binary interval tree, we can achieve logarithmic query time. The purpose of this chapter is to improve this to constant time. 
+This data structure was found by Imre Simon~\cite[Theorem 6.1]{simonFactorizationForestsFinite1990}, and for this reason we call it a  \emph{Simon tree}. A Simon tree is also a tree of intervals, however it is no longer binary and it can have nodes of unbounded degree. The general idea is that such nodes will be restricted to intervals whose value in the monoid is an idempotent, i.e.~an element $e$ satisfying $e^2 = e$. Here is the formal definition.
+
+\begin{definition}[Simon tree]
+	Consider a monoid homomorphism 
+	\begin{align*}
+	h : \Sigma^* \to M
+	\end{align*}
+	into a finite monoid. A \emph{Simon tree} for an input word $w \in \Sigma^*$ is an interval tree with the following property: if a node has $n > 2$ children, then  all these  children  are mapped by $h$ to the same monoid element, and this element is an idempotent. 
+\end{definition}
+
+
+
+The main result of this chapter, see Theorem~\ref{thm:simon-forest}, will be that we  can find a  Simon trees whose height is bounded by a constant that depends only on the monoid homomorphism, and not on the input word. Before stating and proving the theorem, let us begin with an example of how the tree is constructed, and also with an explanation of how it can be used in our algorithmic application.
+
+\begin{example}
+	Consider the monoid homomorphism 
+	\begin{align*}
+	h : \set{a,b}^* \to \set{0,1}
+	\end{align*}
+	which counts the occurrences of $a$ modulo 2.  We begin by replacing each letter by its value in the monoid: 
+	\mypicf{14}
+	In this monoid, the only idempotent is $0$, and therefore idemponent nodes can only be used to group intervals with value $0$. This is what we do now:  we consider groups of consecutive $0$'s which have length at least two. Each such group can be blocked into a single node, as in the following picture:
+	\mypicf{15}
+	In the next step, we use binary nodes to group each $1$ with the preceeding block of $0$'s:
+	\mypicf{16}
+	At this stage, the maximal intervals all have value $1$, except for possibly a last interval with value $0$. We group the maximal intervals with value $1$ into pairs, so that they get value $1$:
+	\mypicf{17}
+	The intervals created in the previous step all have value $0$, and therefore they can be grouped using an idempotent step into a single interval: 
+	\mypicf{18}
+	At this stage, we have at most three top level intervals: one big interval on the left that has value $0$, possibly followed by intervals with values $1$ and $0$. The latter two can be joined without increasing the height of the tree, and then finally we can create a single root node: 
+	\mypicf{19}
+	All in all, we have built a Simon tree of height at most 6, for an arbitrary input word.
+\end{example}
+
+The algorithmic application of a Simon tree is the same as for binary trees. Suppose that we have access to a Simon tree, and that we are given an interval query. Similarly to the binary case, the interval can be decomposed into intervals that correspond to the tree. The difference with respect to the binary tree is that now the decomposition can use two kinds of intervals: (a) nodes in the tree; or (b) unions of consecutive siblings in the tree. (In fact, the first kind is a special case of the second one.)  The number of intervals in this decomposition is bounded by the height of the tree. Here is a picture: 
+\mypicf{20}
+For the intervals that are in the tree, their value is stored in the tree. For the unions of consecutive children, the interesting case is when there are at least three of them. In this case, the values of these intervals must all be the same idempotent $e$, and thereore the value of their union will also be the same idempotent $e$. Summing up, using the Simon tree we can compute the value of each interval in time that is proportional to the height of the tree.
+
+It remains to prove that Simon trees of bounded height exist.
+
+\begin{theorem}[Factorisation Forest Theorem, Simon~\cite{simonFactorizationForestsFinite1990}]\label{thm:simon-forest}
+	Consider a monoid homomorphism 
+	\begin{align*}
+	h : \Sigma^* \to M
+	\end{align*}
+	into a finite monoid. There exists a constant $k \in \set{1,2,\ldots}$  such that for every input word $w \in \Sigma^*$ there exists a Simon tree of height at most $k$.
+\end{theorem}
+
+
+\begin{proof} The proof will also come with an algorithm for constructing the tree in linear time, which is relevant for the algorithmic applications. 
+
+	We work with Green's relations, which were introduced in Chapter~\ref{sec:star-free}. There will be three steps: (1) we first prove the theorem in the special case when the monoid is a group; (2) then we prove the theorem in the special case case where all intervals have a value in the same infix class; and (3) finally we prove the general case.
+	\paragraph*{Step 1. Groups.} We begin by proving the theorem in the special case when the monoid  is a group. In this step, the Simon tree for an input word $w$ is constructed based on the size of the set
+	\begin{align*}
+		P(w) = \setbuild{h(v)}{$v$ is a non-trivial prefix of $w$},
+	\end{align*}
+	where a non-trivial prefix is defined to be one that is neither empty nor full. 
+	Since this set is a subset of the group, the 
+	height of the induction will be bounded by the  size of the group. Each induction step will increase the height of the tree by at most 3, thus leading to a Simon tree whose height is at most 3 times the size of the group.
+
+	The induction base is when the set $P(w)$ is empty. This means that there are no non-trivial prefixes, i.e.~the word has length at most one. In this case a trivial Simon tree with zero or one node suffices. 
+
+	Consider now the induction step. Choose some element $g \in P(w)$. Consider all non-trivial the prefixes of the input word whose value is equal to $g$, as in the following picture: 
+	\mypicf{21}
+	We can cut the word along the ends of these prefixes, leading to a factorisation as in the following picture, with the corresponding infixes being called $w_1,\ldots,w_n$:
+	\mypicf{22}
+	The following claim shows that we can apply the induction assumption to each of these infixes.
+
+\begin{claim}
+For each $i \in \set{1,\ldots,n}$, the set $P(w_i)$ is a strict smaller than $P(w)$.
+\end{claim}
+\begin{proof}
+	For the first infix $w_1$, this is clearly true, since it is a prefix of $w$, and it was chosen so that it does not have any non-trivial  prefixes with value $g$. For the remaining infixes, we have a similar situation, except that the group element needs to be prepended: 
+\begin{align*}
+g \cdot P(w_i) \subseteq P(w) \setminus \set g.
+\end{align*}
+Since multiplying to the left by $g$ does not change the size of a set, it follows that each $P(w_i)$ is strictly smaller than $P(w)$. 
+\end{proof}
+
+The Simon tree is constructed for $w$ is constructed as follows. For each of the infixes $w_1,\ldots,w_n$, the above claim shows that we use the induction assumption to build a Simon tree. Then, we combine these trees three additional levels as follows. For each $i \in \set{2,\ldots,n-1}$, the value $h(w_i)$ must be the group identity, since it satisfies 
+\begin{align*}
+g \cdot h(w_i) = g.
+\end{align*}
+In particular, this value is an idempotent. Therefore, we can group the intervals corresponding to $w_2,\ldots,w_{n-1}$ using a single idempotent node. The first and last intervals $w_1$ and $w_n$ can then be added using two binary nodes, thus adding three levels to the height of the tree from the induction assumption.
+
+\paragraph*{Step 2. Single infix class.} Recall the notion of infix class that was used in Chapter~\ref{sec:star-free}. In this step, we consider the special case when there input word satisfies the following assumption: 
+\begin{itemize}
+	\item[(*)] all nonempty intervals in the input word have their value in the same infix class, call it $J \subseteq M$.
+\end{itemize}
+ In this case, the proof is by induction on the number of windows of size two: 
+\begin{align*}
+\setbuild{(a,b) \in M^2}{ $a$ and $b$ are  values of two consecutive letters in $w$}
+\end{align*}
+As previously, the induction basis is when ther are no such windows, in which case the word has length at most one, and a trivial Simon tree suffices. Let us consider the induction step. Choose some window $(a,b)$ in the input word. Consider all occurrences of this window, as in the following picture:
+\mypicf{23}
+We can cut the word along the middle of each window, which leads to a factorisation as in the following picture:
+\mypicf{24}
+	Let $w_1,\ldots,w_n$ be the infixes which arise from the factorisation defined above. All of these infixes have a smaller induction parameter, since they avoid the window $(a,b)$, and therefore we can find Simon trees for them. We now need to put them together. For this, the crucial observation is that if  we ignore the first infix $w_1$ and the last infix $w_n$, then the remaining infixes have values in a group, and we can use the construction from the previous step. Indeed,  each  the    infixes $w_2,\ldots,w_{n-1}$  has $b$ as a prefix and $a$ as a suffix. The following claim shows that these infixes form a group.
+\begin{claim}
+	Let $J$ be an infix class, and let $a,b \in J$ be such that $ba \in J$. Then 
+	\begin{align*}
+	G = \setbuild { m \in J}{$b$ is a prefix of $m$ and $a$ is a suffix of $a$ }
+	\end{align*}
+is a group, with multiplication inherited from $M$, but with some possibly new choice of identity element. 
+\end{claim}
+\begin{proof}
+	We prove  progressively finding more and more group structure in  $G$.
+	\begin{enumerate}
+		\item \textbf{Sub-semigroup.} Let us first show that the set $G$  is a sub-semigroup of $M$, i.e.~it is closed under multiplication. Consider two elements $f,g \in G$. Since all elements in $G$ are infix equivalent and $a$ is a suffix of $f$, we can use Lemma~\ref{lem:infix-prefix} from the previous chapter to conclude that $f$ is suffix equivalent to $a$. In particular, there is some $x \in M$ such that $x \cdot f = a$. Similarly, we can find some $y \in M$ such that $g\cdot y = b$. It follows that $f \cdot g$ belongs to $J$ since it sits infix-wise between $f$ and 
+		\begin{align*}
+		x \cdot f \cdot g \cdot y = a \cdot b \in J.
+		\end{align*} 
+		Since $f \cdot g$ begins with $b$ and ends with $a$, we conclude that it elongs to $G$. 
+		\item \textbf{Idempotent.} We now show that $G$ contains some idempotent. This follows from a more general result: every finite semigroup contains an idempotent. Indeed, we take any semigroup element $g \in G$, and consider its powers $g^n$ for $n \in \set{1,2,\ldots}$.  By finiteness, there must be some repetition, i.e.~$n$ and $n + k$ will give the same power for some $k > 0$. This remains true if we increase $n$ to any number in the set $\set{n,n+1,n+2,\ldots}$, and if we replace $k$ by some multiple of $k$. Therefore, we can choose $n$ and $k$ so that they are equal to each other.  As a result,  $g^n$ will be an idempotent.
+		\item \textbf{Identity element.} Let $e$ be the idempotent found above. We will show that this is an identity in the semigroup $G$, which in particular implies that it is unique. Since $e$ belongs to $G$, it has $b$ as a prefix. Therefore, also $b$ has $e$ as a prefix, and by Lemma~\ref{lem:infix-prefix}, and therefore every element of $G$ has a $e$ as a prefix. This implies that $e$ is a left identity, since $e \cdot g$ holds for every element $g$ that has $e$ as a prefix, by idempotence of $e$. A symmetric argument shows that $e$ is also a right identity.
+		\item \textbf{Inverses.} Finally, we show that every element of $G$ has an inverse. Consider some $g \in G$. Since $g$ is in the prefix class of $e$, as we have just shown, it follows that there is some $x \in M$ such that  $g \cdot x = e$. We can also improve this $x$ so that if falls into $G$, by pre- and post-multiplying it with $e$. This gives us a right inverse for $g$. Similarly, we get a left inverse. Finally, in a group the left and right inverses must coincide, since 
+		 \begin{align*}
+		   g_2 = e \cdot g_2 =  \myunderbrace{g_1}{left\\ inverse} \cdot g \cdot \myunderbrace{g_2}{right\\ inverse} = g_1 \cdot e = g_1.
+		\end{align*}
+	\end{enumerate}
+\end{proof}
+Thanks to the above claim, we can use the construction from Step 1 to combine the Simon trees for $w_2,\ldots,w_{n-1}$. The first and last infixes $w_1$ and $w_n$ can then be added using two binary nodes, thus adding three levels to the height of the tree from the induction assumption.
+
+\paragraph*{Step 3. General case.} We now turn to the general case, where we do not have any assumptions on the input word. In the proof, we no longer distinguish between input letters and monoid elements. In other words, we think of the letters as being monoid elements, with the 
+homomorphism being multiplication in the monoid. This is no different from the general case, since the only relevant information about a letter is its value under the homomorphism. The Simon tree is constructed by  induction on the following parameter for a word $w \in M^*$:
+\begin{align*}
+\setbuild{ m \in M}{some letter in $w$  is an infix of $m$}.
+\end{align*}
+Choose some infix class $J$ that is represented by some letter in the input word, and choose this infix class to be minimal, i.e.~there is no input letter that is a proper infix of $J$. Define a $J$-interval to be an interval that has value $J$. By minimality of $J$, we know that all sub-intervals in a $J$-interval are also $J$-intervals. The key observation is in the following claim. 
+
+\begin{claim}
+	If two $J$-intervals overlap, then their union is a $J$-interval.
+\end{claim}
+\begin{proof}
+	Consider two overlapping $J$-intervals, and the following three elements of the monoid: 
+	\mypicf{25}
+	We know that all three monoid elements belong to the infix class $J$. By Lemma~\ref{lem:prefix-infix}, we know that $a \cdot b$ is in the suffix class of $b$, and therefore there is some $x$ such that $
+	x \cdot a \cdot b = b.
+$
+It follows that $x \cdot a \cdot b \cdot c = b \cdot c$, and therefore $a \cdot b \cdot c$ belongs to the infix class $J$. 
+\end{proof}
+Thanks to the above claim, the maximal inclusionwise $J$-intervals are pairwise disjoint. In each such interval, we can use the construction from Step 2 to build a Simon tree, since all of its sub-intervals have value in $J$. We can now collapse these maximal intervals into single letters, and as a result they will have one letter only. These letters can then be paired with the next letter using binary nodes, and as a result there is no longer any occurrence of the infix class $J$ in the input word, and only bigger infix classes remain. The induction assumption can then be used to build a Simon tree for the remaining word.
+\end{proof}

@@ -258,16 +258,16 @@ Otherwise there would be a turning point between $r_i$ and $r_{i+1}$.
 
 Using the above claim, we can  describe the behaviour of $p$ in an interval of the form $(r_i;r_{i+1})$. This is done using the following case analysis, which can readily be formalised in the \bss model.
 	\begin{itemize}
- 		\item The sign of $p$ is zero on one of the endpoints of the interval $[r_i; r_{i+1}]$.  By Claim~\ref{claim:derivative-nonzero}, at most one of the endpoints is zero, and there are no roots inside the interval. It follows that  the sign inside this interval is the same as for the nonzero endpoint.  
+ 		\item The sign of $p$ is zero on one of the endpoints of the interval $[r_i; r_{i+1}]$.  By Claim~\ref{claim:derivative-nonzero}, at most one of the endpoints is zero, and there are no roots inside the interval, as in the following picture 
+		\mypicf{10}
+		It follows that  the sign inside this interval is the same as for the nonzero endpoint.  
 
 		\item The signs of $p$ are the same on both  endpoints of the interval $[r_i; r_{i+1}]$, like this:
- 		\begin{center}
- 			picture
- 		\end{center} If $p$ would have a root inside the interval, then it would also have a turning point in this interval, and this cannot happen. Therefore, $p$ has no roots in this interval, and its sign in the interval is the same as in either one of its endpoints. 
+		\mypicf{8}
+		If $p$ would have a root inside the interval, then it would also have a turning point in this interval, and this cannot happen. Therefore, $p$ has no roots in this interval, and its sign in the interval is the same as in either one of its endpoints. 
 		\item The  signs of $p(r_i)$ and $p(r_{i+1})$ are nonzero and different, like this:
- 		\begin{center}
- 			picture
- 		\end{center} In this case $p$ has exactly one root in the interval, which splits the interval into two parts; on the left part the sign of $p$ is  as in $p(r_i)$ and on right part the sign is as in $p(r_{i+1})$. 
+ 			\mypicf{9}
+ 		 In this case $p$ has exactly one root in the interval, which splits the interval into two parts; on the left part the sign of $p$ is  as in $p(r_i)$ and on right part the sign is as in $p(r_{i+1})$. 
 	\end{itemize}
 Doing the above case analysis for all $i \in \set{0,\ldots,n}$, we  fill in the sign table for $P$.  This completes the proof of Lemma~\ref{lem:bss-compute-sign-table}, and therefore also of the Tarski Theorem.
 \end{proof}

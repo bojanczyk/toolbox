@@ -7,15 +7,15 @@
 {
 First we show the treewidth of a forest is indeed one. Let's focus on the tree,
 we can of course decompose every tree independently. We make the following decomposition:
-decomposition tree has the same shape as the tree, root bag contains the root and every other
+the decomposition tree has the same shape as the tree, root bag contains the root and every other
 node bag contains this node and its parent. One can easily check that this is correct.
 
 For the other direction assume that $\tw(G) = 1$. We aim to show that there is no cycle in $G$.
-In there would be a cycle $C = \{v_1, \ldots, v_n, v_1\}$ then also $\tw(C) = 1$, so it is enough to show
+If there were a cycle $C = \{v_1, \ldots, v_n, v_1\}$ then also $\tw(C) = 1$, so it is enough to show
 that treewidth of a cycle is bigger than one. Assume a decomposition of cycle $C$ with tree width one.
 Some bag $B_i$ contains edge $\{v_i, v_{i+1 \mod n}$ for every $i$. Clearly there is a path $\rho_i$ from
 any bag $B_i$ to bag $B_{i+1 \mod n}$, as node $v_{i+1 \mod n}$ belongs to both nodes. Definitely no two consecutive
-paths intersect. Therefore if we follow $\rho_1, \ldots, \rho_n$ we can a nontrivial loop of bags, contradiction with
+paths intersect. Therefore if we follow $\rho_1, \ldots, \rho_n$ we get a nontrivial loop of bags, contradiction with
 the fact that decomposition is a tree.
 
 Remark: there might be a much simpler solution, this is the one we found on exercises.

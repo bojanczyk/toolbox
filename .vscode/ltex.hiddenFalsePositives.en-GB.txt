@@ -1,0 +1,2 @@
+{"rule":"MORFOLOGIK_RULE_EN_GB","sentence":"^\\QIf we this is a non-trivial equivalence relation, then we can reduce the size of the monoid, by fusing equivalent monoid elements, as in the Myhill-Nerode Theorem.\\E$"}
+{"rule":"BEEN_PART_AGREEMENT","sentence":"^\\QThe \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q and \\E(?:Dummy|Ina|Jimmy-)[0-9]+\\Q are prefix equivalent.\\E$"}

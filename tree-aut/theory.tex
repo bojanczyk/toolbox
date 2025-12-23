@@ -17,7 +17,7 @@ $$ \underbrace{\exists X}_{\text{exists a set}} \ \underbrace{(\forall x \forall
 
 The above formula illustrates all syntactic  constructs in \mso: one can quantify over elements, over sets of elements, one can test membership of elements in sets, and one can use the relations available in the input model (in the case of directed graphs, only one binary relation).
 
-Here is another example for graphs. The following \mso formula says that the input graph is three colourable (in the formula, the direction of the edges plays no role):
+Here is another example for graphs. The following \mso formula says that the input graph is three-colourable (in the formula, the direction of the edges plays no role):
 
 $$\exists X_1 \exists X_2 \exists X_3 \underbrace{\forall x \bigvee_{i}x \in  X_i}_{\text{every vertex is coloured}} \land \quad \underbrace{\forall x \forall y \ E(x,y) \Rightarrow \bigwedge_{i}x \not \in  X_i \lor y \not \in X_i}_{\text{no edge has both endpoints with the same colour}}$$
 	
