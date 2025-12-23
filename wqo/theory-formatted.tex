@@ -50,7 +50,7 @@ For a ranked alphabet $\Sigma$, define
 \begin{definition}[Tree-walking automaton]x
 The syntax of a  \emph{(nondeterministic) tree-walking automaton} consists of: a finite ranked alphabet $\Sigma$ called the \emph{input alphabet}, a finite set of states $Q$ with a designated initial state $q$ and  accepting states $F \subseteq Q$, and a transition relation
 		\begin{align*}
-	\delta \subseteq \underbrace{Q \times \views \Sigma}_{\text{source state and view}} \times \underbrace{\set{\text{parent, child 1, ..., child $n$}}}_{\text{where to move, $n$ is maximal arity in $\Sigma$}} \times \underbrace{Q}_{\text{target state}}
+	\delta \subseteq \underbrace{Q \times \views \Sigma}_{\text{source state and view}} \times \underbrace{\set{\text{parent, child 1,\ldots, child $n$}}}_{\text{where to move, $n$ is maximal arity in $\Sigma$}} \times \underbrace{Q}_{\text{target state}}
 %			\delta_a \subseteq \underbrace{Q \times \set{\text{root},1,\ldots,\text{maximal rank in $\Sigma$}}}_{\text{what the automaton sees}}  \times \underbrace{(\set{\text{accept, reject}} \cup Q \times \set{\text{up},1,\ldots,n})}_{\text{what the automaton does}}
 		\end{align*}
 		We assume that for every transition $(q,\tau,d,p) \in \delta$,  the direction $d$ is consistent with the view $\tau$ in the sense that if $d$ is ``parent'' then $\tau$ is the view of a node with a parent, and if $\tau$ is ``child $i$'' then $\tau$ is the view of a node with at least $i$ children.
