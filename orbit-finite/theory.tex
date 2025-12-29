@@ -12,13 +12,13 @@ q \stackrel a \to   p \text{ is a transition}
 \qquad \Leftrightarrow \qquad
  q \stackrel b \to p \text{ is a transition}
 \end{align*}
-holds for every all  states $p$ and $q$. There are finitely many possible equivalence classes of letters, and equivalent letters are indistinguishable by the automaton. Therefore, up to all intents and purposes, the input alphabet is also finite.
+holds for all states $p$ and $q$. There are finitely many possible equivalence classes of letters, and equivalent letters are indistinguishable by the automaton. Therefore, up to all intents and purposes, the input alphabet is also finite.
 
 
-In this chapter, we study a more interesting of notion of regularity for infinite alphabets. It is based on the idea that the automata have access to equality on the alphabet, but nothing else\footnote{This idea dates  back to the work of Kaminski and
+In this chapter, we study a more interesting notion of regularity for infinite alphabets. It is based on the idea that the automata have access to equality on the alphabet, but nothing else\footnote{This idea dates back to the work of Kaminski and
 Francez~\cite{kaminskiFiniteMemoryAutomata1994}, and has been developed in many
 subsequent papers, see e.g.~the
-lecture notes~\cite{bojanczyk_slightly}.}.  We fix for the rest of this chapter some infinite alphabet, which we denote by $\atoms$. We think of the letters in the alphabet as being names\footnote{Although we use names of people as examples, a more relevant application for computer science is variable names in programs. Based on this analogy, the sets discussed in this chapter are called \emph{nominal sets} in the literaure on semantics of programming languages~\cite{PittsAM:nomsns}.}, such as
+lecture notes~\cite{bojanczyk_slightly}.}.  We fix for the rest of this chapter some infinite alphabet, which we denote by $\atoms$. We think of the letters in the alphabet as being names\footnote{Although we use names of people as examples, a more relevant application for computer science is variable names in programs. Based on this analogy, the sets discussed in this chapter are called \emph{nominal sets} in the literature on semantics of programming languages~\cite{PittsAM:nomsns}.}, such as
 \begin{align*}
 \atoms = \set{\text{John}, \text{Eve}, \text{Tom}, \ldots}.
 \end{align*}
@@ -32,7 +32,7 @@ Examples of languages that  we care about include
 \end{align}
 To recognise such languages, we use automata that have some  kind of finite memory, and which can  store letters
 from $\atoms$. For example, the language~\eqref{eq:first-last} is recognised by
-an automaton which loads the first letter into state, and then toggles
+an automaton which loads the first letter into its state, and then toggles
 acceptance depending on comparison of the state with the current input
 letter. The language~\eqref{eq:some-twice} is recognised by an automaton which
 nondeterministically guesses a position, stores its letter, and
@@ -56,7 +56,7 @@ This idea is formalised by applying permutations of the alphabet, since choosing
   holds for every permutation $\pi$ of the alphabet $\atoms$.
 \end{definition}
 
-The goal of this chapter is to define certain automata models that recognise equivariant languages. Let us now describe more detail two automata for the languages that were mentioned before.
+The goal of this chapter is to define certain automata models that recognise equivariant languages. Let us now describe in more detail two automata for the languages that were mentioned before.
 
 \begin{example}\label{ex:first-last-automaton}
 	Consider the language from~\eqref{eq:first-last}, i.e.~the set of words where the first letter is equal to the last letter. We describe a deterministic automaton that recognises this language. The state space of this automaton will be 
@@ -112,7 +112,7 @@ The goal of this chapter is to define certain automata models that recognise equ
 \section{Orbit-finite sets}
 \label{sec:orbit-finite}
 
-The automata in  Examples~\ref{eq:first-last} and~\ref{ex:some-letter-twice-automaton} use their state space to store some finite information (e.g.~one of the two copies in Example~\ref{ex:first-last-automaton}) and a constant number of letters (in the above examples, the state stores at most one letter, but two or more  letters could also be stored). This idea could be formalised using an automaton model that has a state of the form (element of a finite set, tuple of letters from $\atoms$); this is the approach used in~\cite{kaminskiFiniteMemoryAutomata1994}.
+The automata in Examples~\ref{ex:first-last-automaton} and~\ref{ex:some-letter-twice-automaton} use their state space to store some finite information (e.g.~one of the two copies in Example~\ref{ex:first-last-automaton}) and a constant number of letters (in the above examples, the state stores at most one letter, but two or more letters could also be stored). This idea could be formalised using an automaton model that has a state of the form (element of a finite set, tuple of letters from $\atoms$); this is the approach used in~\cite{kaminskiFiniteMemoryAutomata1994}.
 In this chapter, we choose a slightly more abstract approach, following~\cite{bojanczyk_slightly}. Instead of defining a new notion of automaton, we define a new notion of ``finite set'', and then the automata are defined to be  those that use this new notion. 
 
 
@@ -197,7 +197,7 @@ x \in Y\quad  \iff \quad \pi(x) \in Y \qquad \text{for every $x \in X$ and atom 
 	\end{align*}
 \end{definition}
 
-An equivariant set is the same as some union of orbits, since if it contains one element of an orbit, then it must contain all elements of this orbit. It follows that an orbit-finite set can have only finitely many equivariant subsets. For example, the set $\atoms^3$ has $32 = 2^5$ equivariant subsets, since it has five orbits, and each of these orbits can be independently either be included in the subset, or not.
+An equivariant set is the same as some union of orbits, since if it contains one element of an orbit, then it must contain all elements of this orbit. It follows that an orbit-finite set can have only finitely many equivariant subsets. For example, the set $\atoms^3$ has $32 = 2^5$ equivariant subsets, since it has five orbits, and each of these orbits can either be included in the subset, or not.
 
 We can generalise the notion of equivariance to relations 
 \begin{align*}
@@ -313,7 +313,7 @@ However, some constructions do not transfer. An important example is complementa
 	
 	Suppose toward a contradiction that there is a nondeterministic orbit-finite automaton $\Aa$ that recognises the complement language, i.e.~the words where each letter appears at most once. Let $d \in \set{0,1,\ldots}$ be the maximal number of atoms that can be stored in a state of this automaton.  
 	Consider an input word with
-    $2d+2$ pairwise different letters, and let $w_1$ and $w_2$ be its first and second halves, respecitvely. The automaton $\Aa$ must accept $w_1 w_2$. In the witnessing run, consider the first and last states, as well as the state that is used between the two halves: 
+    $2d+2$ pairwise different letters, and let $w_1$ and $w_2$ be its first and second halves, respectively. The automaton $\Aa$ must accept $w_1 w_2$. In the witnessing run, consider the first and last states, as well as the state that is used between the two halves: 
 	\begin{align*}
 	p \stackrel {w_1} \to q \stackrel {w_2} \to r.
 	\end{align*}
@@ -321,13 +321,13 @@ However, some constructions do not transfer. An important example is complementa
 	\begin{align*}
 	p \stackrel {w_1} \to q = \pi(q)\stackrel {\pi(w_2)} \to \pi(r).
 	\end{align*}	
-	Therefore, the automaton also has an accepting run on the input word $w_1 \pi(w_2)$. This input contais a repetition, since $a_1$ appears both in $w_1$ and in $\pi(w_2)$. The desired contradiction follows.
+	Therefore, the automaton also has an accepting run on the input word $w_1 \pi(w_2)$. This input contains a repetition, since $a_1$ appears both in $w_1$ and in $\pi(w_2)$. The desired contradiction follows.
 \end{proof}
 
 
 \section{Emptiness}
 \label{sec:emptiness}
-In this section, we show that the emptiness problem is decidable for orbit-finite automata. This theoem is meant to illustrate the idea that orbit-finite sets can be manipulated algorithmically, despite being infinite.
+In this section, we show that the emptiness problem is decidable for orbit-finite automata. This theorem is meant to illustrate the idea that orbit-finite sets can be manipulated algorithmically, despite being infinite.
 
 \newcommand{\generated}[1]{\langle #1 \rangle}
 \begin{theorem}
@@ -338,11 +338,11 @@ In this section, we show that the emptiness problem is decidable for orbit-finit
 	To make the problem well-defined, we have to explain how an orbit-finite automaton is represented as input, which requires a representation of orbit-finite sets and their equivariant subsets. 
 	
 \paragraph*{Representation of orbit-finite sets and equivariant subsets.}
-	For orbit-finite sets, Definition~\ref{def:orbit-finite-sets} already comes with a representation: we need to give a list of powers $[d_1,\ldots,d_n]$. For equivariant subsets, there are several possibilitiles, but in this chapter we use a finite list of example elements, with one example for each orbit. More formally, for an orbit-finite set $X$ and a finite subset $Y \subseteq X$, define 
+	For orbit-finite sets, Definition~\ref{def:orbit-finite-sets} already comes with a representation: we need to give a list of powers $[d_1,\ldots,d_n]$. For equivariant subsets, there are several possibilities, but in this chapter we use a finite list of example elements, with one example for each orbit. More formally, for an orbit-finite set $X$ and a finite subset $Y \subseteq X$, define 
 	\begin{align*}
 	\generated{Y} = \setbuild{ \pi(y)}{$y \in Y$ and $\pi$ is an atom permutation}.
 	\end{align*}
-	In other words, this is the least equivariant subset of $X$ that contains $Y$. Every equivariant subset of an orbit-finite set is generated by a finite subset in this way, and thus we can use expressions of the form $\generated Y$ as representations of equivariant subets. (This assumes that one can write down individual elements of orbit-finite sets, which in turn assumes that we can write down atoms. This is indeed the case, since we can think of atoms as being natural numbers, or  strings over some finite alphabet.) As we have already mentioned, relations and functions can be represented as special kinds of subsets, so these can also be represented. For example, the function of type $\atoms^2 \to \atoms$ that projects onto the first coordinate is represented as 
+	In other words, this is the least equivariant subset of $X$ that contains $Y$. Every equivariant subset of an orbit-finite set is generated by a finite subset in this way, and thus we can use expressions of the form $\generated Y$ as representations of equivariant subsets. (This assumes that one can write down individual elements of orbit-finite sets, which in turn assumes that we can write down atoms. This is indeed the case, since we can think of atoms as being natural numbers, or  strings over some finite alphabet.) As we have already mentioned, relations and functions can be represented as special kinds of subsets, so these can also be represented. For example, the function of type $\atoms^2 \to \atoms$ that projects onto the first coordinate is represented as 
 	\begin{align*}
 	\generated{\quad (\text{Eve},\text{John}) \mapsto \text{Eve}, \quad 
 	(\text{Eve},\text{Eve}) \mapsto \text{Eve}\quad }.
@@ -375,6 +375,6 @@ In this section, we show that the emptiness problem is decidable for orbit-finit
 Once the chain stabilises, we check if $Q_n$ contains some final state. Since the set of accepting states is equivariant, this boils down to checking if one of the finitely many representatives of $Q_n$ belongs to the final set, which can be done using the membership test. The result of this test gives the answer to the emptiness problem.
 \end{proof}
 
-The above procedure even runs in polynomial time, assuming the representation used in the proof. This is because the running time is bounded by the number of orbits in the state space and the transition relation, and these numbers are polynomial in the size of the representation. However, the complexity of the algorithm depends on the choice of representations, and the one that we have used is particularly verbose (which makes the running time look quick). For more succint representations the complexity can go up, e.g.~the problem is  PSPACE-complete for a representation using  registers~\cite{kaminskiFiniteMemoryAutomata1994}. 
+The above procedure even runs in polynomial time, assuming the representation used in the proof. This is because the running time is bounded by the number of orbits in the state space and the transition relation, and these numbers are polynomial in the size of the representation. However, the complexity of the algorithm depends on the choice of representations, and the one that we have used is particularly verbose (which makes the running time look quick). For more succinct representations the complexity can go up, e.g.~the problem is PSPACE-complete for a representation using registers~\cite{kaminskiFiniteMemoryAutomata1994}. 
 
 Not all problems for orbit-finite automata are decidable. For example, universality is undecidable~\cite[Section 2.2]{bojanczyk_slightly}.

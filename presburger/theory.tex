@@ -1,6 +1,6 @@
 \label{sec:presburger}
 
-In this chapter, we show  an algorithm that tells us which formulas are true the structure $(\Nat, +)$ of natural numbers with equality. This structure is called \emph{Presburger arithmetic}, because the original algorithm, which is a quantifier elimination procedure,  was proposed by Mojżesz Presburger in 1928.  Another name for the theory is \emph{linear integer arithmetic}, which is popular in the verification community, where it used as part of automatic theorem provers. 
+In this chapter, we show  an algorithm that tells us which formulas are true the structure $(\Nat, +)$ of natural numbers with equality. This structure is called \emph{Presburger arithmetic}, because the original algorithm, which is a quantifier elimination procedure,  was proposed by Mojżesz Presburger in 1929~\cite{presburgerUberVollstandigkeitGewissen1929}.  Another name for the theory is \emph{linear integer arithmetic}, which is popular in the verification community, where it used as part of automatic theorem provers. 
 
 
 We are interested in the first-order theory of the natural numbers with addition, i.e.~in the formulas that are true in this structure, and are constructed using variables (ranging over natural numbers), addition, quantification (over natural numbers), and the Boolean connectives $\land$, $\lor$, $\neg$. Here, we treat addition as a function that takes two arguments, and not as a relation that takes three arguments, although the two views are equivalent.
@@ -69,7 +69,7 @@ Once we have proved quantifier elimination, decidability of the first-order theo
 	 In the proof, we consider the extended vocabulary without addition as a function symbol, i.e.~the vocabulary contains only relations. We use the name \emph{atomic formula} for a relation from the vocabulary applied to some variables. Atomic formulas are either divisibility constraints or linear inequalities.
 
 	 We prove the theorem by induction on the structure of formulas. In the induction basis, we have atomic formulas, which are already quantifier-free.  
-	Since quantifier-free formulas are closed under the Boolean operations, and $\forall$ is complementary to $\exists$, it enough to show that a single existential quantifier can be eliminated, i.e.~if
+	Since quantifier-free formulas are closed under the Boolean operations, and $\forall$ is complementary to $\exists$, it is enough to show that a single existential quantifier can be eliminated, i.e.~if
 	\begin{align*}
 	\varphi(\myunderbrace{x_1,\ldots,x_k}{call this $\bar x$},y)
 	\end{align*}
@@ -129,7 +129,7 @@ These ideas are formalized in the following definition.
 	A \emph{linear} subset of $\Nat^d$ is any set of the form
 \begin{align*}
 \setbuild{ \bar a + \beta_1 \bar b + \cdots + \beta_k \bar b}{
-	$\beta_1,\ldots, \beta_k \in \Nat^d $
+	$\beta_1,\ldots, \beta_k \in \Nat $
 },
 \end{align*}
 for some choice of  base vector $\bar a \in \Nat^d$ and  period vectors $\bar b_1, \ldots, \bar b_k \in \Nat^d$. A \emph{semilinear} set is any finite  union of linear sets (in the same dimension).
@@ -160,7 +160,7 @@ The following theorem tells us that the semilinear sets are exactly the sets tha
 		A \bar x = \bar 0.
 		\end{align}
 	Consider the set of minimal solutions to such an system, i.e.~the set  of solutions $\bar x$  
-	which are minimal coordinatewise. By Dickson's Lemma, see Claim~\ref{clm:dickson},  the set minimal solutions, call it $S$, is finite.  We now claim that every other solution can be obtained by coordinatewise addition of minimal solutions, and therefore the set of solutions forms a linear set, where the period vectors are the minimal solutions. This is an immediate consequence of the definition of minimality: a non-minimal solution can be obtained by taking some minimal solution, and adding some vector to it. The added vector is also a solution to the homogeneous system, and therefore an inductive argument can be used to decompose it into a sum of minimal solutions.
+	which are minimal coordinatewise. By Dickson's Lemma, see Claim~\ref{clm:dickson},  the set of minimal solutions, call it $S$, is finite.  We now claim that every other solution can be obtained by coordinatewise addition of minimal solutions, and therefore the set of solutions forms a linear set, where the period vectors are the minimal solutions. This is an immediate consequence of the definition of minimality: a non-minimal solution can be obtained by taking some minimal solution, and adding some vector to it. The added vector is also a solution to the homogeneous system, and therefore an inductive argument can be used to decompose it into a sum of minimal solutions.
 
 	Consider now the general case of the lemma, where $\bar b$ is not necessarily the zero vector. Again, consider the set of minimal solutions, which is finite. Every other solution is obtained by taking a minimal solution, and adding to it some solution of the homogeneous version of the system as in~\eqref{eq:homogeneous-system}. Since the homogeneous solutions form a linear set, we get the result. 
 \end{proof}

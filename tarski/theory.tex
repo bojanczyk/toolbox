@@ -1,15 +1,15 @@
 \label{sec:tarski}
 \newcommand{\bss}{\textsc{bss}\xspace}
 \newcommand{\Real}{\mathbb R}
-Consider the real numbers, equipped with binary functions for addition, subtraction, multiplication, and constants for zero and one, and a binary relation for the ordering
+Consider the real numbers, equipped with binary functions for addition, subtraction, multiplication, constants for zero and one, and a binary relation for the ordering:
 \begin{align*}
-  (\Real, +, -, \times, 0, 1, <)
+  (\Real, +, -, \times, 0, 1, <).
 \end{align*}
 The goal of this section is to prove a Theorem of Alfred Tarski, which says that the first-order theory of this structure is decidable, i.e.~there is an algorithm which inputs a sentence of first-order logic like
 \begin{align*}
 \forall x  \exists y \ y \times y + x = 0
 \end{align*}
-and says if the sentence is true in the real numbers. Remarkably this theorem represents a nontrivial algorithm dealing with first-order logic that was found in the late 1920s, before the notions of ``first-order logic'' and ``algorithm'' were well defined in the modern sense. Although apparently proved earlier, the result was published only after the war~\cite{Tarski:1951vl}.
+and says if the sentence is true in the real numbers. Remarkably, this theorem represents a nontrivial algorithm dealing with first-order logic that was found before the notions of ``first-order logic'' and ``algorithm'' were well defined in the modern sense. Although apparently proved earlier, the result was published only after the war~\cite{Tarski:1951vl}.
 
 There is some freedom in the choice of vocabulary. For example we could add division because it is definable in first order logic by
 \begin{align*}
@@ -23,7 +23,7 @@ thus
 \begin{align*}
   x < y \qquad \eqdef \qquad x \ne y \land \exists z \ x + z \times z = y.
 \end{align*}
-Also, we could remove the constants for $0$ and $1$, because $0$ is the unit for addition and $1$ is the unit for multiplication. Summing up, as long as we care about first-order logic, the vocabulary could be reduced to have only $+$ and $\times$. Nevertheless, we will care about quantifier-free formulas, and some of the above definitions are not quantifier-free.
+Also, we could remove the constants for $0$ and $1$, because $0$ is the unit for addition and $1$ is the unit for multiplication. Summing up, as long as we care about first-order logic, the vocabulary could be reduced to have only $+$ and $\times$. Nevertheless, some of the above definitions are not quantifier-free, and we will care about quantifier-free formulas, as expressed in the following theorem. 
 
 \begin{theorem}\label{thm:tarski}
 	For every formula of first-order logic over 
@@ -48,9 +48,9 @@ The  first-order theory of the integers with addition, subtraction and multiplic
 \begin{align*}
 (\Int, +, -, \times, 0, 1, <)
 \end{align*}
-is undecidable. It follows that there is no first-order formula $\varphi(x)$  which defines the integers inside the real numbers. (We will see another reason why the integers cannot be defined later on.) In contrast, every single integer can be defined.	
+is undecidable. This is the original undecidability result, which was proved by Church~\cite[Corollary 2]{church1936unsolvable} and  Turing~\cite[Section 11]{turing1936computable}.  It follows that there is no first-order formula $\varphi(x)$  which defines the integers inside the real numbers. (We will see another reason why the integers cannot be defined later on.) In contrast, every single integer can be defined.	
 
-A celebrated theorem of Julia Robinson says that there is a first-order formula that defines the integers inside the rational numbers, and therefore also the rational numbers cannot be defined inside the real numbers.
+A celebrated theorem of Julia Robinson~\cite[Theorem 3.1]{Robinson_1949} says that there is a first-order formula that defines the integers inside the rational numbers, and therefore also the rational numbers cannot be defined inside the real numbers.
 \end{example}
 
 \begin{example}
@@ -62,7 +62,7 @@ A celebrated theorem of Julia Robinson says that there is a first-order formula 
 \end{example}
 
 The rest of this chapter is devoted to proving Theorem~\ref{thm:tarski}. 
-The second part of the theorem (deciding which  sentences are true) is an immediate consequence of the first part (effective quantifier elimination). Indeed, if we want to know if a sentence is true in the real numbers, we first eliminate all quantifiers using the first part of the theorem, arriving at a formula which is a Boolean combination of inequalities that involve values which are obtained form the constants $0$ and $1$ by applying the operations $+,\times,-$. Here is an example  of such a formula:
+The second part of the theorem (deciding which  sentences are true) is an immediate consequence of the first part (effective quantifier elimination). Indeed, if we want to know if a sentence is true in the real numbers, we eliminate all quantifiers using the first part of the theorem, arriving at a formula which is a Boolean combination of inequalities that involve values which are obtained form the constants $0$ and $1$ by applying the operations $+,\times,-$. Here is an example  of such a formula:
 \begin{align*}
   ((1  +  1) \times (1 + 1 + 0) - 0 \times (1 + 0) >  0) \lor (1 = 0).
 \end{align*}
@@ -84,8 +84,7 @@ This formula says that the quadratic polynomial with coefficients $y_1,y_2,y_3$ 
 \begin{align*}
 y_2^2 - 4 y_1 y_3 \geq 0.
 \end{align*}
-The new condition is quantifier-free, as required. When proving the general result, we will also obtain similar quantifier-free formulas for polynomials of higher degree. The reader might feel uneasy about this, because we know that there is no general formula for roots of polynomials of degree five or higher. However, note that we do not need to express the roots themselves, but only the existence of roots, which is a much easier task, and can be done in a quantifier-free way.
-\end{example}
+The new condition is quantifier-free, as required. When proving the general result, we will also obtain similar quantifier-free formulas for polynomials of higher degree. The reader might feel uneasy about this, because we know that there is no general ``formula'' for roots of polynomials of degree five or higher. However, note that we do not need to express the roots themselves, but only the existence of roots, which is a much easier task, and can be done in a quantifier-free way. \end{example}
 
 We first observe that the formula $\varphi$ can be without loss of generality assumed to be a Boolean combination of formulas of the form
 \begin{align*}
@@ -214,7 +213,7 @@ Define a finite sequence of polynomials
 \begin{align*}
   p=p_0,p_1,\ldots,p_n=r
 \end{align*}
-subject to the following  invariant:  (a) the degrees in the sequence strictly decrease; and (b)  $q$ divides  $p-p_n$ for every $n$.  We begin with $p_0 = p$. Suppose that $p_i$ has been defined. If the degree of $p_i$ is stritly smaller than the degree of $q$, then we output $r = p_i$; otherwise we define $p_{i+1}$ to be the difference
+subject to the following  invariant:  (a) the degrees in the sequence strictly decrease; and (b)  $q$ divides  $p-p_n$ for every $n$.  We begin with $p_0 = p$. Suppose that $p_i$ has been defined. If the degree of $p_i$ is strcitly smaller than the degree of $q$, then we output $r = p_i$; otherwise we define $p_{i+1}$ to be the difference
 	\begin{align*}
     p_i - \frac{\text{leading coefficient of $p_i$ }}{\text{leading coefficient of $q$ }} x^\text{(degree of $p_i$)- (degree of $q$)} \cdot q
 \end{align*}

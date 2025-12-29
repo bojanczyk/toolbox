@@ -50,7 +50,7 @@ A tree automaton is called \emph{bottom-up deterministic} if every transition re
 \begin{lemma}\label{lem:tree-aut-bool-alg}
   Languages recognised by nondeterministic tree automata are closed under union, intersection and complementation.
 \end{lemma}
-\begin{proof} For union,  take the disjoint union of two nondeterministic tree automata. Intersection can be done using a cartesian product, or by using union and complementation.  For complementation, we use determinisation: the same proof as for automata on words -- the subset construction -- shows that for every nondeterministic tree automata there is an equivalent one that is bottom-up deterministic (top-down deterministic automata are strictly weaker, see Exercise~\ref{zad:tree-aut-01}.). Since bottom-up deterministic automata can be complemented by complementing the root states, we get the lemma.
+\begin{proof} For union,  take the disjoint union of two nondeterministic tree automata. Intersection can be done using a cartesian product, or by using union and complementation.  For complementation, we use determinisation: the same proof as for automata on words -- the subset construction -- shows that for every nondeterministic tree automata there is an equivalent one that is bottom-up deterministic (top-down deterministic automata are strictly weaker). Since bottom-up deterministic automata can be complemented by complementing the root states, we get the lemma.
 \end{proof}
 
 \paragraph*{\mso on finite trees.} We now define how \mso can be used to define a tree language, and show that tree languages defined this way are exactly those that are recognised by tree automata.
@@ -96,7 +96,6 @@ By induction on the size of an \mso formula, we show that its language, as defin
 \end{itemize}
 \end{proof}
 
-\cite{Figueira:2017hn}
 
 
 \section{Infinite trees}
@@ -130,7 +129,7 @@ The proof has the same structure as in the case of finite trees. The only differ
 The difficulty in the Complementation Lemma  is that  we use only nondeterministic automata; in fact no deterministic model for infinite trees is known that would be equivalent to \mso. Rabin's Theorem will follow immediately once the Complementation Lemma is proved, so 
  the rest of this chapter is devoted to proving the Complementation Lemma.
  
-A corollary of the  statement of Rabin's Theorem as in Theorem~\ref{thm:rabin}, and of decidability of emptiness for nondeterministic parity tree automata (see Exercise~\ref{zad:tree-aut-emptiness-parity})  is that the following logical structure has decidable \mso theory: the universe is the nodes of the complete binary tree, and there are two binary relations for left child and right child. This corollary is the 
+A corollary of the  statement of Rabin's Theorem as in Theorem~\ref{thm:rabin}, and of decidability of emptiness for nondeterministic parity tree automata,  is that the following logical structure has decidable \mso theory: the universe is the nodes of the complete binary tree, and there are two binary relations for left child and right child. This corollary is the 
 original statement of Rabin's Theorem, see~\cite[Theorem 1.1.]{Rabin:1969kx}.
 
 \paragraph*{Alternating parity tree automata.} To show complementation of nondeterministic tree automata, we  pass through a more powerful model. The syntax of an \emph{alternating parity tree automaton} is defined the same as in Definition~\ref{def:nondeterministic-parity} for nondeterministic automata, with the following differences: (1) to each state we assign an \emph{owner}, which is either ``player $0$'' or ``player $1$''; and (2) for each letter $a$, the transition relation has form

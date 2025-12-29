@@ -1,0 +1,97 @@
+% this is the main file for each individual chapter
+% each chapter has a subfolder, which contains a main.tex that simply inlines this file
+
+\ifx\synctex\undefined\else\synctex=1\fi
+
+\documentclass[b5paper,11pt]{book}
+
+\usepackage[utf8]{inputenc}
+%% (FMu) uzywamy \lw do napisania l z kreska, bo potem cos
+%% przedefiniowuje \l na \lambda. To nie jest eleganckie,
+%% ale dziala. To samo dla czeskiego hacka (np. w Cerny)
+\let\lw\l  
+\let\hacek\v
+
+\usepackage{amsfonts}
+\usepackage[fleqn]{amsmath} %fleqn does left alignment of display formulas
+\usepackage{amssymb,amsmath}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{todonotes}
+\usepackage{mathbbol}
+\usepackage{enumerate}
+\usepackage{comment}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{bookmark}
+\usepackage{nameref}
+\usepackage{ifthen}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\usepackage{tikz}
+\usepackage[normalem]{ulem}
+\usepackage[all]{xy}
+% \usepackage{mdframed} 
+\usepackage{fancyhdr}
+\usepackage{pdfpages}
+\usepackage{mathtools}
+
+
+\RequirePackage[osf,sc]{mathpazo}
+\usepackage[mathcal]{euscript}
+
+
+
+\input{../macros}
+
+\begin{document}
+\frontmatter 
+
+\thispagestyle{empty}
+
+\mainmatter   % arabic page numbers
+\pagestyle{fancy}
+
+\renewcommand{\mypicf}[1]{
+  \smallskip
+	\begin{center}
+		\includegraphics[page=#1,scale=0.25]{../toolbox-figma}
+	\end{center}
+}
+
+\renewcommand{\mypic}[1]{
+  \smallskip
+	\begin{center}
+		\includegraphics[page=#1,scale=0.25]{../pics}
+	\end{center}
+}
+
+\renewcommand{\mypicb}[1]{
+  \smallskip
+	\begin{center}
+		\includegraphics[page=#1,scale=0.25]{../picsb}
+	\end{center}
+}
+
+\newcommand{\exercise}[3]{
+    \paragraph*{Problem.} #1
+    \paragraph*{Solution.} #3
+}
+
+\input{theory}
+
+
+
+\input{exercises}
+
+\newpage
+{\Huge \it Bibliography}
+
+\bigskip
+\renewcommand{\chapter}[2]{}
+\bibliographystyle{plain}
+\bibliography{bib}
+
+
+\end{document}

@@ -48,7 +48,7 @@ This data structure was found by Imre Simon~\cite[Theorem 6.1]{simonFactorizatio
 
 
 
-The main result of this chapter, see Theorem~\ref{thm:simon-forest}, will be that we  can find a  Simon trees whose height is bounded by a constant that depends only on the monoid homomorphism, and not on the input word. Before stating and proving the theorem, let us begin with an example of how the tree is constructed, and also with an explanation of how it can be used in our algorithmic application.
+The main result of this chapter, see Theorem~\ref{thm:simon-forest}, will be that we  can find a Simon tree whose height is bounded by a constant that depends only on the monoid homomorphism, and not on the input word. Before stating and proving the theorem, let us begin with an example of how the tree is constructed, and also with an explanation of how it can be used in our algorithmic application.
 
 \begin{example}
 	Consider the monoid homomorphism 
@@ -57,11 +57,11 @@ The main result of this chapter, see Theorem~\ref{thm:simon-forest}, will be tha
 	\end{align*}
 	which counts the occurrences of $a$ modulo 2.  We begin by replacing each letter by its value in the monoid: 
 	\mypicf{14}
-	In this monoid, the only idempotent is $0$, and therefore idemponent nodes can only be used to group intervals with value $0$. This is what we do now:  we consider groups of consecutive $0$'s which have length at least two. Each such group can be blocked into a single node, as in the following picture:
+	In this monoid, the only idempotent is $0$, and therefore idempotent nodes can only be used to group intervals with value $0$. This is what we do now:  we consider groups of consecutive $0$'s which have length at least two. Each such group can be grouped into a single node, as in the following picture:
 	\mypicf{15}
-	In the next step, we use binary nodes to group each $1$ with the preceeding block of $0$'s:
+	In the next step, we use binary nodes to group each $1$ with the preceding block of $0$'s:
 	\mypicf{16}
-	At this stage, the maximal intervals all have value $1$, except for possibly a last interval with value $0$. We group the maximal intervals with value $1$ into pairs, so that they get value $1$:
+	At this stage, the maximal intervals all have value $1$, except for possibly a last interval with value $0$. We group the maximal intervals with value $1$ into pairs, so that they get value $0$:
 	\mypicf{17}
 	The intervals created in the previous step all have value $0$, and therefore they can be grouped using an idempotent step into a single interval: 
 	\mypicf{18}
@@ -72,7 +72,7 @@ The main result of this chapter, see Theorem~\ref{thm:simon-forest}, will be tha
 
 The algorithmic application of a Simon tree is the same as for binary trees. Suppose that we have access to a Simon tree, and that we are given an interval query. Similarly to the binary case, the interval can be decomposed into intervals that correspond to the tree. The difference with respect to the binary tree is that now the decomposition can use two kinds of intervals: (a) nodes in the tree; or (b) unions of consecutive siblings in the tree. (In fact, the first kind is a special case of the second one.)  The number of intervals in this decomposition is bounded by the height of the tree. Here is a picture: 
 \mypicf{20}
-For the intervals that are in the tree, their value is stored in the tree. For the unions of consecutive children, the interesting case is when there are at least three of them. In this case, the values of these intervals must all be the same idempotent $e$, and thereore the value of their union will also be the same idempotent $e$. Summing up, using the Simon tree we can compute the value of each interval in time that is proportional to the height of the tree.
+For the intervals that are in the tree, their value is stored in the tree. For the unions of consecutive children, the interesting case is when there are at least three of them. In this case, the values of these intervals must all be the same idempotent $e$, and therefore the value of their union will also be the same idempotent $e$. Summing up, using the Simon tree we can compute the value of each interval in time that is proportional to the height of the tree.
 
 It remains to prove that Simon trees of bounded height exist.
 
@@ -87,7 +87,7 @@ It remains to prove that Simon trees of bounded height exist.
 
 \begin{proof} The proof will also come with an algorithm for constructing the tree in linear time, which is relevant for the algorithmic applications. 
 
-	We work with Green's relations, which were introduced in Chapter~\ref{sec:star-free}. There will be three steps: (1) we first prove the theorem in the special case when the monoid is a group; (2) then we prove the theorem in the special case case where all intervals have a value in the same infix class; and (3) finally we prove the general case.
+	We work with Green's relations, which were introduced in Chapter~\ref{sec:star-free}. There will be three steps: (1) we first prove the theorem in the special case when the monoid is a group; (2) then we prove the theorem in the special case where all intervals have a value in the same infix class; and (3) finally we prove the general case.
 	\paragraph*{Step 1. Groups.} We begin by proving the theorem in the special case when the monoid  is a group. In this step, the Simon tree for an input word $w$ is constructed based on the size of the set
 	\begin{align*}
 		P(w) = \setbuild{h(v)}{$v$ is a non-trivial prefix of $w$},
@@ -98,14 +98,14 @@ It remains to prove that Simon trees of bounded height exist.
 
 	The induction base is when the set $P(w)$ is empty. This means that there are no non-trivial prefixes, i.e.~the word has length at most one. In this case a trivial Simon tree with zero or one node suffices. 
 
-	Consider now the induction step. Choose some element $g \in P(w)$. Consider all non-trivial the prefixes of the input word whose value is equal to $g$, as in the following picture: 
+	Consider now the induction step. Choose some element $g \in P(w)$. Consider all the non-trivial prefixes of the input word whose value is equal to $g$, as in the following picture: 
 	\mypicf{21}
 	We can cut the word along the ends of these prefixes, leading to a factorisation as in the following picture, with the corresponding infixes being called $w_1,\ldots,w_n$:
 	\mypicf{22}
 	The following claim shows that we can apply the induction assumption to each of these infixes.
 
 \begin{claim}
-For each $i \in \set{1,\ldots,n}$, the set $P(w_i)$ is a strict smaller than $P(w)$.
+For each $i \in \set{1,\ldots,n}$, the set $P(w_i)$ is strictly smaller than $P(w)$.
 \end{claim}
 \begin{proof}
 	For the first infix $w_1$, this is clearly true, since it is a prefix of $w$, and it was chosen so that it does not have any non-trivial  prefixes with value $g$. For the remaining infixes, we have a similar situation, except that the group element needs to be prepended: 
@@ -115,13 +115,13 @@ g \cdot P(w_i) \subseteq P(w) \setminus \set g.
 Since multiplying to the left by $g$ does not change the size of a set, it follows that each $P(w_i)$ is strictly smaller than $P(w)$. 
 \end{proof}
 
-The Simon tree is constructed for $w$ is constructed as follows. For each of the infixes $w_1,\ldots,w_n$, the above claim shows that we use the induction assumption to build a Simon tree. Then, we combine these trees three additional levels as follows. For each $i \in \set{2,\ldots,n-1}$, the value $h(w_i)$ must be the group identity, since it satisfies 
+The Simon tree for $w$ is constructed as follows. For each of the infixes $w_1,\ldots,w_n$, the above claim shows that we use the induction assumption to build a Simon tree. Then, we combine these trees three additional levels as follows. For each $i \in \set{2,\ldots,n-1}$, the value $h(w_i)$ must be the group identity, since it satisfies 
 \begin{align*}
 g \cdot h(w_i) = g.
 \end{align*}
 In particular, this value is an idempotent. Therefore, we can group the intervals corresponding to $w_2,\ldots,w_{n-1}$ using a single idempotent node. The first and last intervals $w_1$ and $w_n$ can then be added using two binary nodes, thus adding three levels to the height of the tree from the induction assumption.
 
-\paragraph*{Step 2. Single infix class.} Recall the notion of infix class that was used in Chapter~\ref{sec:star-free}. In this step, we consider the special case when there input word satisfies the following assumption: 
+\paragraph*{Step 2. Single infix class.} Recall the notion of infix class that was used in Chapter~\ref{sec:star-free}. In this step, we consider the special case when the input word satisfies the following assumption: 
 \begin{itemize}
 	\item[(*)] all nonempty intervals in the input word have their value in the same infix class, call it $J \subseteq M$.
 \end{itemize}
@@ -129,15 +129,15 @@ In particular, this value is an idempotent. Therefore, we can group the interval
 \begin{align*}
 \setbuild{(a,b) \in M^2}{ $a$ and $b$ are  values of two consecutive letters in $w$}
 \end{align*}
-As previously, the induction basis is when ther are no such windows, in which case the word has length at most one, and a trivial Simon tree suffices. Let us consider the induction step. Choose some window $(a,b)$ in the input word. Consider all occurrences of this window, as in the following picture:
+As previously, the induction basis is when there are no such windows, in which case the word has length at most one, and a trivial Simon tree suffices. Let us consider the induction step. Choose some window $(a,b)$ in the input word. Consider all occurrences of this window, as in the following picture:
 \mypicf{23}
 We can cut the word along the middle of each window, which leads to a factorisation as in the following picture:
 \mypicf{24}
-	Let $w_1,\ldots,w_n$ be the infixes which arise from the factorisation defined above. All of these infixes have a smaller induction parameter, since they avoid the window $(a,b)$, and therefore we can find Simon trees for them. We now need to put them together. For this, the crucial observation is that if  we ignore the first infix $w_1$ and the last infix $w_n$, then the remaining infixes have values in a group, and we can use the construction from the previous step. Indeed,  each  the    infixes $w_2,\ldots,w_{n-1}$  has $b$ as a prefix and $a$ as a suffix. The following claim shows that these infixes form a group.
+	Let $w_1,\ldots,w_n$ be the infixes which arise from the factorisation defined above. All of these infixes have a smaller induction parameter, since they avoid the window $(a,b)$, and therefore we can find Simon trees for them. We now need to put them together. For this, the crucial observation is that if  we ignore the first infix $w_1$ and the last infix $w_n$, then the remaining infixes have values in a group, and we can use the construction from the previous step. Indeed, each of the infixes $w_2,\ldots,w_{n-1}$  has $b$ as a prefix and $a$ as a suffix. The following claim shows that these infixes form a group.
 \begin{claim}
 	Let $J$ be an infix class, and let $a,b \in J$ be such that $ba \in J$. Then 
 	\begin{align*}
-	G = \setbuild { m \in J}{$b$ is a prefix of $m$ and $a$ is a suffix of $a$ }
+	G = \setbuild { m \in J}{$m$ has $b$ as a prefix  and $a$ as a suffix }
 	\end{align*}
 is a group, with multiplication inherited from $M$, but with some possibly new choice of identity element. 
 \end{claim}
@@ -148,10 +148,10 @@ is a group, with multiplication inherited from $M$, but with some possibly new c
 		\begin{align*}
 		x \cdot f \cdot g \cdot y = a \cdot b \in J.
 		\end{align*} 
-		Since $f \cdot g$ begins with $b$ and ends with $a$, we conclude that it elongs to $G$. 
+		Since $f \cdot g$ begins with $b$ and ends with $a$, we conclude that it belongs to $G$. 
 		\item \textbf{Idempotent.} We now show that $G$ contains some idempotent. This follows from a more general result: every finite semigroup contains an idempotent. Indeed, we take any semigroup element $g \in G$, and consider its powers $g^n$ for $n \in \set{1,2,\ldots}$.  By finiteness, there must be some repetition, i.e.~$n$ and $n + k$ will give the same power for some $k > 0$. This remains true if we increase $n$ to any number in the set $\set{n,n+1,n+2,\ldots}$, and if we replace $k$ by some multiple of $k$. Therefore, we can choose $n$ and $k$ so that they are equal to each other.  As a result,  $g^n$ will be an idempotent.
-		\item \textbf{Identity element.} Let $e$ be the idempotent found above. We will show that this is an identity in the semigroup $G$, which in particular implies that it is unique. Since $e$ belongs to $G$, it has $b$ as a prefix. Therefore, also $b$ has $e$ as a prefix, and by Lemma~\ref{lem:infix-prefix}, and therefore every element of $G$ has a $e$ as a prefix. This implies that $e$ is a left identity, since $e \cdot g$ holds for every element $g$ that has $e$ as a prefix, by idempotence of $e$. A symmetric argument shows that $e$ is also a right identity.
-		\item \textbf{Inverses.} Finally, we show that every element of $G$ has an inverse. Consider some $g \in G$. Since $g$ is in the prefix class of $e$, as we have just shown, it follows that there is some $x \in M$ such that  $g \cdot x = e$. We can also improve this $x$ so that if falls into $G$, by pre- and post-multiplying it with $e$. This gives us a right inverse for $g$. Similarly, we get a left inverse. Finally, in a group the left and right inverses must coincide, since 
+		\item \textbf{Identity element.} Let $e$ be the idempotent found above. We will show that this is an identity in the semigroup $G$, which in particular implies that it is unique. Since $e$ belongs to $G$, it has $b$ as a prefix. Therefore, also $b$ has $e$ as a prefix, and by Lemma~\ref{lem:infix-prefix}, and therefore every element of $G$ has an $e$ as a prefix. This implies that $e$ is a left identity, since $e \cdot g$ holds for every element $g$ that has $e$ as a prefix, by idempotence of $e$. A symmetric argument shows that $e$ is also a right identity.
+		\item \textbf{Inverses.} Finally, we show that every element of $G$ has an inverse. Consider some $g \in G$. Since $g$ is in the prefix class of $e$, as we have just shown, it follows that there is some $x \in M$ such that  $g \cdot x = e$. We can also improve this $x$ so that it falls into $G$, by pre- and post-multiplying it with $e$. This gives us a right inverse for $g$. Similarly, we get a left inverse. Finally, in a group the left and right inverses must coincide, since
 		 \begin{align*}
 		   g_2 = e \cdot g_2 =  \myunderbrace{g_1}{left\\ inverse} \cdot g \cdot \myunderbrace{g_2}{right\\ inverse} = g_1 \cdot e = g_1.
 		\end{align*}
@@ -172,7 +172,7 @@ Choose some infix class $J$ that is represented by some letter in the input word
 \begin{proof}
 	Consider two overlapping $J$-intervals, and the following three elements of the monoid: 
 	\mypicf{25}
-	We know that all three monoid elements belong to the infix class $J$. By Lemma~\ref{lem:prefix-infix}, we know that $a \cdot b$ is in the suffix class of $b$, and therefore there is some $x$ such that $
+	We know that all three monoid elements belong to the infix class $J$. By Lemma~\ref{lem:infix-prefix}, we know that $a \cdot b$ is in the suffix class of $b$, and therefore there is some $x$ such that $
 	x \cdot a \cdot b = b.
 $
 It follows that $x \cdot a \cdot b \cdot c = b \cdot c$, and therefore $a \cdot b \cdot c$ belongs to the infix class $J$. 

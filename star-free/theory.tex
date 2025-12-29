@@ -34,7 +34,7 @@ We often abuse notation, and use the same letter $M$ to denote both the monoid a
 	\begin{align*}
 	R \circ S = \setbuild{(p,q)}{$(p,t) \in R$ and $(t,q) \in S$ for some $t \in Q$}.
 	\end{align*}
-	The neutral element is  identity relation, which is happens to be a function.
+	The neutral element is the identity relation, which happens to be a function.
 \end{enumerate}
 Observe that the monoid from item 2 is contained in the monoid from item 3.
 \end{example}
@@ -137,18 +137,18 @@ One of the advantages of using monoids instead of automata is that monoids have 
 
 All three relations defined above define pre-orders, i.e.~they are reflexive and transitive, which is easy to see. In a free monoid $\Sigma^*$, these relations are anti-symmetric, i.e.~one cannot have non-trivial comparisons in both directions. However, in general monoids these relations need not be  anti-symmetric. For example, in a group, all elements are prefixes of each other, and likewise for infixes and suffixes
 
-A prefix is a special case of an infix. Therefore, every prefix class is contained in some infix class. One could image that it is possible to grow in the prefix ordering while staying in the same infix class. As the following lemma shows, this is not possible in a finite monoid, and therefore all prefix classes contained in the same infix class must be incomparable in the prefix ordering.
+A prefix is a special case of an infix. Therefore, every prefix class is contained in some infix class. One could imagine that it is possible to grow in the prefix ordering while staying in the same infix class. As the following lemma shows, this is not possible in a finite monoid, and therefore all prefix classes contained in the same infix class must be incomparable in the prefix ordering.
 \begin{lemma}\label{lem:infix-prefix}
-	Consider a finite monoid $M$, and let $m,n \in M$ be such that $m$ and $n$ are infix equivalent, and $m$ is a prefix of $n$. The $m$ and $n$ are prefix equivalent. 
+	Consider a finite monoid $M$, and let $m,n \in M$ be such that $m$ and $n$ are infix equivalent, and $m$ is a prefix of $n$. Then $m$ and $n$ are prefix equivalent. 
 \end{lemma}
 \begin{proof}
-	By the assumption that $m$ is a prefix of $n$, one can obtain $n$ from $m$ by multiplying to the right by some $x \in M$. By the assumption that $n$ is an infix of $m$, one can obtain $m$ from $n$ by multiplying to the left by some $y \in M$ and multiplying to the right by some $z \in M$. By iterating this process in a loop, we see that 
+	By the assumption that $m$ is a prefix of $n$, one can obtain $n$ from $m$ by multiplying to the right by some $x \in M$. By the assumption that $n$ is an infix of $m$, one can obtain $m$ from $n$ by multiplying to the right by some $y \in M$ and multiplying to the left by some $z \in M$. By iterating this process in a loop, we see that 
 	\begin{align*}
 	  z^im(xy)^i  = m \quad \text{and} \quad  z^im(xy)^i x = n \qquad \text{for all $i \in \set{0,1,\ldots}$}.
 	\end{align*}
 	Since the monoid is finite, there must be some $i < j$ such that $(xy)^i = (xy)^j$. Therefore, 
 	\begin{align*}
-	n = z^im(xy)^i x = z^jm(xy)^i \quad  \text{ is a prefix of } \quad  z^jm(xy)^j  = m.
+	n = z^im(xy)^i x  \quad  \text{ is a prefix of } \quad  z^jm(xy)^i = z^jm(xy)^j  = m.
 	\end{align*}
 	This proves that $n$ is a prefix of $m$, and therefore they are prefix equivalent.
 	\end{proof}
@@ -156,7 +156,7 @@ A prefix is a special case of an infix. Therefore, every prefix class is contain
 There are other results about Green's relations, which identify a very well-behaved structure inside each infix class. A description of some of this structure can be found in~\cite[Section 1]{bojanczyk_recobook}. For the purposes of this chapter, the above lemma will be sufficient.
 \section{Star-free languages and aperiodic monoids}
 \label{sec:star-free}
-To illustrate the power of monoid, we will use them to describe star-free languages. These are defined by using regular expressions which cannot use the Kleene star operation, but which are allowed to use complementation.
+To illustrate the power of monoids, we will use them to describe star-free languages. These are defined by using regular expressions which cannot use the Kleene star operation, but which are allowed to use complementation.
 
 \begin{definition}[Star-free language]
 	 A language $L \subseteq \Sigma^*$ is called \emph{star-free} if it can be generated from finite languages (i.e.~languages containing finitely many words) using concatenation $L \cdot K$, as well as the Boolean operations of union, intersection, and complement.
@@ -164,9 +164,9 @@ To illustrate the power of monoid, we will use them to describe star-free langua
 
 \begin{example}
 	The full language $\Sigma^*$ is star-free, since it is the complement of the empty language, which is finite. Also, if we take some letter $a \in \Sigma$, then the language $a^*$ is star-free, since it can be obtained as the complement of the language 
-$
-	\Sigma^* \cdot a \cdot \Sigma^*.
-$
+\begin{align*}
+\Sigma^* \cdot (\Sigma \setminus \set a)\cdot \Sigma^*.
+\end{align*}
 \end{example}
 
 \begin{example}\label{ex:aa-not-star-free}
@@ -206,7 +206,7 @@ The first consequence is an alternative description of aperiodicity, which is ex
 	By taking $\omega$ to be the maximum of all $\omega_m$, we obtain the aperiodicity.
 \end{proof}
 
-Thanks to the above fact, an alternative statement of Theorem~\ref{thm:schutz-star-free} is that a language is star-free if and only if it is recognised by a finite monoid that does not contain any non-trivial group. This is particularly pleasing, since it relates a language property (star-freeness) to a purely algebraic property (absence of non-trivial groups). Things get even better, since star-freeness is also equivalent to other conditions, such as definability in first-order logic or the temporal logic LTL, as explained in~\cite[Chapter 2.2]{bojanczyk_recobook}, but we do not dicuss these other characterisations here.
+Thanks to the above fact, an alternative statement of Theorem~\ref{thm:schutz-star-free} is that a language is star-free if and only if it is recognised by a finite monoid that does not contain any non-trivial group. This is particularly pleasing, since it relates a language property (star-freeness) to a purely algebraic property (absence of non-trivial groups). Things get even better, since star-freeness is also equivalent to other conditions, such as definability in first-order logic or the temporal logic LTL, as explained in~\cite[Chapter 2.2]{bojanczyk_recobook}, but we do not discuss these other characterisations here.
 
 Let us state another consequence of Theorem~\ref{thm:schutz-star-free}, which is  that star-freeness is a decidable property of regular languages. On its own, Theorem~\ref{thm:schutz-star-free} does not give such a decision procedure, since it might seem that we need to check all possible recognising monoids for a given language, and some of these monoids might not be aperiodic. However, as the following corollary shows, it is sufficient to check one monoid only, which leads to decidability.
 
@@ -291,7 +291,7 @@ Consider a  homomorphism into an aperiodic monoid
 \begin{align*}
 h: \Sigma^* \to M.
 \end{align*}
-We will show that every language recognised by this homomorphism is star-free. The interseting case is when the accepting set is a single monoid element $m \in M$, in which case the  recognised language is
+We will show that every language recognised by this homomorphism is star-free. The interesting case is when the accepting set is a single monoid element $m \in M$, in which case the  recognised language is
 \begin{align*}
 L_m = \setbuild{w \in \Sigma^*}{$h(w)=m$}.
 \end{align*}
@@ -299,12 +299,12 @@ In the following lemma, we will show that this language
 is star-free. This will extend to all other languages recognised by the homomorphism, thus completing the proof of Theorem~\ref{thm:schutz-star-free},  since all languages recognised by the homomorphism are finite unions of languages of the form $L_m$.
 
 \begin{lemma}\label{lem:star-free-induction}
-	For every $m \in M$, there language $L_m$ is a star-free.
+		For every $m \in M$, the language $L_m$ is star-free.
 \end{lemma}
 
 
 \begin{proof}
-The lemma is proved by induction on the position of $m$ in the infix ordering. Suppose that we want to prove the lemma for some $m \in M$, and we have already proved it for all monoid elements that are proper prefixes of  $m$. 
+The lemma is proved by induction on the position of $m$ in the infix ordering. Suppose that we want to prove the lemma for some $m \in M$, and we have already proved it for all monoid elements that are proper prefixes of $m$. 
 Define $K_m$ to be the set of words which: 
 	\begin{enumerate}
 		\item have a prefix whose value in the monoid is in the prefix class of $m$; and
@@ -317,7 +317,7 @@ We begin by showing that this property is star-free.
 \begin{proof}
 	Consider first the special case when $m$ is in the prefix class of the monoid identity.  In this case, $K_m$ is the set of all words, since the corresponding prefixes and suffixes in the definition of $K_m$ can be taken to be the empty word. 
 
-	We are left with the case when $m$ is not equivalent to the monoid identity, which means that the monoid identity is a proper prefix of $m$. For a word $w \in K_m$, consider the shortest prefix of $m$ whose value in the monoid is in the prefix class of $m$. Since we  have assumed that $m$ is not prefix equivalent to the identity, this shortest prefix is non-empty,  and therefore it is of the form $ua$, where $a$ is a letter and $u$ has a value in the monoid that is strictly smaller than $m$ in the prefix ordering. Thanks to Lemma~\ref{lem:infix-prefix}, the value of $u$ is smaller not only in the prefix ordering, but also in the infix ordering. Therefore, we can use the induction assumption. Summing up, the property ``some prefix is in the prefix class of $m$'' can be expressed using the star-free expression 
+	We are left with the case when $m$ is not equivalent to the monoid identity, which means that the monoid identity is a proper prefix of $m$. For a word $w \in K_m$, consider the shortest prefix of $w$ whose value in the monoid is in the prefix class of $m$. Since we have assumed that $m$ is not prefix equivalent to the identity, this shortest prefix is non-empty, and therefore it is of the form $ua$, where $a$ is a letter and $u$ has a value in the monoid that is strictly smaller than $m$ in the prefix ordering. Thanks to Lemma~\ref{lem:infix-prefix}, the value of $u$ is smaller not only in the prefix ordering, but also in the infix ordering. Therefore, we can use the induction assumption. Summing up, the property ``some prefix is in the prefix class of $m$'' can be expressed using the star-free expression 
 		\begin{align*}
 		\bigcup_{n,a} L_n \cdot a \cdot \Sigma^*,
 		\end{align*}
@@ -338,7 +338,7 @@ In the following claim, we show that the language $K_m$ is closely related to th
 
 	Consider now the second inclusion. Take some  $ w \in K_m$. Since $w$ has a prefix whose value in the monoid is in the prefix class of $m$, the value of $w$ is either equal to $m$, or strictly bigger than $m$ in the prefix ordering. By Lemma~\ref{lem:infix-prefix}, if the value is strictly bigger than $m$ in the prefix ordering, then it is also strictly bigger in the infix ordering. Using this observation and a similar one for suffixes, we know that the value of $w \in K_m$ is either: (a) equivalent to $m$ in both the prefix and suffix orderings; or (b) strictly bigger than $m$ in the infix ordering. In case (b), we have membership in $L_{>m}$. It remains to prove that in  case (a), the value is actually equal to $m$, and not some other element of its prefix class and suffix class. This is because there are no other such elements, as we now show:
 	\begin{itemize}
-		\item[(*)] is $n \in M$ is both prefix and suffix equivalent to $m$, then $n = m$.
+		\item[(*)] If $n \in M$ is both prefix and suffix equivalent to $m$, then $n = m$.
 	\end{itemize}
 	To prove (*), we use aperiodicity of the monoid. (The statement fails for general monoids, e.g.~in a group all elements are prefix and suffix equivalent to each other.) If $n$ is prefix equivalent to $m$, then there exist $x,y \in M$ such that
 	\begin{align*}

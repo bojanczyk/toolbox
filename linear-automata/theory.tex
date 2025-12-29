@@ -8,13 +8,15 @@
 This chapter is about automata which input words and output rational numbers. The original definition comes from Schützenberger~\cite{Schutzenberger:1961cf}. 
 We show that these automata can be minimised  (even in  polynomial time) and  can be  tested for equivalence (again, in polynomial time),  but the following version of the emptiness problem is undecidable: 
 \begin{center}
-	is the output $0$ for at least one input?
+	is the output $0$ for some input?
 \end{center}
  Note that the dual problem, 
  \begin{center}
- 	is the output $0$ for all inputs?
+ 	is the output $0$ for every input?
  \end{center}
-  is a special case of the equivalence problem, and is therefore decidable in polynomial time.  We use the field of rational numbers, but most results would work for other fields. The automata  can be viewed in two ways: as a nondeterministic device with states from a finite set (we call these weighted automata) and as a deterministic device with states from a vector space (we call these vector space automata). Both views are useful, so we present both of them. 
+  is a special case of the equivalence problem, and is therefore decidable in polynomial time.  We use the field of rational numbers, but most results would work for other fields. 
+  
+The automata discussed in this chapter  can be viewed in two ways: as a nondeterministic device with states from a finite set (we call these weighted automata) and as a deterministic device with states from a vector space (we call these vector space automata). Both views are useful, so we present both of them. 
 
 \paragraph*{Weighted automata.} In the nondeterministic view, the automaton has a state space which is a finite set, and many possible runs. Each run has an associated weight, and the weight of an input word is the sum of weights of all the runs.
 
@@ -45,7 +47,7 @@ Consider the following weighted automaton with three states.
 \mypicc{7}
  The weight of a run that stays in $\whiteball$  is  $1$, and the weight of a run that goes from $\whiteball$ to $\blackball$  is $2^n$, where $n$ is the number of times the run loops around $\blackball$. Other runs have cost zero. If the input word has length $n$, then the weight of the word is
 \begin{align*}
-	\underbrace{2^{n-1} + 2^{n-1} + \cdots +2^1}_{\text{runs from $\whiteball$ to $\blackball$}} + \underbrace{1}_{\text{loop in $\whiteball$}} = 2^n
+	\underbrace{2^{n-1} + 2^{n-2} + \cdots +2^1}_{\text{runs from $\whiteball$ to $\blackball$}} + \underbrace{1}_{\text{loop in $\whiteball$}} = 2^n
 \end{align*}
 To recognise the same function $a^n \mapsto 2^n$ we could also use this automaton
 \mypicc{10}

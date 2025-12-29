@@ -1,7 +1,7 @@
 \label{sec:zero-one-laws}
 
 
-Suppose that we want to randomly select a graph with $n$ vertices. One way to do this is as follows: independently for every pair of vertices, flip a coin to decide if there is an edge or not.
+Suppose that we want to randomly select a graph with $n$ vertices. One way to do this is as follows: independently for every pair of vertices, flip a coin to decide if there is an edge or not. We are working with undirected graphs without loops, and therefore if the graph has $n$ vertices, then we need to flip the coin ${n \choose 2}$ times, once for each possible edge. 
 For example, the probability that the graph is a clique is 
 \begin{align*}
 \frac 1 {2^{n \choose 2}}
@@ -15,7 +15,7 @@ because there are $n \choose 2$ edges to choose randomly, and  all of them need 
 The probability that there is an even number of edges is exactly $1/2$, independently of $n$. This is because the absence or presence of the last edge (in some predetermined order of edges) determines the parity. 
 \end{example}
 
-As the two examples show, the probability of a graph having some property can have some limit, such as zero or one half. There are also properties that do not have a limit, e.g.~the property ``the number of vertices is even'' (which does not depend on the choice of edges), oscillates between zero and one without any convergence. The goal of this chapter is to show that for properties that can be defined in first-order logic, there will be a limit, and this limit will be zero or one.
+As the two examples show, the probability of a graph having some property can have some limit, such as zero or one half. There are also properties that do not have a limit, e.g.~the property ``the number of vertices is even'' (which does not depend on the choice of edges), oscillates between zero and one without any convergence. The goal of this chapter is to show that for properties which can be defined in first-order logic, there will be a limit, and this limit will be zero or one.
 
 Let us begin by explaining first-order logic on graphs. The idea is to use a formula that is built using the quantifiers $\forall$ and $\exists$,  the logical connectives $\land$, $\lor$, $\neg$, and a binary relation for the edges. Here are some examples of first-order formulas, and the corresponding limiting probabilities.
 
@@ -24,7 +24,7 @@ Let us begin by explaining first-order logic on graphs. The idea is to use a for
 	\begin{align*}
 	\exists x \ \forall y \qquad x \neq y \ \Rightarrow \ \text{edge}(x,y)
 	\end{align*}
-	says that the graph has an apex vertex, i.e.~some vertex that is connected to all other vertices. For any given vertex, the probability that it is an apex is equal to $1/2^{n-1}$. Even if we sum this probability across all $n$ possible choices of the apex, we will still get a probability that tends to zero with $n$. Therefore, the limiting probability of having an apex vertex is zero. 
+	says that the graph has an apex vertex, i.e.~some vertex $x$ that is connected to every other vertex $y$. For any given vertex, the probability that it is an apex is equal to $1/2^{n-1}$. Even if we sum this probability across all $n$ possible choices of the apex, we will still get a probability that tends to zero with $n$. Therefore, the limiting probability of having an apex vertex is zero. 
 \end{example}
 
 \begin{example}[Triangle]
@@ -36,17 +36,17 @@ Let us begin by explaining first-order logic on graphs. The idea is to use a for
 	says that the graph contains a triangle as an induced subgraph. If we fix a particular triple of vertices, then the probability that this triple is a triangle will be $1/8$. However, if we look at $n/3$ disjoint triples, then the probability that none of them is a triangle will be exponentially small. Therefore, the limiting probability of having a triangle is one. 
 \end{example}
 
-As in the above examples, we define the \emph{limiting probability} of a graph property to be  the limit, with $n \to \infty$, of the probability that a graph with $n$ vertices satisfies the property. The main result of this chapter is the following theorem, which shows that the limiting probability is necessarily zero or one for properties that can be defined in first-order logic.
+As in the above examples, we define the \emph{limiting probability} of a graph property to be  the limit, with $n \to \infty$, of the probability that a graph with $n$ vertices satisfies the property. The main result of this chapter is the following theorem, which shows that the limiting probability exists and  is necessarily zero or one for properties that can be defined in first-order logic.
 
 \begin{theorem}\label{thm:zero-one-law}
-	Let $\varphi$ be a first-order formula that defines a property of graphs, then its limiting probability is defined and equal to zero or one.  
+	Let $\varphi$ be a first-order formula that defines a property of graphs, then its limiting probability exists and is equal to zero or one.  
 \end{theorem}
 
 \begin{proof}
 	The proof will be based on a certain property of graphs, which we call the \emph{extension property}. This property formalizes the idea that the graph contains many different induced subgraphs. 
 
 \begin{definition}[Extension property] Let $k \in \set{0,1,\ldots}$. 
-	A graph $G$ has the \emph{$k$-extension property} if for every induced subgraph $H \subseteq G$ with at most $k$ vertices, and every partition of the vertices of $H$ into two parts $V_1$ and $V_2$, there is some vertex in $G$ that is adjacent to all vertices in $V_2$ and not adjacent to any of the vertices in $V_2$.
+	A graph $G$ has the \emph{$k$-extension property} if for every induced subgraph $H \subseteq G$ with at most $k$ vertices, and every partition of the vertices of $H$ into two parts $V_1$ and $V_2$, there is some vertex in $G \setminus H$ that is adjacent to all vertices in $V_2$ and non-adjacent to all vertices in $V_2$.
 \end{definition}
 Here is a picture of the 5-extension property:
 \mypicf{3}
@@ -59,13 +59,13 @@ The first observation is that for every $k$, sufficiently large random graphs ha
 Let $n \in \Nat$. Consider the probability that some particular $k$-tuple vertices in the graph with $n$ vertices  is a violation of the $k$-extension property. This probability is  exponentially small in $n$, for the same reasons as in Example~\ref{ex:random-connectivity}. Since the number of $k$-tuples is polynomial in $n$, once $k$ has been fixed, it follows that the property that some $k$-tuple is a violation must tend to zero.
 \end{proof}
 
-We will now show that for every formula of first-order logic, there is some $k$ such that all graphs with the $k$-extension property agree on this formula. 
+We now show that for every formula of first-order logic, there is some $k$ such that all graphs with the $k$-extension property agree on this formula. 
 
 
 \begin{lemma} \label{lem:k-extension-distinguish} Let $\varphi$ be a formula of first-order logic. Then there is some $k$ such that either all graphs with the $k$-extension property satisfy $\varphi$, or all graphs with the $k$-extension property do not satisfy $\varphi$. 
 \end{lemma}
 \begin{proof}
-	The formula in the statement of the lemma does not have free variables, since otherwise it would not be meaningful to say that a graph satisfies or does not satisfy it without specifying the values of the free variables. However, in the proof we will discuss  a slightly stronger statement that involves free variables. To evaluate a formula with $\ell$ free variables, we need a graph together with a list of $\ell$ distinguished vertices.  We use the name \emph{$\ell$-pointed graph} for such an object. The lemma follows immediately from the following claim in the case of $\ell =0$. 
+	The formula in the statement of the lemma does not have free variables, since otherwise it would not be meaningful to say that a graph satisfies or does not satisfy it, without specifying the values of the free variables. However, in the proof we will discuss  a slightly stronger statement that involves free variables. To evaluate a formula with $\ell$ free variables, we need a graph together with a list of $\ell$ distinguished vertices.  We use the name \emph{$\ell$-pointed graph} for such an object. The lemma follows immediately from the following claim in the case of $\ell =0$. 
 	\begin{itemize}
 		\item[(*)] Let $\varphi$ be a formula that has $\ell$ free variables. There is some $k$ with the following property: if two $\ell$-pointed  satisfy the same quantifier-free formulas, and the underlying graphs both  have the $k$-extension property, then $\varphi$ is true in both or none of them.  
 	\end{itemize}
@@ -87,7 +87,7 @@ We use the same distribution as previously, i.e.~for each (unordered) pair of ve
 	There is some countably infinite graph $G$, such that if we randomly select a graph with vertices $\omega$, then with probability one, the selected graph is isomorphic to $G$.	
 \end{theorem}
 
-Thanks to the above theorem, it makes sense to talk about \emph{the infinite random graphs}, since it is unique up to probability one. 
+Thanks to the above theorem, it makes sense to talk about \emph{the infinite random graph}, since it is unique up to probability one. 
 
 \begin{proof}[Proof of Theorem~\ref{thm:infinite-random-graph}]
 	The proof is also based on the extension property. 
